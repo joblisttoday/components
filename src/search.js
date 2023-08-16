@@ -35,24 +35,53 @@ class Search extends HTMLElement {
 		this.worker = await this._loadDbWorker();
 		this.db = this.worker.db
 		this._render();
-		await this.executeQuery();
 	}
 	_render() {
 		this.innerHTML = ''
 		const $input = document.createElement('input')
+		$input.type = "search"
+		$input.placeholder = "Search"
 		$input.addEventListener('input', this._onInput.bind(this))
 		this.append($input)
 	}
-	_onInput(event) {
+	async _onInput(event) {
+		event.preventDefault()
 		const {value} = event.target
-		this.executeQuery(value)
+		const result = await this.searchCompanies(value)
+		const resultEvent = new CustomEvent("search", {
+			bubbles: false,
+			detail: result,
+		});
+		this.dispatchEvent(resultEvent);
+		return result
 	}
-
-	async executeQuery(search = "ableton") {
-		const result = await this.db.exec(`select * from companies where slug = ?`, [search]);
+	async searchCompaniesBySlug(search = "ableton") {
+		return await this.executeQuery(
+			`SELECT * FROM companies WHERE slug = ?`,
+			[search]
+		)
+	}
+	async searchCompanies(query = "") {
+		const rows = await this.executeQuery(`
+				SELECT *
+				FROM companies_fts
+				WHERE companies_fts MATCH ?
+		`, [query]);
+		return rows;
+	};
+	async searchJobs(query = "") {
+		const rows = await this.executeQuery(`
+				SELECT *
+				FROM jobs_fts
+				WHERE jobs_fts MATCH ?
+		`, [query]);
+		return rows;
+	};
+	async executeQuery(exec = "", params = []) {
+		const result = await this.db.exec(exec, [...params]);
 		const bytesRead = await this.worker.worker.bytesRead;
-		console.log(result);
 		this.worker.worker.bytesRead = 0;
+		return result
 	}
 }
 

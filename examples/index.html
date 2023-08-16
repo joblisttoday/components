@@ -8,5 +8,15 @@
 	<body>
 		<script type="module" src="../src/index.js"></script>
 		<joblist-search></joblist-search>
+		<script type="module">
+		const $search = document.querySelector('joblist-search')
+		$search.addEventListener('search', ({detail}) => {
+			if (detail.length) {
+				console.log(detail)
+			} else {
+				console.log("no match", detail)
+			}
+		})
+		</script>
 	</body>
 </html>
