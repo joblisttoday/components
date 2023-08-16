@@ -48,10 +48,11 @@ class Search extends HTMLElement {
 		this.executeQuery(value)
 	}
 
-	async executeQuery(search) {
-		const result = await this.db.exec(`select * from companies where slug = ?`, search);
-		debugger
+	async executeQuery(search = "ableton") {
+		const result = await this.db.exec(`select * from companies where slug = ?`, [search]);
+		const bytesRead = await this.worker.worker.bytesRead;
 		console.log(result);
+		this.worker.worker.bytesRead = 0;
 	}
 }
 
