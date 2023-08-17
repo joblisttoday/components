@@ -29,66 +29,69 @@ class Search extends HTMLElement {
 			}
 		};
 		this.maxBytesToRead = 10 * 1024 * 1024;
+		this.debounceTimeout = null;
+		this.debouncingDelay = 333;
 	}
-
+	
 	async connectedCallback() {
 		this.worker = await this._loadDbWorker();
-		this.db = this.worker.db
+		this.db = this.worker.db;
 		this._render();
 	}
+	
 	_render() {
-		this.innerHTML = ''
-		const $input = document.createElement('input')
-		$input.type = "search"
-		$input.placeholder = "Search"
-		$input.addEventListener('input', this._onInput.bind(this))
-		this.append($input)
+		this.innerHTML = '';
+		const $input = document.createElement('input');
+		$input.type = "search";
+		$input.placeholder = "Search";
+		$input.addEventListener('input', this._debounceOnInput.bind(this));
+		this.append($input);
 	}
-	async _onInput(event) {
-		event.preventDefault()
-		const {value} = event.target
-		let companies, jobs
-		try {
-			companies = await this.searchCompanies(value)
-			jobs = await this.searchJobs(value)
-		} catch (e) {
-			console.info('sqlite search error', e)
+
+	_debounceOnInput(event) {
+		if (this.debounceTimeout) {
+			clearTimeout(this.debounceTimeout);
 		}
-		const result = { jobs, companies }
+		this.debounceTimeout = setTimeout(() => this._onInput(event), this.debouncingDelay);
+	}
+	
+	async _onInput(event) {
+		const {value} = event.target;
+		let companies, jobs;
+		try {
+			companies = await this.searchCompanies(value);
+			jobs = await this.searchJobs(value);
+		} catch (e) {
+			console.info('Search error.', e);
+		}
+		const result = { jobs, companies };
 		const resultEvent = new CustomEvent("search", {
 			bubbles: false,
 			detail: result,
 		});
 		this.dispatchEvent(resultEvent);
-		return result
+		return result;
 	}
-	async searchCompaniesBySlug(search = "ableton") {
-		return await this.executeQuery(
-			`SELECT * FROM companies WHERE slug = ?`,
-			[search]
-		)
-	}
+	
 	async searchCompanies(query = "") {
-		const rows = await this.executeQuery(`
-				SELECT *
-				FROM companies_fts
-				WHERE companies_fts MATCH ?
-		`, [query]);
-		return rows;
-	};
+		return await this.executeQuery(
+			`SELECT * FROM companies_fts WHERE companies_fts MATCH ?`,
+			[query]
+		);
+	}
+	
 	async searchJobs(query = "") {
-		const rows = await this.executeQuery(`
-				SELECT *
-				FROM jobs_fts
-				WHERE jobs_fts MATCH ?
-		`, [query]);
-		return rows;
-	};
+		return await this.executeQuery(
+			`SELECT * FROM jobs_fts WHERE jobs_fts MATCH ?`,
+			[query]
+		);
+	}
+	
 	async executeQuery(exec = "", params = []) {
 		const result = await this.db.exec(exec, [...params]);
 		const bytesRead = await this.worker.worker.bytesRead;
 		this.worker.worker.bytesRead = 0;
-		return result
+		return result;
 	}
 }
 
