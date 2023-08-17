@@ -27,7 +27,8 @@ class SearchResults extends HTMLElement {
 			for (const companyValues of companies[0].values) {
 				const companyEl = document.createElement('joblist-company');
 				companyColumns.forEach((column, index) => {
-					companyEl.setAttribute(column, companyValues[index]);
+					const value = companyValues[index]
+					value && companyEl.setAttribute(column, value);
 				});
 				this.appendChild(companyEl);
 			}
@@ -38,7 +39,8 @@ class SearchResults extends HTMLElement {
 			for (const jobValues of jobs[0].values) {
 				const jobEl = document.createElement('joblist-job');
 				jobColumns.forEach((column, index) => {
-					jobEl.setAttribute(column, jobValues[index]);
+					const value = jobValues[index]
+					value && jobEl.setAttribute(column, value);
 				});
 				this.appendChild(jobEl);
 			}

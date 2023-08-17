@@ -8,7 +8,7 @@ joblist-search input {
 		padding: 0.25rem;
 }
 
-joblist-search-results a {
+joblist-results a {
 		text-decoration: none;
 }
 
@@ -18,7 +18,12 @@ joblist-company {
 		padding: 0.5rem;
 		flex-direction: column;
 }
-
+joblist-company-title {
+		font-weight: bold;
+}
+joblist-job-company_title {
+		font-weight: bold;
+}
 joblist-company-tags {
 	display: flex;
 	flex-wrap: wrap;
@@ -33,6 +38,15 @@ joblist-job {
 		flex-wrap: wrap;
 		padding: 0.5rem;
 }
-joblist-job-company-title {
+joblist-job-company_title,
+joblist-job-name,
+joblist-job-location {
 		margin-right: 0.25rem;
+}
+joblist-job-location {
+		text-decoration: underline;
+}
+
+joblist-job-published_date {
+		font-style: italic;
 }

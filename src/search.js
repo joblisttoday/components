@@ -1,4 +1,10 @@
 class Search extends HTMLElement {
+	get placeholder() {
+		return this.getAttribute('placeholder')
+	}
+	get DATABASE_URL() {
+		return this.getAttribute('database-url') || `https://joblist.gitlab.io/workers/joblist.db`;
+	}
 	async _loadDbWorker() {
 		const { createDbWorker } = await import('sql.js-httpvfs');
 		return await createDbWorker(
@@ -11,7 +17,6 @@ class Search extends HTMLElement {
 	
 	constructor() {
 		super();
-		this.DATABASE_URL = `https://joblist.gitlab.io/workers/joblist.db`;
 		this.workerUrl = new URL(
 			"sql.js-httpvfs/dist/sqlite.worker.js",
 			import.meta.url
@@ -43,7 +48,7 @@ class Search extends HTMLElement {
 		this.innerHTML = '';
 		const $input = document.createElement('input');
 		$input.type = "search";
-		$input.placeholder = "Search";
+		$input.placeholder = this.placeholder || "Search (eg. test OR free*)";
 		$input.addEventListener('input', this._debounceOnInput.bind(this));
 		this.append($input);
 	}
@@ -72,6 +77,32 @@ class Search extends HTMLElement {
 		this.dispatchEvent(resultEvent);
 		return result;
 	}
+
+	async _onCoordinatesInput(event = { target: { value: {} } }) {
+		const {
+			value
+		} = event.target
+		const {
+			lat = 52.5200,
+			lon = 13.4050,
+			radius = 0.1,
+		} = value
+		let companies, jobs;
+		try {
+			companies = await this.searchCompaniesByCoordinates(lat, lon, radius);
+			/* @TODO jobs do not have positions in providers */
+			/* jobs = await this.searchJobsByCoordinates(lat, lon, radius); */
+		} catch (e) {
+			console.info('Search error.', e);
+		}
+		const result = { jobs, companies };
+		const resultEvent = new CustomEvent("search", {
+			bubbles: false,
+			detail: result,
+		});
+		this.dispatchEvent(resultEvent);
+		return result;
+	}
 	
 	async searchCompanies(query = "") {
 		return await this.executeQuery(
@@ -86,7 +117,34 @@ class Search extends HTMLElement {
 			[query]
 		);
 	}
-	
+
+	async searchCompaniesByCoordinates(lat, lon, radius) {
+		const sql = `
+	SELECT *
+	FROM companies
+	WHERE json_extract(json(positions), '$[0].map.coordinates') IS NOT NULL
+	AND (
+		(CAST(json_extract(json(positions), '$[0].map.coordinates[0]') AS REAL) - ?) * (? - CAST(json_extract(json(positions), '$[0].map.coordinates[0]') AS REAL)) + 
+		(CAST(json_extract(json(positions), '$[0].map.coordinates[1]') AS REAL) - ?) * (? - CAST(json_extract(json(positions), '$[0].map.coordinates[1]') AS REAL)) <= ? * ?
+	)`;
+		const params = [lon, lon, lat, lat, radius, radius];
+		return await this.executeQuery(sql, params);
+	}
+
+	async searchJobsByCoordinates(lat, lon, radius) {
+		const sql = `
+	SELECT *
+	FROM jobs
+	WHERE json_extract(json(positions), '$[0].map.coordinates') IS NOT NULL
+	AND (
+		(CAST(json_extract(json(positions), '$[0].map.coordinates[0]') AS REAL) - ?) * (? - CAST(json_extract(json(positions), '$[0].map.coordinates[0]') AS REAL)) + 
+		(CAST(json_extract(json(positions), '$[0].map.coordinates[1]') AS REAL) - ?) * (? - CAST(json_extract(json(positions), '$[0].map.coordinates[1]') AS REAL)) <= ? * ?
+	)`;
+		const params = [lon, lon, lat, lat, radius, radius];
+		return await this.executeQuery(sql, params);
+	}
+
+
 	async executeQuery(exec = "", params = []) {
 		const result = await this.db.exec(exec, [...params]);
 		const bytesRead = await this.worker.worker.bytesRead;
