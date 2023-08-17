@@ -93,7 +93,6 @@ class Job extends HTMLElement {
 				if (attrValue) {
 					try {
 						const dateValue = new Date(attrValue);
-						console.log('date', attrValue, dateValue)
 						element.textContent = timeSince(dateValue);
 					} catch(e) {
 						element.textContent = attrValue;

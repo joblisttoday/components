@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@joblist/components/map</title>
+		<link rel="stylesheet" href="../../src/index.css" />
+	</head>
+	<body>
+		<script type="module" src="../../src/index.js"></script>
+		<joblist-search></joblist-search>
+		<joblist-map-list latitude="" longitude="" zoom="3" origin="https://profiles.joblist.today/companies/"></joblist-map-list>
+
+		<script type="module">
+		import {
+			MapList,
+			companiesSqliteResultsToMapMarkers,
+		} from '../../src/map/index.js'
+
+		const $search = document.querySelector('joblist-search')
+		const $resultsMap = document.querySelector('joblist-map-list')
+		$search.addEventListener('search', ({detail}) => {
+			const { companies } = detail
+			if (companies) {
+				/* @TODO there are no position on jobs yet */
+				delete detail.jobs
+				const itemMarkers = companiesSqliteResultsToMapMarkers(companies)
+				console.log('itemMarkers', itemMarkers)
+				$resultsMap.setAttribute('markers', JSON.stringify(itemMarkers))
+			} else {
+				$resultsMap.removeAttribute('results')
+			}
+		})
+		</script>
+	</body>
+</html>

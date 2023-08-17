@@ -7,19 +7,17 @@
 		<link rel="stylesheet" href="../src/index.css" />
 	</head>
 	<body>
-		<script type="module" src="../src/index.js"></script>
-		<joblist-search></joblist-search>
-		<joblist-results></joblist-results>
-		<script type="module">
-		const $search = document.querySelector('joblist-search')
-		const $results = document.querySelector('joblist-results')
-		$search.addEventListener('search', ({detail}) => {
-			if (detail.companies || detail.jobs) {
-				$results.setAttribute('results', JSON.stringify(detail))
-			} else {
-				$results.removeAttribute('results')
-			}
-		})
-		</script>
+		<menu>
+			<li>
+				<a href="./search/">
+					search
+				</a>
+			</li>
+			<li>
+				<a href="./map/">
+					map
+				</a>
+			</li>
+		</menu>
 	</body>
 </html>
