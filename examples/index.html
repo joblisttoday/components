@@ -8,13 +8,15 @@
 	<body>
 		<script type="module" src="../src/index.js"></script>
 		<joblist-search></joblist-search>
+		<joblist-search-results></joblist-search-results>
 		<script type="module">
 		const $search = document.querySelector('joblist-search')
+		const $results = document.querySelector('joblist-search-results')
 		$search.addEventListener('search', ({detail}) => {
-			if (detail.length) {
-				console.log(detail)
+			if (detail.companies || detail.jobs) {
+				$results.setAttribute('results', JSON.stringify(detail))
 			} else {
-				console.log("no match", detail)
+				$results.removeAttribute('results')
 			}
 		})
 		</script>

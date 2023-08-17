@@ -1,2 +1,4 @@
 import './search.js'
 import './search-results.js'
+import './company.js'
+import './job.js'

@@ -47,7 +47,14 @@ class Search extends HTMLElement {
 	async _onInput(event) {
 		event.preventDefault()
 		const {value} = event.target
-		const result = await this.searchCompanies(value)
+		let companies, jobs
+		try {
+			companies = await this.searchCompanies(value)
+			jobs = await this.searchJobs(value)
+		} catch (e) {
+			console.info('sqlite search error', e)
+		}
+		const result = { jobs, companies }
 		const resultEvent = new CustomEvent("search", {
 			bubbles: false,
 			detail: result,
