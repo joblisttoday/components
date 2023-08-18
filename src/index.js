@@ -1,4 +1,5 @@
 import './styles/index.css'
+import './favicon.js'
 import './search.js'
 import './search-results.js'
 import './company.js'
