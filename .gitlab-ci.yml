@@ -41,7 +41,7 @@ pages:
 # should be equivalent to package.json.version,
 # and prefixed by `v`; ex: v0.0.1
 # (only work when tagging from gitlab ui)
-.publish:
+publish:
   stage: npm-publish
   image: node:latest
   rules:
