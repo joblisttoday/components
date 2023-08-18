@@ -1,6 +1,6 @@
 {
   "name": "@sctlib/components",
-  "private": true,
+  "private": false,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
@@ -17,5 +17,28 @@
   "dependencies": {
     "leaflet": "^1.9.4",
     "sql.js-httpvfs": "^0.8.12"
-  }
+  },
+  "homepage": "https://gitlab.com/joblist/components",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/joblist/components.git"
+  },
+  "keywords": [
+    "web-components",
+    "leaflet",
+    "sqlite3",
+    "wasm"
+  ],
+  "author": "joblist",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://gitlab.com/joblist/components/issues"
+  },
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ]
 }
