@@ -6,7 +6,7 @@ import recursive from "recursive-readdir";
 const BASE_URL = process.env.VITE_BASE || "/";
 
 const generateExampleInputFiles = async () => {
-	const entriesDir = resolve("./examples/");
+	const entriesDir = resolve("./apps/");
 	const entries = await recursive(entriesDir);
 	const inputFiles = entries
 		.filter((entry) => entry.endsWith(".html"))

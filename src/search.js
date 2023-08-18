@@ -16,7 +16,7 @@ class Search extends HTMLElement {
 
 	async connectedCallback() {
 		this.joblistSDK = new JoblistSDK(this.databaseUrl);
-		await this.joblistSDK.initialize();
+		this.joblistSDK.initialize();
 		this._render();
 	}
 	_render() {
