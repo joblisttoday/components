@@ -1,0 +1,14 @@
+/* favicon svg image */
+joblist-favicon {
+	max-height: var(--s-favicon);
+	max-width: var(--s-favicon);
+}
+joblist-favicon svg {
+	width: 100%;
+	height: 100%;
+	max-width: 50vmax;
+	max-height: 50vmax;
+}
+joblist-favicon svg g {
+	fill: var(--c-svg);
+}
