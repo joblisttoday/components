@@ -1,3 +1,4 @@
+import './styles/index.css'
 import './search.js'
 import './search-results.js'
 import './company.js'

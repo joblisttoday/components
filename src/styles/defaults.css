@@ -1,0 +1,39 @@
+/* defaults */
+html {
+	font-size: var(--size-font);
+	font-family: var(--font-family);
+	background-color: var(--c-bg);
+	color: var(--c-fg);
+}
+@media (min-width: 60rem) {
+	html {
+		font-size: 19px;
+	}
+}
+@media (min-width: 100rem) {
+	html {
+		font-size: 20px;
+	}
+}
+
+/* resets */
+h1, h2, h3, h4, h5, h6,
+p {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+ul, ol {
+	padding-left: calc(var(--size) * 1.5);
+}
+body {
+	margin: 0
+}
+
+a,
+a:visited {
+	color: var(--c-link);
+}
+a:active,
+a:hover {
+	color: var(--c-link--active);
+}

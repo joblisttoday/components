@@ -1,0 +1,79 @@
+/* variables */
+:root {
+	--c-white: white;
+	--c-black: black;
+	--c-green: darkgreen;
+	--c-gray: gray;
+	--c-purple: violet;
+	--c-whitesmoke: whitesmoke;
+	--c-blue: blue;
+	--c-orange: orange;
+
+	--font-family: 'IBM Plex Serif', serif;
+	--size-font: 19px;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--c-bg: var(--c-black);
+		--c-fg: whitesmoke;
+		--c-fg--info: gray;
+		--c-link: chartreuse;
+		--c-link--active: var(--c-purple);
+		--c-company: violet;
+		--c-tag--fg: var(--c-fg);
+		--c-tag--bg: midnightblue;
+		--c-position: gray;
+		--c-svg: white;
+	}
+}
+@media (prefers-color-scheme: light) {
+	:root {
+		--c-bg: snow;
+		--c-fg: var(--c-black);
+		--c-fg--info: gray;
+		--c-link: var(--c-blue);
+		--c-link--active: var(--c-green);
+		--c-company: var(--c-green);
+		--c-tag--fg: var(--c-fg);
+		--c-tag--bg: darkturquoise;
+		--c-position: gray;
+		--c-svg: black;
+	}
+}
+
+@media (min-width: 60rem) {
+	html {
+		--size-font: 21px;
+	}
+}
+
+@media (min-width: 100rem) {
+	html {
+		--size-font: 23px;
+	}
+}
+
+/* these root vars are project specific */
+:root {
+	--size: 1.5rem;
+	--size-container: 65rem;
+	--c-text: black;
+	--c-active: green;
+	--c-bg--light: ghostwhite;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--c-bg--company: black;
+		--c-border--company: gray;
+		--c-button: darkblue;
+	}
+}
+@media (prefers-color-scheme: light) {
+	:root {
+		--c-bg--company: snow;
+		--c-border--company: lightgray;
+		--c-button: lightgray;
+	}
+}

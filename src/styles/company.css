@@ -1,0 +1,20 @@
+joblist-company {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 0.5rem;
+	flex-direction: column;
+}
+joblist-company-title {
+	font-weight: bold;
+}
+joblist-job-company_title {
+	font-weight: bold;
+}
+joblist-company-tags {
+	display: flex;
+	flex-wrap: wrap;
+	font-style: italic;
+}
+joblist-company-tags a:not(:last-child) + a {
+	margin-left: 0.5rem;
+}
