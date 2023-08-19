@@ -36,15 +36,17 @@ class Search extends HTMLElement {
 	}
 
 	async _onInput(event) {
-		const {value} = event.target;
+		const {
+			value: query
+		} = event.target;
 		let companies, jobs;
 		try {
-			companies = await this.joblistSDK.searchCompanies(value);
-			jobs = await this.joblistSDK.searchJobs(value);
+			companies = await this.joblistSDK.searchCompanies(query);
+			jobs = await this.joblistSDK.searchJobs(query);
 		} catch (e) {
 			console.info('Search error.', e);
 		}
-		const result = { jobs, companies };
+		const result = { jobs, companies, query };
 		const resultEvent = new CustomEvent("search", {
 			bubbles: false,
 			detail: result,
@@ -64,7 +66,10 @@ class Search extends HTMLElement {
 		} = value
 		let companies, jobs;
 		try {
-			companies = await this.joblistSDK.searchCompaniesByCoordinates(lat, lon, radius); // <-- Change here
+			companies = await this.joblistSDK.searchCompaniesByCoordinates(
+				lat, lon, radius
+			);
+
 			/* @TODO jobs do not have positions in providers */
 			/* jobs = await sdk.searchJobsByCoordinates(lat, lon, radius); */
 		} catch (e) {

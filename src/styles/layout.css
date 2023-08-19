@@ -7,14 +7,15 @@ joblist-layout {
 	min-height: 100%;
 }
 
-joblist-layout {
-	padding: calc(var(--size) / 2);
+joblist-layout:not([full]) {
+	padding: calc(var(--s) / 2);
 }
 
 joblist-layout joblist-search {
-	max-width: 20rem;
+	width: 100%;
 	align-self: center;
-	padding: calc(var(--size) / 3);
+	position: sticky;
+	top: 0;
 }
 
 joblist-layout joblist-map-list {

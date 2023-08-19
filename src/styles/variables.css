@@ -13,6 +13,7 @@
 	--s-font: 19px;
 	--s: 1.5rem;
 	--s-favicon: calc(var(--s) * 2);
+	--s-container: calc(var(--s) * 42);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,15 +55,6 @@
 	html {
 		--s-font: 23px;
 	}
-}
-
-/* these root vars are project specific */
-:root {
-	--size: 1.5rem;
-	--size-container: 65rem;
-	--c-text: black;
-	--c-active: green;
-	--c-bg--light: ghostwhite;
 }
 
 @media (prefers-color-scheme: dark) {

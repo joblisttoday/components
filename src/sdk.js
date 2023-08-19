@@ -83,6 +83,13 @@ export class JoblistSDK {
 		const params = [lon, lon, lat, lat, radius, radius];
 		return await this.executeQuery(sql, params);
 	}
+
+	async getLastAddedCompanies(limit = 10) {
+		return await this.executeQuery(
+			`SELECT * FROM companies ORDER BY rowid DESC LIMIT ?`,
+			[limit]
+		);
+	}
 }
 
 export default new JoblistSDK()

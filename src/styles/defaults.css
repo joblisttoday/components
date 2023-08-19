@@ -1,6 +1,6 @@
 /* defaults */
 html {
-	font-size: var(--size-font);
+	font-size: var(--s-font);
 	font-family: var(--font-family);
 	background-color: var(--c-bg);
 	color: var(--c-fg);
@@ -26,7 +26,7 @@ p {
 	margin-bottom: 0;
 }
 ul, ol {
-	padding-left: calc(var(--size) * 1.5);
+	padding-left: calc(var(--s) * 1.5);
 }
 
 a,
@@ -39,10 +39,12 @@ a:hover {
 }
 
 /* forms */
-input {
+input,
+textarea {
 	background-color: var(--c-bg);
 	color: var(--c-fg);
 	border-color: var(--c-company);
+	padding: calc(var(--s) / 3);
 }
 input:focus-visible {
 	outline: var(--outline-width) solid var(--c-company);
