@@ -1,0 +1,22 @@
+html,
+body,
+joblist-layout {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	min-height: 100%;
+}
+
+joblist-layout {
+	padding: calc(var(--size) / 2);
+}
+
+joblist-layout joblist-search {
+	max-width: 20rem;
+	align-self: center;
+	padding: calc(var(--size) / 3);
+}
+
+joblist-layout joblist-map-list {
+	flex-grow: 1;
+}

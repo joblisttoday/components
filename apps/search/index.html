@@ -4,21 +4,23 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>@joblist/components/search</title>
+		<script type="module" src="../../src/index.js"></script>
+		<script type="module">
+			const $search = document.querySelector('joblist-search')
+			const $results = document.querySelector('joblist-results')
+			$search.addEventListener('search', ({detail}) => {
+				if (detail.companies || detail.jobs) {
+					$results.setAttribute('results', JSON.stringify(detail))
+				} else {
+					$results.removeAttribute('results')
+				}
+			})
+		</script>
 	</head>
 	<body>
-		<script type="module" src="../../src/index.js"></script>
-		<joblist-search></joblist-search>
-		<joblist-results></joblist-results>
-		<script type="module">
-		const $search = document.querySelector('joblist-search')
-		const $results = document.querySelector('joblist-results')
-		$search.addEventListener('search', ({detail}) => {
-			if (detail.companies || detail.jobs) {
-				$results.setAttribute('results', JSON.stringify(detail))
-			} else {
-				$results.removeAttribute('results')
-			}
-		})
-		</script>
+		<joblist-layout>
+			<joblist-search></joblist-search>
+			<joblist-results></joblist-results>
+		</joblist-layout>
 	</body>
 </html>

@@ -13,12 +13,14 @@ const buildTemplate = () => {
 			/* hidden */
 			:host([hidden]) { display: none }
 			:host {
-				display: block;
+				display: flex;
+				flex-direction: column;
 				width: 100%;
 			}
-			.Component {
+			joblist-leaflet {
 				height: 100%;
 				min-height: 17rem;
+				flex-grow: 1;
 			}
 			.leaflet-marker-icon {
 				/* background-color: red; */
@@ -31,8 +33,8 @@ const buildTemplate = () => {
 				padding: 0.8rem;
 			}
 		</style>
-		<div class="Component"></div>
-`
+		<joblist-leaflet></joblist-leaflet>
+	`
 	return template
 }
 
@@ -88,7 +90,7 @@ export default class MapList extends HTMLElement {
 	}
 
 	async connectedCallback() {
-		this.$component = this.shadowRoot.querySelector('.Component')
+		this.$component = this.shadowRoot.querySelector('joblist-leaflet')
 
 		/* leaflet css */
 		await this.insertStyles(this.$component)
