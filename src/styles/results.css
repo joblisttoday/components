@@ -3,10 +3,11 @@ joblist-results a {
 }
 joblist-results-404 {
 	padding: calc(var(--s) / 4);
-	display: inline-flex;
 	font-style: italic;
+	display: inline-flex;
+	flex-wrap: wrap;
 }
 joblist-results-404 a::before,
 joblist-results-404 a::after {
-	content: '\00a0';
+	content: "\00a0";
 }
