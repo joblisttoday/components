@@ -17,8 +17,8 @@
     "vitest": "^0.34.2"
   },
   "dependencies": {
-    "leaflet": "^1.9.4",
-    "sql.js-httpvfs": "^0.8.12"
+    "@sqlite.org/sqlite-wasm": "^3.44.2-build1",
+    "leaflet": "^1.9.4"
   },
   "homepage": "https://gitlab.com/joblist/components",
   "repository": {

@@ -1,34 +1,50 @@
-import { createDbWorker } from 'sql.js-httpvfs';
+import { sqlite3Worker1Promiser } from "@sqlite.org/sqlite-wasm";
+
+const log = (...args) => console.log(...args);
+const error = (...args) => console.error(...args);
 
 export class JoblistSDK {
 	constructor(databaseUrl = `https://joblist.gitlab.io/workers/joblist.db`) {
-		this.workerUrl = new URL(
-			"sql.js-httpvfs/dist/sqlite.worker.js",
-			import.meta.url
-		);
-		this.wasmUrl = new URL(
-			"sql.js-httpvfs/dist/sql-wasm.wasm",
-			import.meta.url
-		);
-		this.config = {
-			from: "inline",
-			config: {
-				serverMode: "full",
-				requestChunkSize: 4096,
-				url: databaseUrl
-			}
-		};
-		this.maxBytesToRead = 10 * 1024 * 1024;
+		this.databaseUrl = databaseUrl;
 	}
 
 	async initialize() {
-		this.worker = await createDbWorker(
-			[this.config],
-			this.workerUrl.toString(),
-			this.wasmUrl.toString(),
-			this.maxBytesToRead
-		);
-		this.db = this.worker.db;
+		try {
+			log("Loading and initializing SQLite3 module...");
+
+			const promiser = await new Promise((resolve) => {
+				const _promiser = sqlite3Worker1Promiser({
+					onready: () => {
+						resolve(_promiser);
+					},
+				});
+			});
+
+			log("Done initializing. Running demo...");
+
+			let response;
+
+			response = await promiser("config-get", {});
+			log("Running SQLite3 version", response.result.version.libVersion);
+
+			response = await promiser("open", {
+				filename: `${this.databaseUrl}?vfs=opfs`,
+			});
+
+			console.log("db response", response);
+
+			const { dbId } = response;
+			log(
+				"OPFS is available, created persisted database at",
+				response.result.filename.replace(/^file:(.*?)\?vfs=opfs$/, "$1"),
+			);
+			// Your SQLite code here.
+		} catch (err) {
+			if (!(err instanceof Error)) {
+				err = new Error(err.result.message);
+			}
+			error(err.name, err.message);
+		}
 	}
 
 	async executeQuery(exec = "", params = []) {
@@ -47,14 +63,14 @@ export class JoblistSDK {
 	async searchCompanies(query = "") {
 		return await this.executeQuery(
 			`SELECT * FROM companies_fts WHERE companies_fts MATCH ?`,
-			[query]
+			[query],
 		);
 	}
 
 	async searchJobs(query = "") {
 		return await this.executeQuery(
 			`SELECT * FROM jobs_fts WHERE jobs_fts MATCH ?`,
-			[query]
+			[query],
 		);
 	}
 
@@ -87,9 +103,9 @@ export class JoblistSDK {
 	async getLastAddedCompanies(limit = 10) {
 		return await this.executeQuery(
 			`SELECT * FROM companies ORDER BY rowid DESC LIMIT ?`,
-			[limit]
+			[limit],
 		);
 	}
 }
 
-export default new JoblistSDK()
+export default new JoblistSDK();
