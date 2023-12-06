@@ -1,34 +1,21 @@
-import { createDbWorker } from 'sql.js-httpvfs';
+/* import { createDbWorker } from 'sql.js-httpvfs'; */
+import initSqlJs from "sql.js";
 
 export class JoblistSDK {
 	constructor(databaseUrl = `https://joblist.gitlab.io/workers/joblist.db`) {
-		this.workerUrl = new URL(
-			"sql.js-httpvfs/dist/sqlite.worker.js",
-			import.meta.url
-		);
-		this.wasmUrl = new URL(
-			"sql.js-httpvfs/dist/sql-wasm.wasm",
-			import.meta.url
-		);
-		this.config = {
-			from: "inline",
-			config: {
-				serverMode: "full",
-				requestChunkSize: 4096,
-				url: databaseUrl
-			}
-		};
-		this.maxBytesToRead = 10 * 1024 * 1024;
+		this.databaseUrl = databaseUrl;
 	}
 
 	async initialize() {
-		this.worker = await createDbWorker(
-			[this.config],
-			this.workerUrl.toString(),
-			this.wasmUrl.toString(),
-			this.maxBytesToRead
+		const sqlPromise = initSqlJs({
+			/* locateFile: file => `https://path/to/your/dist/folder/dist/${file}` */
+			locateFile: (file) => `https://sql.js.org/dist/${file}`,
+		});
+		const dataPromise = fetch(this.databaseUrl).then((res) =>
+			res.arrayBuffer(),
 		);
-		this.db = this.worker.db;
+		const [SQL, buf] = await Promise.all([sqlPromise, dataPromise]);
+		this.db = new SQL.Database(new Uint8Array(buf));
 	}
 
 	async executeQuery(exec = "", params = []) {
@@ -47,14 +34,14 @@ export class JoblistSDK {
 	async searchCompanies(query = "") {
 		return await this.executeQuery(
 			`SELECT * FROM companies_fts WHERE companies_fts MATCH ?`,
-			[query]
+			[query],
 		);
 	}
 
 	async searchJobs(query = "") {
 		return await this.executeQuery(
 			`SELECT * FROM jobs_fts WHERE jobs_fts MATCH ?`,
-			[query]
+			[query],
 		);
 	}
 
@@ -87,9 +74,9 @@ export class JoblistSDK {
 	async getLastAddedCompanies(limit = 10) {
 		return await this.executeQuery(
 			`SELECT * FROM companies ORDER BY rowid DESC LIMIT ?`,
-			[limit]
+			[limit],
 		);
 	}
 }
 
-export default new JoblistSDK()
+export default new JoblistSDK();
