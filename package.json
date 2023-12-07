@@ -1,7 +1,7 @@
 {
   "name": "@joblist/components",
   "private": false,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -25,12 +25,7 @@
     "type": "git",
     "url": "git+ssh://git@gitlab.com/joblist/components.git"
   },
-  "keywords": [
-    "web-components",
-    "leaflet",
-    "sqlite3",
-    "wasm"
-  ],
+  "keywords": ["web-components", "leaflet", "sqlite3", "wasm"],
   "author": "joblist",
   "license": "GPL-3.0-or-later",
   "bugs": {
@@ -40,7 +35,5 @@
   "exports": {
     ".": "./dist/index.js"
   },
-  "files": [
-    "dist"
-  ]
+  "files": ["dist"]
 }
