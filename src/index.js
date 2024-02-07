@@ -1,7 +1,8 @@
-import './styles/index.css'
-import './favicon.js'
-import './search.js'
-import './search-results.js'
-import './company.js'
-import './job.js'
-import './map/index.js'
+import "./styles/index.css";
+import "./favicon.js";
+import "./search.js";
+import "./search-results.js";
+import "./company.js";
+import "./job.js";
+import "./map/index.js";
+import "./umami-script.js";
