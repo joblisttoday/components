@@ -52,6 +52,5 @@ publish:
     - npm install
     - npm run test
     - npm run build-lib
-    - mv dist-lib dist
     - npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
     - npm publish --access public --verbose
