@@ -8,7 +8,7 @@ export default defineConfig({
 	base: "./",
 	build: {
 		lib: {
-			entry: resolve(__dirname, "src/index.js"),
+			entry: resolve("src/index.js"),
 			formats: ["es"],
 			name: "index",
 			fileName: "index",
@@ -20,6 +20,6 @@ export default defineConfig({
 		},
 	},
 	optimizeDeps: {
-		exclude: ['@sqlite.org/sqlite-wasm'],
+		exclude: ["@sqlite.org/sqlite-wasm"],
 	},
 });

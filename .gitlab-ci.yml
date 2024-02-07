@@ -1,3 +1,5 @@
+---
+---
 stages:
   - test-project
   - site-publish
@@ -30,7 +32,7 @@ pages:
     - npm install
     - npm run build-website
     - rm -rf public
-    - mv dist public
+    - mv dist-website public
   artifacts:
     paths:
       - public

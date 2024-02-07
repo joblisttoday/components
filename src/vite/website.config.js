@@ -13,7 +13,7 @@ const generateExampleInputFiles = async () => {
 		.reduce((acc, entry) => {
 			const inputFilePath = entry.replace(__dirname + "/", "");
 			const inputName = inputFilePath.replace(".html", "").split("/").join("_");
-			acc[inputName] = `./${inputFilePath}`;
+			acc[inputName] = inputFilePath;
 			return acc;
 		}, {});
 	return inputFiles;
@@ -30,7 +30,7 @@ export default defineConfig({
 				...examples,
 			},
 			output: {
-				dir: "dist",
+				dir: "dist-website",
 			},
 		},
 	},

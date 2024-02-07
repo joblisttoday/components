@@ -15,8 +15,8 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run build-website; npm run build-lib;",
-    "build-lib": "vite build --config src/vite/lib.config.js",
-    "build-website": "vite build --config src/vite/website.config.js",
+    "build-lib": "vite build --config ./src/vite/lib.config.js",
+    "build-website": "vite build --config ./src/vite/website.config.js",
     "preview": "vite preview",
     "test": "vitest"
   },
