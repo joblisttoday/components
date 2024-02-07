@@ -1,7 +1,7 @@
 {
   "name": "@joblist/components",
   "private": false,
-  "version": "0.0.10",
+  "version": "0.0.11",
   "homepage": "https://gitlab.com/joblist/components",
   "keywords": ["web-components", "leaflet", "sqlite3", "wasm", "joblist"],
   "author": "joblist",
@@ -11,6 +11,7 @@
     ".": "./dist-lib/index.js"
   },
   "main": "./dist-lib/index.js",
+  "files": ["**/*", "dist-lib/*"],
   "scripts": {
     "dev": "vite",
     "build": "npm run build-website; npm run build-lib;",

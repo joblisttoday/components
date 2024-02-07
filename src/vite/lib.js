@@ -1,7 +1,6 @@
 // vite.config.js
 import { resolve } from "path";
 import { defineConfig } from "vite";
-import { existsSync } from "fs";
 
 export default defineConfig({
 	appType: "mpa",
