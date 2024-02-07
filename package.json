@@ -2,38 +2,39 @@
   "name": "@joblist/components",
   "private": false,
   "version": "0.0.6",
+  "homepage": "https://gitlab.com/joblist/components",
+  "keywords": ["web-components", "leaflet", "sqlite3", "wasm", "joblist"],
+  "author": "joblist",
+  "license": "GPL-3.0-or-later",
   "type": "module",
+  "exports": {
+    ".": "./dist-lib/index.js"
+  },
+  "main": "./dist-lib/index.js",
+  "files": ["dist-list"],
   "scripts": {
     "dev": "vite",
     "build": "npm run build-website; npm run build-lib;",
-    "build-lib": "vite build --config vite-lib.config.js",
-    "build-website": "vite build --config vite-website.config.js",
+    "build-lib": "vite build --config src/vite/lib.config.js",
+    "build-website": "vite build --config src/vite/website.config.js",
     "preview": "vite preview",
     "test": "vitest"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "sql.js": "^1.9.0"
   },
   "devDependencies": {
     "recursive-readdir": "^2.2.3",
     "vite": "^4.4.5",
     "vitest": "^0.34.2"
   },
-  "dependencies": {
-    "leaflet": "^1.9.4",
-    "sql.js": "^1.9.0"
-  },
-  "homepage": "https://gitlab.com/joblist/components",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@gitlab.com/joblist/components.git"
   },
-  "keywords": ["web-components", "leaflet", "sqlite3", "wasm"],
-  "author": "joblist",
-  "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://gitlab.com/joblist/components/issues"
   },
-  "main": "./dist/index.js",
-  "exports": {
-    ".": "./dist/index.js"
-  },
-  "files": ["dist"]
+  "prettier": {}
 }

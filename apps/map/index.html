@@ -4,11 +4,10 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>@joblist/components/map</title>
-		<script type="module" src="../../src/index.js"></script>
 		<script type="module">
-			import { companiesSqliteResultsToMapMarkers } from "../../src/map/index.js";
-			import sdk from "../../src/sdk.js";
-
+			import joblist from "../../src/index.js";
+			const { sdk, map } = joblist;
+			const { companiesSqliteResultsToMapMarkers } = map;
 			(async ({
 				$search = document.querySelector("joblist-search"),
 				$map = document.querySelector("joblist-map-list"),
@@ -41,7 +40,7 @@
 				latitude=""
 				longitude=""
 				zoom="3"
-				origin="https://profiles.joblist.today/companies/"
+				origin="https://profiles.joblist.today/companies"
 			></joblist-map-list>
 		</joblist-layout>
 	</body>

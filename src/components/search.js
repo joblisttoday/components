@@ -1,6 +1,6 @@
-import { JoblistSDK } from "./sdk.js";
+import { JoblistSDK } from "../libs/sdk.js";
 
-class Search extends HTMLElement {
+export default class JoblistSearch extends HTMLElement {
 	get placeholder() {
 		return this.getAttribute("placeholder");
 	}
@@ -83,8 +83,4 @@ class Search extends HTMLElement {
 		this.dispatchEvent(resultEvent);
 		return result;
 	}
-}
-
-if (!customElements.get("joblist-search")) {
-	customElements.define("joblist-search", Search);
 }

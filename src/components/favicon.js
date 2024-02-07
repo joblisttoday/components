@@ -39,21 +39,17 @@ const template = `
 				683 0 882 -9 883 -37 3 -436 3 -454 1z"/>
 		</g>
 	</svg>
-`
+`;
 
-export default class Favicon extends HTMLElement {
+export default class JoblistFavicon extends HTMLElement {
 	get color() {
-		return `#${(0x1000000+(Math.random()) * 0xffffff).toString(16).substr(1,6)}`
+		return `#${(0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6)}`;
 	}
 	connectedCallback() {
-		this.style.setProperty('--c-svg', this.color)
-		this._render()
+		this.style.setProperty("--c-svg", this.color);
+		this._render();
 	}
 	_render() {
-		this.innerHTML = template
+		this.innerHTML = template;
 	}
-}
-
-if (!customElements.get('joblist-favicon')) {
-	customElements.define('joblist-favicon', Favicon);
 }

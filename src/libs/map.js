@@ -1,5 +1,4 @@
 import "leaflet";
-import MapList from "./list.js";
 
 const parsePosition = (position) => {
 	if (!position.map) return null;
@@ -109,7 +108,6 @@ const companiesResultsToMapMarkers = (companies) => {
 };
 
 export {
-	MapList,
 	companiesResultsToMapMarkers,
 	companiesFileToMapMarkers,
 	companiesSqliteResultsToMapMarkers,

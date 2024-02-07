@@ -1,6 +1,6 @@
 const JOBLIST_UMAMI_WEBSITE_ID = "479fa5c4-e9c9-4d8d-85c6-9a88c886dd24";
 
-class UmamiScript extends HTMLElement {
+export default class JoblistUmamiScript extends HTMLElement {
 	get websiteId() {
 		return this.getAttribute("website-id") || JOBLIST_UMAMI_WEBSITE_ID;
 	}
@@ -35,8 +35,4 @@ class UmamiScript extends HTMLElement {
 		$script.addEventListener("error", this.onScript.bind(this));
 		return $script;
 	}
-}
-
-if (!customElements.get("joblist-umami-script")) {
-	customElements.define("joblist-umami-script", UmamiScript);
 }
