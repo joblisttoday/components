@@ -1,6 +1,14 @@
 /* import { createDbWorker } from 'sql.js-httpvfs'; */
 import initSqlJs from "sql.js";
 
+export const MATRIX_TYPE_JOB = "today.joblist.job";
+export const MATRIX_ROOM_FILTER_JOB = {
+	types: [MATRIX_TYPE_JOB],
+};
+export const MATRIX_ROOM_MAP = {
+	general: "#general.boards.joblist.today:matrix.org",
+};
+
 export class JoblistSDK {
 	constructor(databaseUrl = `https://joblist.gitlab.io/workers/joblist.db`) {
 		this.databaseUrl = databaseUrl;

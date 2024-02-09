@@ -18,14 +18,20 @@ html {
 
 /* resets */
 body {
-	margin: 0
+	margin: 0;
 }
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 p {
 	margin-top: 0;
 	margin-bottom: 0;
 }
-ul, ol {
+ul,
+ol {
 	padding-left: calc(var(--s) * 1.5);
 }
 
@@ -38,20 +44,40 @@ a:hover {
 	color: var(--c-link--active);
 }
 
-/* forms */
-input,
-textarea {
-	background-color: var(--c-bg);
-	color: var(--c-fg);
-	border-color: var(--c-company);
-	padding: calc(var(--s) / 3);
+form {
+	:is(input, textarea) {
+		background-color: var(--c-bg);
+		color: var(--c-fg);
+		border-color: var(--c-company);
+		padding: calc(var(--s) / 3);
+	}
+	:is(input):focus-visible {
+		outline: var(--outline-width) solid var(--c-company);
+	}
+	:is(fieldset) {
+		:is(input, textarea, select, option) {
+			font-size: 1rem;
+		}
+		:is(input, textarea) {
+			flex-grow: 1;
+			width: 100%;
+		}
+		:is(textarea) {
+			min-height: calc(var(--s) * 3);
+			resize: vertical;
+		}
+		:is(button) {
+			background: transparent;
+			color: var(--c-fg);
+		}
+		margin-top: var(--s);
+	}
 }
-input:focus-visible {
-	outline: var(--outline-width) solid var(--c-company);
-}
+
 button {
 	cursor: pointer;
-	padding: var(--btn-padding);
+	padding: calc(var(--s) / 3) calc(var(--s) / 2);
+	font-size: 1rem;
 }
 menu {
 	padding: 0;

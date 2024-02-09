@@ -1,0 +1,14 @@
+matrix-room-state {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: var(--s);
+}
+matrix-room-name {
+	font-weight: bold;
+	font-size: var(--s);
+}
+matrix-event {
+	display: flex;
+	flex-direction: column;
+	margin-top: var(--s);
+}

@@ -3,14 +3,17 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>@joblist/components/umami</title>
+		<title>@joblist/components/joblist-matrix-jobs</title>
 		<script type="module" src="../../src/index.js"></script>
 	</head>
 	<body>
 		<joblist-layout>
-			<joblist-umami-script
-				website-id="479fa5c4-e9c9-4d8d-85c6-9a88c886dd24"
-			></joblist-umami-script>
+			<joblist-matrix-jobs
+				profile-id="#general.boards.joblist.today:matrix.org"
+				show-context="true"
+				show-event-info="true"
+				origin="https://joblist.today"
+			></joblist-matrix-jobs>
 		</joblist-layout>
 	</body>
 </html>
