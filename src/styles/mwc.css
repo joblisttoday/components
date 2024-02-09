@@ -1,7 +1,6 @@
 matrix-room-state {
 	display: flex;
 	flex-direction: column;
-	margin-bottom: var(--s);
 }
 matrix-room-name {
 	font-weight: bold;
