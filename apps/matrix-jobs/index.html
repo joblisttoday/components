@@ -4,16 +4,31 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>@joblist/components/joblist-matrix-jobs</title>
-		<script type="module" src="../../src/index.js"></script>
+		<script type="module">
+			import joblist from "../../src/index.js";
+
+			const searchParams = new URLSearchParams(window.location.search);
+			const hashParams = new URLSearchParams(window.location.hash.slice(1));
+			const widgetRoomId = searchParams.get("roomId");
+
+			const profileId =
+				widgetRoomId ||
+				hashParams.get("profile-id") ||
+				"#general.boards.joblist.today:matrix.org";
+
+			const $jobs = document.createElement("joblist-matrix-jobs");
+			$jobs.setAttribute("show-event-info", true);
+			$jobs.setAttribute("show-context", true);
+			$jobs.setAttribute("origin", "https://matrix.org/#");
+			if (profileId) {
+				$jobs.setAttribute("profile-id", profileId);
+			}
+
+			const $layout = document.querySelector("joblist-layout");
+			$layout.replaceChildren($jobs);
+		</script>
 	</head>
 	<body>
-		<joblist-layout>
-			<joblist-matrix-jobs
-				profile-id="#general.boards.joblist.today:matrix.org"
-				show-context="true"
-				show-event-info="true"
-				origin="https://boards.joblist.today/#"
-			></joblist-matrix-jobs>
-		</joblist-layout>
+		<joblist-layout> </joblist-layout>
 	</body>
 </html>

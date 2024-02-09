@@ -7,3 +7,6 @@ joblist-matrix-job {
 joblist-matrix-job-title {
 	font-size: var(--s);
 }
+joblist-matrix-job-description {
+	white-space: pre-wrap;
+}

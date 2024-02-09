@@ -19,7 +19,7 @@ matrix-room-context {
 		}
 	}
 	:is(button[dir="before"], button[dir="after"]) {
-		margin: calc(var(--size) / 3);
+		margin: calc(var(--s) / 3);
 		align-self: center;
 	}
 	display: flex;
