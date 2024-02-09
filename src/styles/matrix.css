@@ -1,3 +1,5 @@
+matrix-event[event-type="today.joblist.job"] {
+}
 joblist-matrix-job {
 	display: flex;
 	flex-direction: column;

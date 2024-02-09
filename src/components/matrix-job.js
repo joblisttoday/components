@@ -22,28 +22,21 @@ export default class JoblistMatrixJob extends HTMLElement {
 	}
 	_render() {
 		const $doms = [];
-		if (this.content.title) {
-			$doms.push(this.createJobTitle(this.content.title));
-		}
 		if (this.content.url && this.content.title) {
-			$doms.push(this.createJobUrl(this.content.url, this.content.title));
+			$doms.push(this.createJobTitle(this.content.title));
 		}
 		if (this.content.description) {
 			$doms.push(this.createJobDescription(this.content.description));
 		}
 		this.replaceChildren(...$doms);
 	}
-	createJobTitle(title) {
+	createJobTitle(title, url) {
 		const $jobTitle = document.createElement("joblist-matrix-job-title");
-		$jobTitle.textContent = title;
-		return $jobTitle;
-	}
-	createJobUrl(url, title) {
-		const $jobUrl = document.createElement("joblist-matrix-job-url");
 		const $jobAnchor = document.createElement("a");
 		$jobAnchor.setAttribute("href", url);
 		$jobAnchor.textContent = title;
-		return $jobUrl;
+		$jobTitle.append($jobAnchor);
+		return $jobTitle;
 	}
 	createJobDescription(desc) {
 		const $jobDesc = document.createElement("joblist-matrix-job-description");

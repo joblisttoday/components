@@ -12,3 +12,20 @@ matrix-event {
 	flex-direction: column;
 	margin-top: var(--s);
 }
+
+matrix-room-context {
+	&:not([event-id]) {
+		:is(button[dir="after"]) {
+			display: none;
+		}
+	}
+	:is(button[dir="before"], button[dir="after"]) {
+		margin: calc(var(--size) / 3);
+		align-self: center;
+	}
+	display: flex;
+	flex-direction: column;
+}
+
+matrix-auth::part() {
+}

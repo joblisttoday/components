@@ -8,14 +8,14 @@ formTemplate.innerHTML = `
 			<input
 						name="url"
 						type="url"
-						placeholder="https://example.org/jobs/my-open-position"
+						placeholder="https://example.org/jobs/job"
 			/>
 		</fieldset>
 		<fieldset>
 			<legend>Title</legend>
 			<input
 						name="title"
-						placeholder="Short descriptive text used as title and name for this job"
+						placeholder="Short descriptive text used as name for this job"
 						required="true"
 			/>
 		</fieldset>
@@ -23,7 +23,7 @@ formTemplate.innerHTML = `
 			<legend>Description</legend>
 			<textarea
 							 name="description"
-							 placeholder="A text describing the job, all infromation any applicant needs to know in order to apply (be concise and clear, do not repeat what is already available in the ressource where the URL points)"
+							 placeholder="A text describing the job, all information any applicant needs to know in order to apply"
 				></textarea>
 		</fieldset>
 		<fieldset>
