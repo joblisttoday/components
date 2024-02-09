@@ -3,13 +3,7 @@
   "private": false,
   "version": "0.0.12",
   "homepage": "https://gitlab.com/joblist/components",
-  "keywords": [
-    "web-components",
-    "leaflet",
-    "sqlite3",
-    "wasm",
-    "joblist"
-  ],
+  "keywords": ["web-components", "leaflet", "sqlite3", "wasm", "joblist"],
   "author": "joblist",
   "license": "GPL-3.0-or-later",
   "type": "module",
@@ -17,10 +11,7 @@
     ".": "./dist-lib/index.js"
   },
   "main": "./dist-lib/index.js",
-  "files": [
-    "**/*",
-    "dist-lib/*"
-  ],
+  "files": ["**/*", "dist-lib/*"],
   "scripts": {
     "dev": "vite",
     "build": "npm run build-website; npm run build-lib;",
@@ -30,7 +21,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@sctlib/mwc": "^0.2.6",
+    "@sctlib/mwc": "^0.2.8",
     "dompurify": "^3.0.8",
     "leaflet": "^1.9.4",
     "sql.js": "^1.9.0"
