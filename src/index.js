@@ -1,6 +1,9 @@
 /* bundle styles */
 import "./styles/index.css";
 
+/* dependencies */
+import mwc from "./libs/mwc.js";
+
 /* sdk */
 import joblistSDK, { JoblistSDK } from "./libs/sdk.js";
 import * as joblistMapSDK from "./libs/map.js";
