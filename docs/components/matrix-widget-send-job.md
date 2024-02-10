@@ -16,3 +16,7 @@ user through the client.
 
 This component will then allow a user to post the job event type in
 the room the widget is in.
+
+> This widget does not require additional search params attributes for
+> the matrix widget spec (it is a native client widget asking for its
+> own capabilties).
