@@ -1,0 +1,6 @@
+# map-list
+
+Display a new leaflet map with the companies.
+
+> Legacy, to be-redone, so we can re-use the map better (create a new
+> job, on profiles etc.)
