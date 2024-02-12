@@ -9,7 +9,8 @@
 
 			const searchParams = new URLSearchParams(window.location.search);
 			const hashParams = new URLSearchParams(window.location.hash.slice(1));
-			const widgetRoomId = searchParams.get("roomId");
+			const widgetRoomId =
+				hashParams.get("roomId") || searchParams.get("roomId");
 
 			const profileId =
 				widgetRoomId ||
