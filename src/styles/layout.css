@@ -7,17 +7,23 @@ joblist-layout {
 	min-height: 100%;
 }
 
-joblist-layout:not([full]) {
-	padding: calc(var(--s) / 2);
+joblist-layout {
+	:is(joblist-search) {
+		width: 100%;
+		align-self: center;
+		position: sticky;
+		top: 0;
+	}
+	:is(joblist-map-list) {
+		flex-grow: 1;
+	}
+	&:not([full]) {
+		padding: calc(var(--s) / 1.5);
+	}
 }
 
-joblist-layout joblist-search {
-	width: 100%;
-	align-self: center;
-	position: sticky;
-	top: 0;
-}
-
-joblist-layout joblist-map-list {
-	flex-grow: 1;
+joblist-layout {
+	:is(section + section) {
+		margin-top: var(--s);
+	}
 }
