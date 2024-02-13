@@ -12,15 +12,25 @@ formTemplate.innerHTML = `
 			/>
 		</fieldset>
 		<fieldset>
-			<legend>Title</legend>
+			<legend>Title (name of the job position)</legend>
 			<input
 						name="title"
+						type="text"
 						placeholder="Short descriptive text used as name for this job"
 						required="true"
 			/>
 		</fieldset>
 		<fieldset>
-			<legend>Description</legend>
+			<legend>Location (where in the world)</legend>
+			<input
+						name="location"
+						type="text"
+						placeholder="City, Country (Remote, Hybrid)"
+						required="true"
+			/>
+		</fieldset>
+		<fieldset>
+			<legend>Description (more information about the tasks, missions, environment)</legend>
 			<textarea
 							 name="description"
 							 placeholder="A text describing the job, all information any applicant needs to know in order to apply"
