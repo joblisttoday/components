@@ -1,5 +1,6 @@
-import JoblistCompany from "./company.js";
+import JoblistUmamiScript from "./umami-script.js";
 import JoblistFavicon from "./favicon.js";
+import JoblistCompany from "./company.js";
 import JoblistJob from "./job.js";
 import JoblistMapList from "./map-list.js";
 import JoblistMatrixAuth from "./matrix-auth.js";
@@ -10,22 +11,33 @@ import JoblistMatrixSendJobForm from "./matrix-send-job-form.js";
 import JoblistMatrixWidetSendJob from "./matrix-widget-send-job.js";
 import JoblistSearch from "./search.js";
 import JoblistSearchResults from "./search-results.js";
-import JoblistUmamiScript from "./umami-script.js";
+import JoblistBoards from "./boards.js";
+import JoblistBoard from "./board.js";
+import JoblistBoardProvider, { providerDefinitions } from "./board-provider.js";
+import JoblistBoardJob from "./board-job.js";
 
 const componentDefinitions = {
-	"joblist-company": JoblistCompany,
+	"joblist-umami-script": JoblistUmamiScript,
 	"joblist-favicon": JoblistFavicon,
-	"joblist-job": JoblistJob,
+	"joblist-search": JoblistSearch,
+	"joblist-results": JoblistSearchResults,
 	"joblist-map-list": JoblistMapList,
+	"joblist-job": JoblistJob,
+	"joblist-company": JoblistCompany,
+
+	/* matrix */
 	"joblist-matrix-auth": JoblistMatrixAuth,
 	"joblist-matrix-jobs": JoblistMatrixJobs,
 	"joblist-matrix-job": JoblistMatrixJob,
 	"joblist-matrix-send-job": JoblistMatrixSendJob,
 	"joblist-matrix-send-job-form": JoblistMatrixSendJobForm,
 	"joblist-matrix-widget-send-job": JoblistMatrixWidetSendJob,
-	"joblist-search": JoblistSearch,
-	"joblist-results": JoblistSearchResults,
-	"joblist-umami-script": JoblistUmamiScript,
+
+	/* boards */
+	"joblist-boards": JoblistBoards,
+	"joblist-board": JoblistBoard,
+	"joblist-board-provider": JoblistBoardProvider,
+	"joblist-board-job": JoblistBoardJob,
 };
 
-export default componentDefinitions;
+export { componentDefinitions, providerDefinitions };

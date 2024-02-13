@@ -87,12 +87,21 @@ button {
 	border-radius: var(--s-border-radius);
 	color: var(--c-fg);
 }
-menu {
+menu,
+ol,
+ul {
 	padding: 0;
 	margin: 0;
+	list-style-position: inside;
 }
 
 img,
 video {
 	max-width: 100%;
+}
+
+details {
+	:is(summary) {
+		cursor: pointer;
+	}
 }

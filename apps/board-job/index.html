@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@joblist/components/board-job</title>
+		<script type="module">
+			import joblist from "../../src/index.js";
+		</script>
+	</head>
+	<body>
+		<joblist-layout>
+			<details open>
+				<summary>With title, url and location attributes</summary>
+				<joblist-board-job
+					title="People Operations Team Leader (m/f/d)"
+					url="https://joblist.today/?examples=example-job"
+					location="Berlin, de"
+				></joblist-board-job>
+			</details>
+			<details open>
+				<summary>Without a location</summary>
+				<joblist-board-job
+					title="People Operations Team Leader (m/f/d)"
+					url="https://joblist.today/?examples=example-job"
+				></joblist-board-job>
+			</details>
+		</joblist-layout>
+	</body>
+</html>
