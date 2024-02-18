@@ -88,12 +88,14 @@ export default class JobBoards extends HTMLElement {
 		$board.setAttribute("provider-name", this.providerName);
 		$board.setAttribute("provider-hostname", this.providerHostname);
 		this.$board.innerHTML = "";
-		this.renderBoardCopy($board);
+		this.renderBoardCopy();
 		this.$board.append($board);
 	}
-	renderBoardCopy($board) {
-		this.$code.innerText = `<joblist-board provider-name="${this.providerName}" provider-hostname="${this.providerHostname}"></joblist-board>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@joblist/job-board-providers/src/styles/index.css" />
-<script async type="module" src="https://cdn.jsdelivr.net/npm/@joblist/job-board-providers/src/index.js"></script>`;
+	renderBoardCopy() {
+		this.$code.innerText = `
+<joblist-board provider-name="${this.providerName}" provider-hostname="${this.providerHostname}"></joblist-board>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@joblist/components/src/styles/index.css" />
+<script async type="module" src="https://cdn.jsdelivr.net/npm/@joblist/components"></script>
+		`;
 	}
 }

@@ -8,7 +8,8 @@
   "license": "GPL-3.0-or-later",
   "type": "module",
   "exports": {
-    ".": "./dist-lib/index.js"
+    ".": "./dist-lib/index.js",
+    "providers": "./src/providers/index.js"
   },
   "main": "./dist-lib/index.js",
   "files": ["**/*", "dist-lib/*"],
