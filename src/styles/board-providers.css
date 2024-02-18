@@ -51,6 +51,12 @@ joblist-boards {
 	flex-direction: column;
 }
 
+joblist-board {
+	padding: var(--s);
+	display: flex;
+	flex-direction: column;
+}
+
 joblist-board-job {
 	:is(joblist-board-job-name) {
 		margin-right: 0.5rem;
