@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@joblist/components/heatmap</title>
+		<script type="module">
+			import "../../src/index.js";
+			const searchParams = new URLSearchParams(window.location.search);
+			const slug = searchParams.get("slug")
+			const days = searchParams.get("days") || 365;
+			const $heatmap = document.querySelector("joblist-heatmap");
+			slug && $heatmap.setAttribute("slug", slug);
+			days && $heatmap.setAttribute("days", days);
+		</script>
+	</head>
+	<body>
+		<joblist-layout>
+			<joblist-heatmap></joblist-company-heatmap>
+		</joblist-layout>
+	</body>
+</html>
