@@ -15,6 +15,7 @@ import JoblistBoards from "./boards.js";
 import JoblistBoard from "./board.js";
 import JoblistBoardProvider, { providerDefinitions } from "./board-provider.js";
 import JoblistBoardJob from "./board-job.js";
+import JoblistHeatmap from "./heatmap.js";
 
 const componentDefinitions = {
 	"joblist-umami-script": JoblistUmamiScript,
@@ -24,6 +25,9 @@ const componentDefinitions = {
 	"joblist-map-list": JoblistMapList,
 	"joblist-job": JoblistJob,
 	"joblist-company": JoblistCompany,
+
+	/* d3 & plots & stats */
+	"joblist-heatmap": JoblistHeatmap,
 
 	/* matrix */
 	"joblist-matrix-auth": JoblistMatrixAuth,
