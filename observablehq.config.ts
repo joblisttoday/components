@@ -1,15 +1,6 @@
-// observable patch for HTMLElement not defined
-import jsdom from "jsdom";
-const { JSDOM } = jsdom;
-
-global.window = new JSDOM().window;
-global.document = new JSDOM().window.document;
-global.HTMLElement = new JSDOM().window.HTMLElement;
-global.customElements = new JSDOM().window.customElements;
-global.DOMParser = new JSDOM().window.DOMParser;
-
 // import our components, so they are available in observable
-import "./src/index.js";
+// see: https://github.com/observablehq/framework/issues/888
+// import "./src/index.js";
 
 // See https://observablehq.com/framework/config for documentation.
 export default {

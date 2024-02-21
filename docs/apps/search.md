@@ -1,4 +1,8 @@
 ```js
+import "../../src/index.js";
+```
+
+```js
 const $search = document.querySelector('joblist-search')
 const $results = document.querySelector('joblist-results')
 $search.addEventListener('search', ({detail}) => {
