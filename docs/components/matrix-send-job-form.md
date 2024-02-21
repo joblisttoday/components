@@ -1,3 +1,10 @@
+---
+title: matrix-send-job-form
+---
+```js
+// import joblist from "../../src/index.js";
+```
+
 # matrix-send-job-form
 
 A `@sctlib/mwc` HTML form template for `today.joblist.job` event CRUD.
@@ -8,6 +15,16 @@ try and fetch "oembed" information from a linked URL.
 It currently represents the "matrix joblist job model", as the form's
 "named inputs" are used for the matrix `event.content` key and values.
 
+```html
+<joblist-matrix-send-job-form
+  profile-id="#general.boards.joblist.today:matrix.org"
+  show-context="true"
+  show-event-info="true"
+  origin="https://joblist.today"
+></joblist-matrix-send-job-form>
+```
+
+<joblist-matrix-send-job-form profile-id="#general.boards.joblist.today:matrix.org" show-context="true" show-event-info="true" origin="https://joblist.today"></joblist-matrix-send-job-form>
 
 ## Improvements
 

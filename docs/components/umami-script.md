@@ -1,3 +1,9 @@
+---
+title: umami-script
+---
+```js
+// import joblist from "../../src/index.js";
+```
 # umami-script
 
 Insert this element on a page (only once in the page), so
@@ -12,3 +18,11 @@ the umami script (and other required attributes).
 
 In joblist website cases, the same script should be copied from the
 homepage, to track the same site (ID) across domains.
+
+```html
+<joblist-umami-script
+  website-id="479fa5c4-e9c9-4d8d-85c6-9a88c886dd24"
+></joblist-umami-script>
+```
+
+<joblist-umami-script website-id="479fa5c4-e9c9-4d8d-85c6-9a88c886dd24"></joblist-umami-script>

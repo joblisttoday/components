@@ -1,3 +1,11 @@
+---
+title: map-lisp
+---
+
+```js
+// import joblist from "../../src/index.js";
+```
+
 # map-list
 
 Display a new leaflet map with the companies.

@@ -12,32 +12,68 @@ export default {
 	// The pages and sections in the sidebar. If you don’t specify this option,
 	// all pages will be listed in alphabetical order. Listing pages explicitly
 	// lets you organize them into sections and have unlisted pages.
-	// pages: [
-	// 	{
-	// 		name: "Introductions",
-	// 		pages: [
-	// 			{ name: "Intro", path: "/intro" },
-	// 			{ name: "Intro Data", path: "/intro-data" },
-	// 		],
-	// 	},
-	// 	{
-	// 		name: "Explorations",
-	// 		pages: [
-	// 			{ name: "Jobs over time", path: "/job-over-time" },
-	// 			{ name: "Jobs over time filtered", path: "/job-over-time-filtered" },
-	// 		],
-	// 	},
-	// 	{
-	// 		name: "Components",
-	// 		pages: [
-	// 			{ name: "Table companies", path: "/components/table-companies" },
-	// 			{ name: "Table jobs", path: "/components/table-jobs" },
-	// 			{ name: "Timeline", path: "/components/timeline" },
-	// 			{ name: "Heatmap", path: "/components/heatmap" },
-	// 			{ name: "Heatmap company", path: "/components/heatmap-company" },
-	// 		],
-	// 	},
-	// ],
+	pages: [
+		{
+			name: "Apps",
+			pages: [
+				{ name: "Search", path: "/apps/search" },
+				{ name: "Map", path: "/apps/map" },
+				{ name: "Heatmap", path: "/apps/heatmap" },
+				{ name: "boards", path: "/apps/boards" },
+			],
+		},
+		{
+			name: "Companies",
+			pages: [{ name: "company", path: "/components/company" }],
+		},
+		{
+			name: "Jobs",
+			pages: [{ name: "job", path: "/components/job" }],
+		},
+		{
+			name: "Layout",
+			pages: [
+				{ name: "layout", path: "/components/layout" },
+				{ name: "favicon", path: "/components/favicon" },
+				{ name: "typography", path: "/components/typography" },
+				{ name: "umami-script", path: "/components/umami-script" },
+			],
+		},
+		{
+			name: "Boards",
+			pages: [
+				{ name: "boards", path: "/components/boards" },
+				{ name: "board", path: "/components/board" },
+				{ name: "board-job", path: "/components/board-job" },
+				{ name: "board-provider", path: "/components/board-provider" },
+			],
+		},
+		{
+			name: "Matrix",
+			pages: [
+				{ name: "matrix-auth", path: "/components/matrix-auth" },
+				{ name: "matrix-job", path: "/components/matrix-job" },
+				{ name: "matrix-jobs", path: "/components/matrix-jobs" },
+				{
+					name: "matrix-send-job-form",
+					path: "/components/matrix-send-job-form",
+				},
+				{ name: "matrix-send-job", path: "/components/matrix-send-job" },
+				{
+					name: "matrix-widget-send-job",
+					path: "/components/matrix-widget-send-job",
+				},
+			],
+		},
+		{
+			name: "Search",
+			pages: [
+				{ name: "search", path: "/components/search" },
+				{ name: "search-results", path: "/components/search-results" },
+				{ name: "map-list", path: "/components/map-list" },
+			],
+		},
+	],
 	// Some additional configuration options and their defaults:
 	// theme: "default", // try "light", "dark", "slate", etc.
 	// header: "", // what to show in the header (HTML)
