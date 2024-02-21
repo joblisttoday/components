@@ -1,9 +1,23 @@
+---
+title: matrix-widget-send-job
+---
+```js
+// import joblist from "../../src/index.js";
+```
 # matrix-widget-send-job
 
 Extends the `@sctlib/mwc` component `matrix-send-event` with the
 widget attribute set to `true` and the `event-type` to
 `today.joblist.job` and can be used as a mtrix widget in a room.
 
+```html
+<joblist-matrix-widget-send-job
+  is-widget="true"
+  profile-id="!pNBegNHVdEdLkDUEbM:matrix.org"
+></joblist-matrix-widget-send-job>
+```
+
+<joblist-matrix-widget-send-job is-widget="true" profile-id="!pNBegNHVdEdLkDUEbM:matrix.org"></joblist-matrix-widget-send-job>
 
 ## Usage
 

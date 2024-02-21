@@ -1,3 +1,10 @@
+---
+title: matrix-jobs
+---
+```js
+// import joblist from "../../src/index.js";
+```
+
 # matrix-jobs
 
 Extends the `@sctlib/mwc` component `matrix-room` with the default
@@ -28,3 +35,33 @@ all job events in this room (inside the widget).
 > applied/enforced to everyone who visits the room. Nice to use in
 > combination with the `matrix-widget-send-job` to read and write jobs
 > (cannot entirely CRUD yet).
+
+
+```js
+import joblist from "../../src/index.js";
+```
+
+```js
+const searchParams = new URLSearchParams(window.location.search);
+const hashParams = new URLSearchParams(window.location.hash.slice(1));
+const widgetRoomId = hashParams.get("roomId") || searchParams.get("roomId");
+const profileId = hashParams.get("profile-id")
+const defaultRoom = "#internal.boards.joblist.today:matrix.org"
+
+```
+
+```js
+const profileId = widgetRoomId || profileId || defaultRoom;
+
+const $jobs = document.createElement("joblist-matrix-jobs");
+$jobs.setAttribute("show-event-info", true);
+$jobs.setAttribute("show-context", true);
+$jobs.setAttribute("origin", "https://boards.joblist.today");
+if (profileId) {
+  $jobs.setAttribute("profile-id", profileId);
+}
+```
+
+```js
+view($jobs);
+```

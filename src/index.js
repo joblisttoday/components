@@ -1,5 +1,5 @@
 /* bundle styles */
-import "./styles/index.css";
+/* import "./styles/index.css"; */
 
 /* dependencies */
 import mwc from "./libs/mwc.js";
