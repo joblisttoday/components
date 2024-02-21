@@ -3,21 +3,30 @@
   "private": false,
   "version": "0.0.13",
   "homepage": "https://gitlab.com/joblist/components",
-  "keywords": ["web-components", "leaflet", "sqlite3", "wasm", "joblist"],
+  "keywords": [
+    "web-components",
+    "leaflet",
+    "sqlite3",
+    "wasm",
+    "joblist"
+  ],
   "author": "joblist",
   "license": "GPL-3.0-or-later",
   "type": "module",
   "exports": {
     ".": "./dist-lib/index.js",
-    "providers": "./src/providers/index.js"
+    "./providers": "./src/providers/index.js"
   },
   "main": "./dist-lib/index.js",
-  "files": ["**/*", "dist-lib/*"],
+  "files": [
+    "**/*",
+    "dist-lib/*"
+  ],
   "scripts": {
-    "dev": "vite",
+    "dev": "observable preview",
     "build": "npm run build-website; npm run build-lib;",
     "build-lib": "vite build --config ./src/vite/lib.js",
-    "build-website": "vite build --config ./src/vite/website.js",
+    "build-website": "rm -rf dist-website && observable build",
     "preview": "vite preview",
     "test": "vitest"
   },
@@ -25,10 +34,12 @@
     "@observablehq/plot": "^0.6.13",
     "@sctlib/mwc": "^0.2.10",
     "dompurify": "^3.0.8",
+    "jsdom": "^24.0.0",
     "leaflet": "^1.9.4",
     "sql.js": "^1.9.0"
   },
   "devDependencies": {
+    "@observablehq/framework": "^1.0.0",
     "recursive-readdir": "^2.2.3",
     "vite": "^4.4.5",
     "vitest": "^0.34.2"
