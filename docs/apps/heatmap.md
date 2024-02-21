@@ -1,9 +1,8 @@
 ```js
-import "../../src/index.js";
+// import "../../src/index.js";
 ```
 
 ```js
-import "../../src/index.js";
 const searchParams = new URLSearchParams(window.location.search);
 const slug = searchParams.get("slug")
 const days = searchParams.get("days") || 365;

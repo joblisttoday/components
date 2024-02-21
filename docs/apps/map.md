@@ -3,7 +3,7 @@ title: map
 ---
 
 ```js
-import joblist from "../src/index.js";
+// import joblist from "../src/index.js";
 ```
 
 ```js
