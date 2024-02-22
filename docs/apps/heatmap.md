@@ -5,7 +5,7 @@ footer: false
 
 ```js
 import joblist from "../src/index.js";
-view(joblist)
+// view(joblist)
 ```
 
 ```js

@@ -2,7 +2,7 @@ body.joblist-layout,
 joblist-layout,
 body:not(.joblist-layout) {
 	--ohq-size-sidebar: calc(var(--s) * 15);
-	--ohq-size-center: calc(var(--s) * 35);
+	--ohq-size-center: 100%;
 }
 
 /* not to pollute "html, body" with styles */
@@ -41,8 +41,8 @@ body:not(.joblist-layout) {
 		}
 	}
 	:is(#observablehq-toc) {
-		:is(nav:not(:empty)) {
-			padding: calc(var(--s) / 2);
+		:is(nav):empty {
+			display: none;
 		}
 		@media (min-width: 60rem) {
 			order: 1;
@@ -95,6 +95,8 @@ body:not(.joblist-layout) {
 					top: 0;
 					display: block;
 					height: 100%;
+					max-height: 100vh;
+					overflow-y: scroll;
 				}
 			}
 		}
