@@ -3,7 +3,7 @@ title: company
 ---
 
 ```js
-// import joblist from "../../src/index.js";
+import joblist from "../src/index.js";
 ```
 # company
 

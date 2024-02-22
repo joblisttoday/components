@@ -2,7 +2,7 @@
 title: umami-script
 ---
 ```js
-// import joblist from "../../src/index.js";
+import joblist from "../src/index.js";
 ```
 # umami-script
 

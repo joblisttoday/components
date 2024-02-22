@@ -2,7 +2,7 @@
 title: job
 ---
 ```js
-// import joblist from "../../src/index.js";
+import joblist from "../src/index.js";
 ```
 # job
 

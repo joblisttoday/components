@@ -6,7 +6,7 @@ import mwc from "./libs/mwc.js";
 
 /* sdk */
 import joblistSDK, { JoblistSDK } from "./libs/sdk.js";
-import * as joblistMapSDK from "./libs/map.js";
+import joblistMapSDK from "./libs/map.js";
 import joblistBoardProviders from "./providers/index.js";
 
 /* components */

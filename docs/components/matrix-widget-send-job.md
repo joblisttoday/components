@@ -2,7 +2,7 @@
 title: matrix-widget-send-job
 ---
 ```js
-// import joblist from "../../src/index.js";
+import joblist from "../src/index.js";
 ```
 # matrix-widget-send-job
 

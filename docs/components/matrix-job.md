@@ -2,7 +2,7 @@
 title: matrix-job
 ---
 ```js
-// import joblist from "../../src/index.js";
+import joblist from "../src/index.js";
 ```
 
 # matrix-job

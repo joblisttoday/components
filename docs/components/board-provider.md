@@ -2,12 +2,9 @@
 title: board-provider
 ---
 ```js
-// import joblist from "../../src/index.js";
+import joblist from "../src/index.js";
 ```
 # board-provider
-```js
-import joblist from "../../src/index.js";
-```
 
 ```js
 const exampleProviderHostnames = {

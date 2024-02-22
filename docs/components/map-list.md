@@ -3,7 +3,7 @@ title: map-lisp
 ---
 
 ```js
-// import joblist from "../../src/index.js";
+import joblist from "../src/index.js";
 ```
 
 # map-list

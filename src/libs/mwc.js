@@ -1,6 +1,6 @@
 import { MATRIX_TYPE_JOB } from "./sdk.js";
 window.MWC_MANUAL_DEFINE = true;
-import mwc from "@sctlib/mwc";
+import mwc from "npm:@sctlib/mwc";
 import jobDisplayTemplate from "../templates/matrix-event/today.joblist.job/display.js";
 import jobFormTemplate from "../templates/matrix-event/today.joblist.job/form.js";
 

@@ -3,7 +3,7 @@ title: heatmap
 ---
 
 ```js
-import "../../src/index.js";
+import "../src/index.js";
 ```
 
 Use the `slug` (of value `company.slug`) and `days` (Number of days)

@@ -2,7 +2,7 @@
 title: matrix-jobs
 ---
 ```js
-// import joblist from "../../src/index.js";
+import joblist from "../src/index.js";
 ```
 
 # matrix-jobs
@@ -38,20 +38,16 @@ all job events in this room (inside the widget).
 
 
 ```js
-import joblist from "../../src/index.js";
-```
-
-```js
 const searchParams = new URLSearchParams(window.location.search);
 const hashParams = new URLSearchParams(window.location.hash.slice(1));
 const widgetRoomId = hashParams.get("roomId") || searchParams.get("roomId");
-const profileId = hashParams.get("profile-id")
+const profileIdHash = hashParams.get("profile-id")
 const defaultRoom = "#internal.boards.joblist.today:matrix.org"
 
 ```
 
 ```js
-const profileId = widgetRoomId || profileId || defaultRoom;
+const profileId = widgetRoomId || profileIdHash || defaultRoom;
 
 const $jobs = document.createElement("joblist-matrix-jobs");
 $jobs.setAttribute("show-event-info", true);

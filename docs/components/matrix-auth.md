@@ -3,7 +3,7 @@ title: matrix-auth
 ---
 
 ```js
-// import joblist from "../../src/index.js";
+import joblist from "../src/index.js";
 ```
 # matrix-auth
 

@@ -1,5 +1,5 @@
 /* import { createDbWorker } from 'sql.js-httpvfs'; */
-import initSqlJs from "sql.js";
+import { SQLiteDatabaseClient } from "npm:@observablehq/sqlite";
 
 export const MATRIX_TYPE_JOB = "today.joblist.job";
 export const MATRIX_ROOM_FILTER_JOB = {
@@ -15,19 +15,11 @@ export class JoblistSDK {
 	}
 
 	async initialize() {
-		const sqlPromise = initSqlJs({
-			/* locateFile: file => `https://path/to/your/dist/folder/dist/${file}` */
-			locateFile: (file) => `https://sql.js.org/dist/${file}`,
-		});
-		const dataPromise = fetch(this.databaseUrl).then((res) =>
-			res.arrayBuffer(),
-		);
-		const [SQL, buf] = await Promise.all([sqlPromise, dataPromise]);
-		this.db = new SQL.Database(new Uint8Array(buf));
+		this.db = await SQLiteDatabaseClient.open(this.databaseUrl);
 	}
 
 	async executeQuery(exec = "", params = []) {
-		const result = await this.db.exec(exec, [...params]);
+		const result = await this.db.query(exec, [...params]);
 		return result;
 	}
 
@@ -110,17 +102,7 @@ OR company_slug is null
 GROUP BY 1,2
 ORDER BY published_date ASC;
 		`;
-		const params = [days, slug, slug];
-		const result = await this.executeQuery(sql, params);
-		if (result) {
-			const { values, columns } = result[0];
-			return values.map((row) => {
-				return row.reduce((acc, col, i) => {
-					acc[columns[i]] = col;
-					return acc;
-				}, {});
-			});
-		}
+		const result = await this.executeQuery(sql, [days, slug, slug]);
 	}
 	async getJobsHeatmap(days = 365) {
 		const sql = `
@@ -152,17 +134,7 @@ GROUP BY
 ORDER BY
   date_range.min_date ASC;
 		`;
-		const params = [days];
-		const result = await this.executeQuery(sql, params);
-		if (result) {
-			const { values, columns } = result[0];
-			return values.map((row) => {
-				return row.reduce((acc, col, i) => {
-					acc[columns[i]] = col;
-					return acc;
-				}, {});
-			});
-		}
+		return await this.executeQuery(sql, [days]);
 	}
 }
 

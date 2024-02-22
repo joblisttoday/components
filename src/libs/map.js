@@ -1,4 +1,4 @@
-import "leaflet";
+import "npm:leaflet";
 
 const parsePosition = (position) => {
 	if (!position.map) return null;
@@ -72,7 +72,6 @@ const companiesAlgoliaResultsToMapMarkers = (searchResults = []) => {
 			}
 		});
 	});
-	return companyMarkers;
 };
 
 const companiesFileToMapMarkers = ({ edges }) => {
@@ -104,12 +103,29 @@ const companyFileToMapMarkers = (companyNode) => {
 };
 
 const companiesResultsToMapMarkers = (companies) => {
-	return companiesAlgoliaResultsToMapMarkers(companies);
+	const companyMarkers = [];
+	companies.forEach((companyData) => {
+		const { title, slug, positions } = companyData;
+		JSON.parse(positions)?.forEach((position) => {
+			const mapData = parsePosition(position);
+			try {
+				if (mapData) {
+					companyMarkers.push({
+						text: title,
+						slug: slug,
+						...mapData,
+					});
+				}
+			} catch (e) {}
+		});
+	});
+	return companyMarkers;
 };
 
-export {
+export default {
 	companiesResultsToMapMarkers,
 	companiesFileToMapMarkers,
 	companiesSqliteResultsToMapMarkers,
 	companiesAlgoliaResultsToMapMarkers,
+	companiesResultsToMapMarkers,
 };

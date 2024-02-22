@@ -2,7 +2,7 @@
 title: board-job
 ---
 ```js
-// import joblist from "../../src/index.js";
+import joblist from "../src/index.js";
 ```
 # board-job
 

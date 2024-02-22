@@ -1,14 +1,16 @@
 ---
 title: map
+sidebar: false
+footer: false
 ---
 
 ```js
-// import joblist from "../src/index.js";
+import joblist from "../src/index.js";
 ```
 
 ```js
 const { sdk, map } = joblist;
-const { companiesSqliteResultsToMapMarkers } = map;
+const { companiesResultsToMapMarkers } = map;
 ```
 
 ```js
@@ -23,7 +25,7 @@ const { companiesSqliteResultsToMapMarkers } = map;
 				} else if (query && companies) {
 						/* @TODO there are no position on jobs yet */
 						delete detail.jobs;
-						const itemMarkers = companiesSqliteResultsToMapMarkers(companies);
+						const itemMarkers = companiesResultsToMapMarkers(companies);
 						$map.setAttribute("markers", JSON.stringify(itemMarkers));
 				} else if (!companies) {
 						$map.removeAttribute("results");
@@ -31,7 +33,7 @@ const { companiesSqliteResultsToMapMarkers } = map;
 		};
 		await sdk.initialize();
 		const allCompanies = await sdk.getAllCompaniesData();
-		const allMarkers = companiesSqliteResultsToMapMarkers(allCompanies);
+		const allMarkers = companiesResultsToMapMarkers(allCompanies);
 		$search.addEventListener("search", handleSearch);
 		$map.setAttribute("markers", JSON.stringify(allMarkers));
 })();

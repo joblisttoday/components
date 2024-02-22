@@ -1,4 +1,5 @@
-import * as Plot from "@observablehq/plot";
+/* import * as Plot from "npm:@observablehq/plot"; */
+import * as Plot from "npm:@observablehq/plot";
 
 export default function heatmap(
 	data = [],
