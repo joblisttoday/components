@@ -17,7 +17,7 @@ body:not(.joblist-layout) {
 		cursor: pointer;
 		&:not(:checked)::before {
 			content: "≣";
-			padding: calc(var(--s) / 2);
+			padding: calc(var(--s) / 5);
 			font-size: 1.5rem;
 		}
 	}
@@ -31,6 +31,8 @@ body:not(.joblist-layout) {
 		padding: calc(var(--s) / 2);
 		z-index: 2;
 		max-width: var(--ohq-size-sidebar);
+		margin: 0.2rem;
+		border-radius: 0.2rem;
 		:is(ol) {
 			list-style: none;
 		}
@@ -40,15 +42,18 @@ body:not(.joblist-layout) {
 	}
 	:is(#observablehq-toc) {
 		:is(nav:not(:empty)) {
-			padding: var(--s);
+			padding: calc(var(--s) / 2);
+		}
+		@media (min-width: 60rem) {
+			order: 1;
 		}
 		max-width: var(--ohq-size-sidebar);
-		order: 1;
 	}
 
 	/* also see joblist-layout */
 	:is(#observablehq-center) {
 		max-width: var(--ohq-size-center);
+		width: 100%;
 	}
 
 	:is(input#observablehq-sidebar-toggle) {
@@ -94,4 +99,9 @@ body:not(.joblist-layout) {
 			}
 		}
 	}
+}
+
+/* somehow a bug? */
+.observablehq-secondary-link-highlight {
+	display: none;
 }

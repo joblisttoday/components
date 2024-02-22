@@ -13,8 +13,7 @@ joblist-layout,
 body.joblist-layout,
 body:not(.joblist-layout) {
 	display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
+	flex-direction: column;
 	flex-grow: 1;
 	justify-content: flex-start;
 	align-items: flex-start;
@@ -23,6 +22,10 @@ body:not(.joblist-layout) {
 	font-family: var(--font-family);
 	background-color: var(--c-bg);
 	color: var(--c-fg);
+	@media (min-width: 60rem) {
+		flex-direction: row;
+		flex-wrap: nowrap;
+	}
 
 	:is(section + section) {
 		margin-top: var(--s);
@@ -44,7 +47,7 @@ body:not(.joblist-layout) {
 		margin-bottom: 0;
 	}
 	:is(ul, ol) {
-		padding-left: calc(var(--s) * 1.5);
+		padding-left: calc(var(--s) * 2);
 	}
 	:is(a) {
 		text-decoration: none;
@@ -116,14 +119,14 @@ body:not(.joblist-layout) {
 /* specific to custom-element */
 joblist-layout {
 	&:not([full]) {
-		padding: calc(var(--s) / 1.5);
+		padding: calc(var(--s) / 2);
 	}
 }
 /* in observable hq */
 body.joblist-layout,
 body:not(.joblist-layout) {
 	:is(#observablehq-center) {
-		padding: calc(var(--s) / 1.5);
+		padding: calc(var(--s) / 2);
 	}
 	margin: 0;
 }
