@@ -1,29 +1,144 @@
+:root,
 html,
-body,
-joblist-layout {
-	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
-	min-height: 100%;
+body {
+	/* Note:
+		never touch these elements,
+		to not pollute the global namespace with our custom styles,
+		when imported as library (with css styles)
+ */
 }
 
-joblist-layout {
+/* joblist root layout is also applied to observablehq */
+joblist-layout,
+body.joblist-layout,
+body:not(.joblist-layout) {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	flex-grow: 1;
+	justify-content: flex-start;
+	align-items: flex-start;
+	min-height: 100%;
+	font-size: var(--s-font);
+	font-family: var(--font-family);
+	background-color: var(--c-bg);
+	color: var(--c-fg);
+
+	:is(section + section) {
+		margin-top: var(--s);
+	}
+
 	:is(joblist-search) {
 		width: 100%;
 		align-self: center;
 		position: sticky;
 		top: 0;
 	}
+
 	:is(joblist-map-list) {
 		flex-grow: 1;
 	}
+	/* defaults elements */
+	:is(h1, h2, h3, h4, h5, h6, p) {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+	:is(ul, ol) {
+		padding-left: calc(var(--s) * 1.5);
+	}
+	:is(a) {
+		text-decoration: none;
+	}
+	:is(a, a:visited) {
+		color: var(--c-link);
+	}
+	:is(a:active, a:hover) {
+		color: var(--c-link--active);
+	}
+
+	:is(form) {
+		:is(input, textarea) {
+			background-color: var(--c-bg);
+			color: var(--c-fg);
+			border-color: var(--c-company);
+			padding: calc(var(--s) / 3);
+		}
+		:is(input):focus-visible {
+			outline: var(--outline-width) solid var(--c-company);
+		}
+		:is(fieldset) {
+			:is(input, textarea, select, option) {
+				font-size: 1rem;
+			}
+			:is(input, textarea) {
+				flex-grow: 1;
+				width: 100%;
+			}
+			:is(textarea) {
+				min-height: calc(var(--s) * 3);
+				resize: vertical;
+			}
+			:is(button) {
+				background: transparent;
+				color: var(--c-fg);
+			}
+			& + :is(fieldset) {
+				margin-top: calc(var(--s) / 4);
+			}
+			border: none;
+		}
+	}
+
+	:is(button) {
+		cursor: pointer;
+		padding: calc(var(--s) / 3) calc(var(--s) / 2);
+		border-width: var(--s-border);
+		background-color: var(--c-bg);
+		border-radius: var(--s-border-radius);
+		color: var(--c-fg);
+	}
+	:is(menu, ol, ul) {
+		padding-left: calc(var(--s) / 2);
+		margin: 0;
+		list-style-position: inside;
+	}
+
+	:is(img, video) {
+		max-width: 100%;
+	}
+
+	:is(details) {
+		:is(summary) {
+			cursor: pointer;
+		}
+	}
+}
+/* specific to custom-element */
+joblist-layout {
 	&:not([full]) {
 		padding: calc(var(--s) / 1.5);
 	}
 }
+/* in observable hq */
+body.joblist-layout,
+body:not(.joblist-layout) {
+	:is(#observablehq-center) {
+		padding: calc(var(--s) / 1.5);
+	}
+	margin: 0;
+}
 
-joblist-layout {
-	:is(section + section) {
-		margin-top: var(--s);
+@media (min-width: 60rem) {
+	joblist-layout,
+	body.joblist-layout,
+	:not(.joblist-layout) {
+		font-size: 1.2rem;
+	}
+}
+@media (min-width: 100rem) {
+	joblist-layout,
+	body.joblist-layout,
+	:not(.joblist-layout) {
+		font-size: 20px;
 	}
 }

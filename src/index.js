@@ -1,6 +1,11 @@
 /* bundle styles */
 /* import "./styles/index.css"; */
 
+/* for observable hq env */
+if (document?.querySelector("#observablehq-sidebar-toggle")) {
+	document.querySelector("body").classList.add("joblist-layout");
+}
+
 /* dependencies */
 import mwc from "./libs/mwc.js";
 

@@ -1,0 +1,97 @@
+body.joblist-layout,
+joblist-layout,
+body:not(.joblist-layout) {
+	--ohq-size-sidebar: calc(var(--s) * 15);
+	--ohq-size-center: calc(var(--s) * 35);
+}
+
+/* not to pollute "html, body" with styles */
+joblist-layout,
+body.joblist-layout,
+body:not(.joblist-layout) {
+	:is(#observablehq-sidebar-toggle) {
+		display: none;
+	}
+	:is(#observablehq-sidebar-backdrop) {
+		/* background-color: var(--c-bg); */
+		cursor: pointer;
+		&:not(:checked)::before {
+			content: "≣";
+			padding: calc(var(--s) / 2);
+			font-size: 1.5rem;
+		}
+	}
+	:is(#observablehq-sidebar-toggle, #observablehq-sidebar-backdrop) {
+		position: sticky;
+		top: 0;
+		left: 0;
+	}
+	:is(#observablehq-sidebar) {
+		background-color: var(--c-bg);
+		padding: calc(var(--s) / 2);
+		z-index: 2;
+		max-width: var(--ohq-size-sidebar);
+		:is(ol) {
+			list-style: none;
+		}
+		:is(details + details, ol + ol) {
+			margin-top: calc(var(--s) / 3);
+		}
+	}
+	:is(#observablehq-toc) {
+		:is(nav:not(:empty)) {
+			padding: var(--s);
+		}
+		max-width: var(--ohq-size-sidebar);
+		order: 1;
+	}
+
+	/* also see joblist-layout */
+	:is(#observablehq-center) {
+		max-width: var(--ohq-size-center);
+	}
+
+	:is(input#observablehq-sidebar-toggle) {
+		&:is(:not(:checked)) {
+			~ :is([id="observablehq-sidebar"]) {
+				display: none;
+			}
+		}
+		&:is(:checked) {
+			~ :is([id="observablehq-sidebar"]) {
+				position: fixed;
+				top: 0;
+				bottom: 0;
+				@media (min-width: 60rem) {
+					position: sticky;
+					height: 100%;
+				}
+			}
+			~ :is(#observablehq-sidebar-backdrop)::after {
+				content: "";
+				position: fixed;
+				top: 0;
+				width: 100vw;
+				height: 100vh;
+				opacity: 0.6;
+				background-color: var(--c-bg);
+			}
+			@media (min-width: 60rem) {
+				~ :is(#observablehq-sidebar-backdrop)::after {
+					display: none;
+				}
+			}
+		}
+		&:is(:indeterminate) {
+			~ :is([id="observablehq-sidebar"]) {
+				display: none;
+				@media (min-width: 60rem) {
+					position: sticky;
+					top: 0;
+					display: block;
+					height: 100%;
+				}
+			}
+		}
+	}
+}

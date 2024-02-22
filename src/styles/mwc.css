@@ -25,6 +25,3 @@ matrix-room-context {
 	display: flex;
 	flex-direction: column;
 }
-
-matrix-auth::part() {
-}

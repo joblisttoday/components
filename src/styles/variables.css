@@ -1,5 +1,7 @@
 /* variables */
-:root {
+joblist-layout,
+body.joblist-layout,
+:not(body.joblist-layout) {
 	--c-white: white;
 	--c-black: black;
 	--c-green: darkgreen;
@@ -19,7 +21,9 @@
 }
 
 @media (prefers-color-scheme: dark) {
-	:root {
+	joblist-layout,
+	body.joblist-layout,
+	:not(body.joblist-layout) {
 		--c-bg: #151517f7;
 		--c-fg: lightgray;
 		--c-fg--info: gray;
@@ -33,7 +37,9 @@
 	}
 }
 @media (prefers-color-scheme: light) {
-	:root {
+	joblist-layout,
+	body.joblist-layout,
+	:not(body.joblist-layout) {
 		--c-bg: snow;
 		--c-fg: var(--c-black);
 		--c-fg--info: gray;
@@ -48,26 +54,34 @@
 }
 
 @media (min-width: 60rem) {
-	html {
+	joblist-layout,
+	body.joblist-layout,
+	:not(body.joblist-layout) {
 		--s-font: 21px;
 	}
 }
 
 @media (min-width: 100rem) {
-	html {
+	joblist-layout,
+	body.joblist-layout,
+	:not(body.joblist-layout) {
 		--s-font: 23px;
 	}
 }
 
 @media (prefers-color-scheme: dark) {
-	:root {
+	joblist-layout,
+	body.joblist-layout,
+	:not(body.joblist-layout) {
 		--c-bg--company: black;
 		--c-border--company: gray;
 		--c-button: darkblue;
 	}
 }
 @media (prefers-color-scheme: light) {
-	:root {
+	joblist-layout,
+	body.joblist-layout,
+	:not(body.joblist-layout) {
 		--c-bg--company: snow;
 		--c-border--company: lightgray;
 		--c-button: lightgray;
