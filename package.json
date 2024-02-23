@@ -1,7 +1,7 @@
 {
   "name": "@joblist/components",
   "private": false,
-  "version": "0.0.13",
+  "version": "0.0.14",
   "homepage": "https://gitlab.com/joblist/components",
   "keywords": ["web-components", "leaflet", "sqlite3", "wasm", "joblist"],
   "author": "joblist",
@@ -9,7 +9,10 @@
   "type": "module",
   "exports": {
     ".": "./dist-lib/index.js",
-    "providers": "./src/providers/index.js"
+    "./providers": "./src/providers/index.js",
+    "./sdk": "./src/libs/sdk.js",
+    "./sanitizer": "./src/libs/sanitizer.js",
+    "./mwc": "./src/libs/mwc.js"
   },
   "main": "./dist-lib/index.js",
   "files": ["**/*", "dist-lib/*"],
