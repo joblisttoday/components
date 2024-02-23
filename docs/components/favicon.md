@@ -9,7 +9,10 @@ import joblist from "../src/index.js";
 
 Display the logo, favicon of this project.
 
-```html
 <joblist-favicon></joblist-favicon>
+
+## Usage
+
 ```
 <joblist-favicon></joblist-favicon>
+```

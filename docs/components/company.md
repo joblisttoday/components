@@ -7,4 +7,4 @@ import joblist from "../src/index.js";
 ```
 # company
 
-Displays a company as returned from the sqllite query.
+Displays a company as returned from the sqlite query.

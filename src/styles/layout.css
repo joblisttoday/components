@@ -42,7 +42,7 @@ body:not(.joblist-layout) {
 		flex-grow: 1;
 	}
 	/* defaults elements */
-	:is(h1, h2, h3, h4, h5, h6, p) {
+	:is(h1, h2, h3, h4, h5, h6) {
 		margin-top: 0;
 		margin-bottom: 0;
 	}
@@ -101,7 +101,7 @@ body:not(.joblist-layout) {
 		color: var(--c-fg);
 	}
 	:is(menu, ol, ul) {
-		padding-left: calc(var(--s) / 2);
+		padding: calc(var(--s) / 2);
 		margin: 0;
 		list-style-position: inside;
 	}
@@ -129,19 +129,4 @@ body:not(.joblist-layout) {
 		padding: calc(var(--s) / 2);
 	}
 	margin: 0;
-}
-
-@media (min-width: 60rem) {
-	joblist-layout,
-	body.joblist-layout,
-	:not(.joblist-layout) {
-		font-size: 1.2rem;
-	}
-}
-@media (min-width: 100rem) {
-	joblist-layout,
-	body.joblist-layout,
-	:not(.joblist-layout) {
-		font-size: 20px;
-	}
 }

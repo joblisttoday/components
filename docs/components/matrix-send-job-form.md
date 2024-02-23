@@ -1,11 +1,11 @@
 ---
-title: matrix-send-job-form
+title: joblist-matrix-send-job-form
 ---
 ```js
 import joblist from "../src/index.js";
 ```
 
-# matrix-send-job-form
+# joblist-matrix-send-job-form
 
 A `@sctlib/mwc` HTML form template for `today.joblist.job` event CRUD.
 

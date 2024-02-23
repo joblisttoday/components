@@ -1,11 +1,11 @@
 ---
-title: matrix-job
+title: joblist-matrix-job
 ---
 ```js
 import joblist from "../src/index.js";
 ```
 
-# matrix-job
+# joblist-matrix-job
 
 Display a job event as returned from a matrix room.
 

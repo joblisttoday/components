@@ -1,10 +1,10 @@
 ---
-title: matrix-widget-send-job
+title: joblist-matrix-widget-send-job
 ---
 ```js
 import joblist from "../src/index.js";
 ```
-# matrix-widget-send-job
+# joblist-matrix-widget-send-job
 
 Extends the `@sctlib/mwc` component `matrix-send-event` with the
 widget attribute set to `true` and the `event-type` to

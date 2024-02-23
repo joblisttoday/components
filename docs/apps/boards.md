@@ -1,6 +1,4 @@
 ---
-sidebar: false
-footer: false
 ---
 
 ```js

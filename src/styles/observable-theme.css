@@ -1,7 +1,7 @@
 body.joblist-layout,
 joblist-layout,
 body:not(.joblist-layout) {
-	--ohq-size-sidebar: calc(var(--s) * 15);
+	--ohq-size-sidebar: calc(var(--s) * 12);
 	--ohq-size-center: 100%;
 }
 
@@ -22,17 +22,18 @@ body:not(.joblist-layout) {
 		}
 	}
 	:is(#observablehq-sidebar-toggle, #observablehq-sidebar-backdrop) {
-		position: sticky;
-		top: 0;
-		left: 0;
+		position: fixed;
+		top: calc(var(--s) / 4 * -1);
+		left: calc(var(--s) / 4 * -1);
+		z-index: 3;
 	}
 	:is(#observablehq-sidebar) {
-		background-color: var(--c-bg);
-		padding: calc(var(--s) / 2);
 		z-index: 2;
 		max-width: var(--ohq-size-sidebar);
-		margin: 0.2rem;
 		border-radius: 0.2rem;
+		padding: calc(var(--s) / 2);
+		background-color: var(--c-bg);
+		flex-grow: 1;
 		:is(ol) {
 			list-style: none;
 		}
@@ -44,6 +45,9 @@ body:not(.joblist-layout) {
 		:is(nav):empty {
 			display: none;
 		}
+		:is(nav):not(:empty) {
+			padding: calc(var(--s) / 1);
+		}
 		@media (min-width: 60rem) {
 			order: 1;
 		}
@@ -53,7 +57,7 @@ body:not(.joblist-layout) {
 	/* also see joblist-layout */
 	:is(#observablehq-center) {
 		max-width: var(--ohq-size-center);
-		width: 100%;
+		flex-grow: 1;
 	}
 
 	:is(input#observablehq-sidebar-toggle) {
@@ -67,9 +71,13 @@ body:not(.joblist-layout) {
 				position: fixed;
 				top: 0;
 				bottom: 0;
+				z-index: 3;
 				@media (min-width: 60rem) {
 					position: sticky;
 					height: 100%;
+					max-height: 100vh;
+					overflow-y: scroll;
+					overflow-x: hidden;
 				}
 			}
 			~ :is(#observablehq-sidebar-backdrop)::after {
@@ -78,8 +86,6 @@ body:not(.joblist-layout) {
 				top: 0;
 				width: 100vw;
 				height: 100vh;
-				opacity: 0.6;
-				background-color: var(--c-bg);
 			}
 			@media (min-width: 60rem) {
 				~ :is(#observablehq-sidebar-backdrop)::after {
@@ -95,8 +101,6 @@ body:not(.joblist-layout) {
 					top: 0;
 					display: block;
 					height: 100%;
-					max-height: 100vh;
-					overflow-y: scroll;
 				}
 			}
 		}

@@ -1,11 +1,15 @@
 ---
-title: matrix-send-job
+title: joblist-joblist-matrix-send-job
 ---
 ```js
 import joblist from "../src/index.js";
 ```
 
-# matrix-send-job
+# joblist-joblist-matrix-send-job
+
+<joblist-matrix-send-job profile-id="#general.boards.joblist.today:matrix.org"></joblist-matrix-send-job>
+
+## Usage
 
 A wrapper (does not extend) around matrix-send-event, to display a
 "login-to-send-event flow.
@@ -19,10 +23,8 @@ join the room, then render the send event component.
 > Note: mmaybe could use the joblist-matrix-send-job-widget, to
 > refactor in one; but complex because of widget API race request
 
-```html
+```
 <joblist-matrix-send-job
 	profile-id="#general.boards.joblist.today:matrix.org"
 ></joblist-matrix-send-job>
 ```
-
-<joblist-matrix-send-job profile-id="#general.boards.joblist.today:matrix.org"></joblist-matrix-send-job>

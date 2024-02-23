@@ -1,4 +1,3 @@
-/* import { createDbWorker } from 'sql.js-httpvfs'; */
 import { SQLiteDatabaseClient } from "npm:@observablehq/sqlite";
 
 export const MATRIX_TYPE_JOB = "today.joblist.job";
@@ -16,36 +15,34 @@ export class JoblistSDK {
 
 	async initialize() {
 		this.db = await SQLiteDatabaseClient.open(this.databaseUrl);
+		return this.db;
 	}
 
-	async executeQuery(exec = "", params = []) {
-		const result = await this.db.query(exec, [...params]);
-		return result;
+	executeQuery(exec = "", params = []) {
+		return this.db.query(exec, [...params]);
 	}
 
-	async getAllCompaniesData() {
-		return await this.executeQuery(`SELECT * FROM companies`);
+	getAllCompaniesData() {
+		return this.executeQuery(`SELECT * FROM companies`);
 	}
 
-	async getAllJobsData() {
-		return await this.executeQuery(`SELECT * FROM jobs`);
+	getAllJobsData() {
+		return this.executeQuery(`SELECT * FROM jobs`);
 	}
 
-	async searchCompanies(query = "") {
-		return await this.executeQuery(
+	searchCompanies(query = "") {
+		return this.executeQuery(
 			`SELECT * FROM companies_fts WHERE companies_fts MATCH ?`,
 			[query],
 		);
 	}
-
-	async searchJobs(query = "") {
-		return await this.executeQuery(
-			`SELECT * FROM jobs_fts WHERE jobs_fts MATCH ?`,
-			[query],
-		);
+	searchJobs(query = "") {
+		return this.executeQuery(`SELECT * FROM jobs_fts WHERE jobs_fts MATCH ?`, [
+			query,
+		]);
 	}
 
-	async searchCompaniesByCoordinates(lat, lon, radius) {
+	searchCompaniesByCoordinates(lat, lon, radius) {
 		const sql = `
 	SELECT *
 	FROM companies
@@ -55,10 +52,10 @@ export class JoblistSDK {
 		(CAST(json_extract(json(positions), '$[0].map.coordinates[1]') AS REAL) - ?) * (? - CAST(json_extract(json(positions), '$[0].map.coordinates[1]') AS REAL)) <= ? * ?
 	)`;
 		const params = [lon, lon, lat, lat, radius, radius];
-		return await this.executeQuery(sql, params);
+		return this.executeQuery(sql, params);
 	}
 
-	async searchJobsByCoordinates(lat, lon, radius) {
+	searchJobsByCoordinates(lat, lon, radius) {
 		const sql = `
 	SELECT *
 	FROM jobs
@@ -68,17 +65,17 @@ export class JoblistSDK {
 		(CAST(json_extract(json(positions), '$[0].map.coordinates[1]') AS REAL) - ?) * (? - CAST(json_extract(json(positions), '$[0].map.coordinates[1]') AS REAL)) <= ? * ?
 	)`;
 		const params = [lon, lon, lat, lat, radius, radius];
-		return await this.executeQuery(sql, params);
+		return this.executeQuery(sql, params);
 	}
 
-	async getLastAddedCompanies(limit = 10) {
-		return await this.executeQuery(
+	getLastAddedCompanies(limit = 10) {
+		return this.executeQuery(
 			`SELECT * FROM companies ORDER BY rowid DESC LIMIT ?`,
 			[limit],
 		);
 	}
 
-	async getCompanyHeatmap(slug, days = 365) {
+	getCompanyHeatmap(slug, days = 365) {
 		const sql = `
 WITH RECURSIVE date_range AS (
   SELECT MIN(published_date) AS min_date, MAX(published_date) AS max_date FROM jobs
@@ -102,9 +99,9 @@ OR company_slug is null
 GROUP BY 1,2
 ORDER BY published_date ASC;
 		`;
-		const result = await this.executeQuery(sql, [days, slug, slug]);
+		return this.executeQuery(sql, [days, slug, slug]);
 	}
-	async getJobsHeatmap(days = 365) {
+	getJobsHeatmap(days = 365) {
 		const sql = `
 WITH RECURSIVE date_range AS (
   SELECT
@@ -134,7 +131,7 @@ GROUP BY
 ORDER BY
   date_range.min_date ASC;
 		`;
-		return await this.executeQuery(sql, [days]);
+		return this.executeQuery(sql, [days]);
 	}
 }
 

@@ -1,11 +1,11 @@
 ---
-title: search-results
+title: joblist-search-results
 ---
 ```js
 import joblist from "../src/index.js";
 ```
 
-# search-results
+# joblist-search-results
 
 Displays the results of a search query from the `search` component.
 

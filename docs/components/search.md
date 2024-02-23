@@ -1,11 +1,11 @@
 ---
-title: search
+title: joblist-search
 ---
 ```js
 import joblist from "../src/index.js";
 ```
 
-# search
+# joblist-search
 
 Display a Search bar, to search into the full text search tables of
 the sqlite database (on the client side).

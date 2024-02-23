@@ -1,14 +1,12 @@
 ---
-title: heatmap
+title: joblist-heatmap
 ---
 
 ```js
 import "../src/index.js";
 ```
 
-Use the `slug` (of value `company.slug`) and `days` (Number of days)
-attributes and URL search parameters to display, the content for a
-specific company.
+# joblist-heatmap
 
 ```js
 import "../../src/index.js";
@@ -21,3 +19,13 @@ days && $heatmap.setAttribute("days", days);
 ```
 
 <joblist-heatmap></joblist-company-heatmap>
+
+## Usage
+
+Use the `slug` (of value `company.slug`) and `days` (Number of days)
+attributes and URL search parameters to display, the content for a
+specific company.
+
+```
+<joblist-heatmap></joblist-company-heatmap>
+```

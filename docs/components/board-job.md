@@ -1,29 +1,36 @@
 ---
-title: board-job
+title: joblist-board-job
 ---
 ```js
 import joblist from "../src/index.js";
 ```
-# board-job
+# joblist-board-job
 
-Display the job of a `job-board`
+Display the job of a job board for every provider.
 
 ## With title, url and location attributes
-```html
+
+<joblist-board-job title="People Operations Team Leader (m/f/d)" url="https://joblist.today/?examples=example-job" location="Berlin, de"></joblist-board-job>
+
+### Usage
+
+```
 <joblist-board-job
-	title="People Operations Team Leader (m/f/d)"
-	url="https://joblist.today/?examples=example-job"
-	location="Berlin, de"
+  title="People Operations Team Leader (m/f/d)"
+  url="https://joblist.today/?examples=example-job"
+  location="Berlin, de"
 ></joblist-board-job>
 ```
-<joblist-board-job title="People Operations Team Leader (m/f/d)" url="https://joblist.today/?examples=example-job" location="Berlin, de"></joblist-board-job>
 
 ## Without a location
 
-```html
+<joblist-board-job title="People Operations Team Leader (m/f/d)" url="https://joblist.today/?examples=example-job"></joblist-board-job>
+
+### Usage
+
+```
 <joblist-board-job
-	title="People Operations Team Leader (m/f/d)"
-	url="https://joblist.today/?examples=example-job"
+  title="People Operations Team Leader (m/f/d)"
+  url="https://joblist.today/?examples=example-job"
 ></joblist-board-job>
 ```
-<joblist-board-job title="People Operations Team Leader (m/f/d)" url="https://joblist.today/?examples=example-job"></joblist-board-job>

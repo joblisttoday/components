@@ -1,8 +1,8 @@
 joblist-heatmap {
 	:is(svg) {
 		width: 100%;
-		min-width: calc(var(--s) * 20);
-		max-height: calc(var(--s) * 10);
+		min-width: calc(var(--s) * 25);
+		max-height: calc(var(--s) * 15);
 	}
 	overflow-x: scroll;
 	display: flex;

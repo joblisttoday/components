@@ -1,10 +1,10 @@
 ---
-title: umami-script
+title: joblist-umami-script
 ---
 ```js
 import joblist from "../src/index.js";
 ```
-# umami-script
+# joblist-umami-script
 
 Insert this element on a page (only once in the page), so
 https://umami.is can track the analytics from visits of the live web
