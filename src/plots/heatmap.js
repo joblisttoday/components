@@ -5,16 +5,25 @@ export default function heatmap(
 	{ width = 800, height = 200, ...options } = {},
 ) {
 	data = data.map((d) => {
-		return { ...d, date: new Date(d.date) };
+		return {
+			date: new Date(d.date),
+			year: Number(d.year),
+			woy: Number(d.woy),
+			dow: Number(d.dow),
+			total: Number(d.total),
+		};
 	});
+	console.log("plot data", data);
 	return Plot.plot({
 		width,
 		height,
-		color: { scheme: "Turbo" },
+		color: { type: "linear", scheme: "Turbo" },
 		...options,
 		marks: [
 			Plot.cell(data, {
-				x: (d) => d.year + "-" + d.woy,
+				x: (d) => {
+					return Number([d.year, d.woy].join("."));
+				},
 				y: (d) => d.dow,
 				fill: "total",
 				fillOpacity: 0.9,
@@ -26,13 +35,13 @@ export default function heatmap(
 						month: "short",
 						day: "numeric",
 					});
-					return `${d.total || "No"} job${d.total > 1 ? "s" : ""} published on ${date}`;
+					return `${d.total || "No"} job${d.total > 1 ? "s" : ""} published on ${date}, ${d.woy}`;
 				},
 			}),
 		],
 		x: {
 			tickFormat: (x) => {
-				const [year, woy] = x.split("-");
+				const [year, woy] = x.toString().split(".");
 				if (woy % 7 === 0) {
 					return new Date(1000 * 60 * 60 * 24 * 7 * woy).toLocaleString(
 						"en-us",
@@ -44,9 +53,9 @@ export default function heatmap(
 			},
 		},
 		y: {
-			tickFormat: (y) => {
-				if (y % 2 === 0) {
-					return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][y];
+			tickFormat: (dow) => {
+				if (dow % 2 === 0) {
+					return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][dow];
 				}
 			},
 		},

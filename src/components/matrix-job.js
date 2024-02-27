@@ -1,5 +1,3 @@
-/* import mwc from "../libs/mwc.js"; */
-/* import sdk from "../libs/sdk.js"; */
 import sanitize from "../libs/sanitizer.js";
 
 const JOB_KEYS = ["title", "description", "url"];

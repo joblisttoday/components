@@ -1,4 +1,4 @@
-import { JoblistSDK } from "../libs/sdk.js";
+import { JoblistSqlSDK } from "../libs/sdk-sql.js";
 
 export default class JoblistSearch extends HTMLElement {
 	get placeholder() {
@@ -18,7 +18,7 @@ export default class JoblistSearch extends HTMLElement {
 	}
 
 	async connectedCallback() {
-		this.joblistSDK = new JoblistSDK(this.databaseUrl);
+		this.joblistSDK = new JoblistSqlSDK(this.databaseUrl);
 		await this.joblistSDK.initialize();
 		this._render();
 	}

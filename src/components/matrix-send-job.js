@@ -1,4 +1,4 @@
-import sdk, { MATRIX_ROOM_MAP, MATRIX_TYPE_JOB } from "../libs/sdk.js";
+import { MATRIX_ROOM_MAP, MATRIX_TYPE_JOB } from "../libs/sdk.js";
 import mwc from "../libs/mwc.js";
 
 const { general: generalRoom } = MATRIX_ROOM_MAP;

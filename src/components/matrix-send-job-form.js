@@ -1,5 +1,3 @@
-import sdk from "../libs/sdk.js";
-
 export const formTemplate = document.createElement("template");
 formTemplate.innerHTML = `
 	<form>
