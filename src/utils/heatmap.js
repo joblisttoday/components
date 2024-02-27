@@ -34,7 +34,6 @@ export const generateMissingDates = async (apiResults, numberOfDays) => {
 
 	const result = allDates.map((date) => {
 		const existingItem = apiResults.find((item) => item.date === date);
-		console.log("date", new Date(date));
 		const emptyDate = { date, total: 0 };
 		return serializeItem(existingItem || emptyDate, new Date(date));
 	});

@@ -13,7 +13,6 @@ export default function heatmap(
 			total: Number(d.total),
 		};
 	});
-	console.log("plot data", data);
 	return Plot.plot({
 		width,
 		height,
