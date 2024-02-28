@@ -23,7 +23,7 @@ const buildTemplate = () => {
 				flex-grow: 1;
 			}
 			.leaflet-marker-icon {
-				/* background-color: red; */
+				/* background-color: var(--c-link); */
 			}
 			.leaflet-popup-content	{
 				margin: 0.3rem;
@@ -161,7 +161,12 @@ export default class JoblistMapList extends HTMLElement {
 		}
 
 		const iconUrl =
-			"data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+			"data:image/svg+xml;base64," +
+			btoa(`
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" fill="blue"/>
+  </svg>
+		`);
 
 		const $markers = markers.map((data) => {
 			var icon = this.leaflet.icon({

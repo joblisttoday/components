@@ -19,8 +19,45 @@
 	</head>
 	<body>
 		<joblist-layout>
-			<joblist-search></joblist-search>
-			<joblist-results></joblist-results>
+			<joblist-menu>
+				<menu>
+					<li>
+						<a href="./">search</a>
+					</li>
+				</menu>
+				<menu>
+					<li>
+						<a href="../map/">map</a>
+					</li>
+				</menu>
+				<menu>
+					<li>
+						<a href="https://joblist.today">joblist.today</a>
+					</li>
+				</menu>
+			</joblist-menu>
+			<joblist-page>
+				<joblist-search></joblist-search>
+				<joblist-results></joblist-results>
+				<footer>
+					<hr />
+					<dl>
+						<dt>
+							<a href="./"> Search </a>
+						</dt>
+						<dd>
+							Explore companies and jobs indices with
+							<a href="https://en.wikipedia.org/wiki/Full-text_search"
+								>full text search syntax</a
+							>, or on the
+							<a
+								href="https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db"
+								>sqlite3 database</a
+							>.
+						</dd>
+					</dl>
+				</footer>
+			</joblist-page>
 		</joblist-layout>
 	</body>
 </html>

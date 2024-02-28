@@ -35,13 +35,32 @@
 	</head>
 	<body>
 		<joblist-layout>
-			<joblist-search></joblist-search>
-			<joblist-map-list
-				latitude=""
-				longitude=""
-				zoom="3"
-				origin="https://profiles.joblist.today/companies"
-			></joblist-map-list>
+			<joblist-menu>
+				<menu>
+					<li>
+						<a href="./">map</a>
+					</li>
+				</menu>
+				<menu>
+					<li>
+						<a href="../search/">search</a>
+					</li>
+				</menu>
+				<menu>
+					<li>
+						<a href="https://joblist.today">joblist.today</a>
+					</li>
+				</menu>
+			</joblist-menu>
+			<joblist-page full>
+				<joblist-search></joblist-search>
+				<joblist-map-list
+					latitude=""
+					longitude=""
+					zoom="3"
+					origin="https://profiles.joblist.today/companies"
+				></joblist-map-list>
+			</joblist-page>
 		</joblist-layout>
 	</body>
 </html>

@@ -2,6 +2,8 @@ joblist-search {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding: calc(var(--s) / 2);
+	background-color: var(--c-bg);
 }
 joblist-search input {
 	flex-grow: 1;

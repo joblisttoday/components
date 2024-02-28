@@ -26,30 +26,9 @@ export default class JoblistSearchResults extends HTMLElement {
 		if ((!companies || !companies.length) && (!jobs || !jobs.length)) {
 			const noResults = document.createElement("joblist-results-404");
 			if (!query) {
-				const $message = document.createElement("span");
-				$message.textContent = "Search companies and jobs indices with ";
-				const $linkFTS = document.createElement("a");
-				$linkFTS.setAttribute(
-					"href",
-					"https://en.wikipedia.org/wiki/Full-text_search",
-				);
-				$linkFTS.textContent = "full text search syntax";
-
-				const $linkSqlite = document.createElement("a");
-				$linkSqlite.setAttribute(
-					"href",
-					"https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db",
-				);
-				$linkSqlite.textContent = "sqlite3 queries";
-				noResults.append(
-					$message,
-					$linkFTS,
-					" or directly with ",
-					$linkSqlite,
-					".",
-				);
+				noResults.textContent = "Input a search query.";
 			} else {
-				noResults.textContent = "No results found.";
+				noResults.textContent = "No results found ø.";
 			}
 			this.append(noResults);
 			return;

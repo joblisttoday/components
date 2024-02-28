@@ -17,13 +17,16 @@ joblist-layout {
 		position: sticky;
 		top: 0;
 	}
-	:is(joblist-map-list) {
+	:is(joblist-page, joblist-map-list) {
 		flex-grow: 1;
 	}
-	&:has(joblist-menu) {
-		:is(joblist-menu ~ joblist-page) {
-			padding: 0 calc(var(--s) / 2);
+	:is(joblist-page) {
+		&:is([full]) {
+			display: flex;
+			flex-direction: column;
 		}
+	}
+	&:has(joblist-menu) {
 		:is(joblist-menu) {
 			position: sticky;
 			top: 0;
@@ -41,9 +44,6 @@ joblist-layout {
 	:is(joblist-menu) {
 		display: flex;
 		flex-wrap: wrap;
-	}
-	:is(joblist-page) {
-		display: block;
 	}
 }
 
