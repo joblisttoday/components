@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en" joblist-layout>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@joblist/components/layout</title>
+		<script type="module" src="../../src/index.js"></script>
+	</head>
+	<body>
+		<joblist-layout>
+			<joblist-menu>
+				<input type="checkbox" id="joblist-menu" />
+				<label for="joblist-menu"></label>
+				<menu>
+					<li>
+						<a href="/">home</a>
+					</li>
+					<li>
+						<a href="/apps">apps</a>
+					</li>
+				</menu>
+				<menu>
+					<li>
+						<a href="https://joblist.today">joblist.today</a>
+					</li>
+					<li>
+						<a href="https://components.joblist.today"
+							>components.joblist.today</a
+						>
+					</li>
+				</menu>
+				<a href="../../">
+					<joblist-favicon></joblist-favicon>
+				</a>
+			</joblist-menu>
+			<joblist-page>
+				<header>
+					<h1>Joblist Layout</h1>
+					<p>
+						A presentation of the layout and how it can be used on a page of a
+						website
+					</p>
+				</header>
+				<main>
+					<h2>Main content</h2>
+					<p>Inside a "joblist-page", this is the "main" content.</p>
+					<section>
+						<h3>Example job board</h3>
+						<p>
+							An example job-board, <code>provider-name</code> and
+							<code>provider-hostname</code> are <code>greenhouse</code>.
+						</p>
+						<joblist-board
+							provider-name="greenhouse"
+							provider-hostname="greenhouse"
+						>
+						</joblist-board>
+					</section>
+					<section>
+						<h3>Other example job board</h3>
+						<p>
+							An example job-board, <code>provider-name</code> and
+							<code>provider-hostname</code> are <code>personio</code>.
+						</p>
+						<joblist-board
+							provider-name="personio"
+							provider-hostname="personio"
+						>
+						</joblist-board>
+					</section>
+				</main>
+				<footer>
+					<h2>Footer content</h2>
+					<p>This is the footer! Go to <a href="./">the top ↑</a></p>
+				</footer>
+			</joblist-page>
+		</joblist-layout>
+	</body>
+</html>

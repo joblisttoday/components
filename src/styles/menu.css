@@ -1,0 +1,59 @@
+joblist-menu {
+	&:has(input[type="checkbox"][id="joblist-menu"]:checked) {
+		/* transform: translateX(-100%); */
+	}
+	&:has(input[type="checkbox"][id="joblist-menu"]:not(:checked)) {
+		/* transform: translateX(0); */
+	}
+	:is(input[type="checkbox"][id="joblist-menu"]) {
+		display: none;
+	}
+	:is(input[type="checkbox"]) {
+		&:checked {
+			& ~ :is(label:hover, label:active) {
+				&::after {
+					content: "⟼";
+				}
+			}
+			& ~ :is(*:not(label)) {
+				display: none;
+			}
+		}
+		&:not(:checked) {
+			& ~ :is(label:hover, label:active) {
+				&::after {
+					content: "⟻";
+				}
+			}
+		}
+	}
+	:is(label[for="joblist-menu"]) {
+		&::before {
+			content: "≡";
+		}
+		&::after {
+			content: "";
+			position: absolute;
+			bottom: 100%;
+			right: 0;
+			transform: rotateY(0);
+		}
+		&:hover,
+		&:active {
+			border-color: var(--c-fg);
+		}
+		cursor: pointer;
+		position: relative;
+		border: 1px solid transparent;
+		transition: border-color 100ms ease-in-out;
+		display: flex;
+	}
+	:is(menu) {
+		:is(li)::before {
+			content: "—";
+		}
+		list-style-type: none;
+		padding-left: calc(var(--s) / 2);
+	}
+	transition: transform 100ms ease-in-out;
+}

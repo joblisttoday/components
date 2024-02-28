@@ -1,20 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" joblist-layout>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>@joblist/components/search</title>
 		<script type="module" src="../../src/index.js"></script>
 		<script type="module">
-			const $search = document.querySelector('joblist-search')
-			const $results = document.querySelector('joblist-results')
-			$search.addEventListener('search', ({detail}) => {
+			const $search = document.querySelector("joblist-search");
+			const $results = document.querySelector("joblist-results");
+			$search.addEventListener("search", ({ detail }) => {
 				if (detail.companies || detail.jobs) {
-					$results.setAttribute('results', JSON.stringify(detail))
+					$results.setAttribute("results", JSON.stringify(detail));
 				} else {
-					$results.removeAttribute('results')
+					$results.removeAttribute("results");
 				}
-			})
+			});
 		</script>
 	</head>
 	<body>

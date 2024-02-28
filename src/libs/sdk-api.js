@@ -12,15 +12,7 @@ export class JoblistApiSDK {
 			const sp = new URLSearchParams(Object.fromEntries(params));
 			url += `?${sp.toString()}`;
 		}
-		return fetch(`${url}`, { signal })
-			.then((res) => res.json())
-			.catch((error) => {
-				if (error.name === "AbortError") {
-					console.log("Fetch aborted");
-				} else {
-					throw error;
-				}
-			});
+		return fetch(`${url}`, { signal }).then((res) => res.json());
 	}
 
 	getAllCompaniesData(signal) {
@@ -32,32 +24,30 @@ export class JoblistApiSDK {
 	}
 
 	async getCompanyHeatmap(slug, days = 365, signal) {
+		let data;
 		try {
-			const data = await this.fetch(
+			data = await this.fetch(
 				`/sqlite/heatmap/${slug}`,
 				[["days", days]],
 				signal,
 			);
-			if (!signal?.aborted) {
-				return generateMissingDates(data, days);
-			}
 		} catch (e) {
-			return e;
+			data = [];
 		}
+		return generateMissingDates(data, days);
+		/* if (!signal?.aborted) {
+			 } */
 	}
 
 	async getJobsHeatmap(days = 365, signal) {
+		let data;
 		try {
-			const data = await this.fetch(
-				"/sqlite/heatmap",
-				[["days", days]],
-				signal,
-			);
-			if (!signal?.aborted) {
-				return generateMissingDates(data, days);
-			}
+			data = await this.fetch("/sqlite/heatmap", [["days", days]], signal);
 		} catch (e) {
-			return e;
+			data = [];
+		}
+		if (!signal?.aborted) {
+			return generateMissingDates(data, days);
 		}
 	}
 }

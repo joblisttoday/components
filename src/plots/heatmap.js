@@ -2,9 +2,9 @@ import * as Plot from "@observablehq/plot";
 
 export default function heatmap(
 	data = [],
-	{ width = 800, height = 200, ...options } = {},
+	{ width = 800, height = 200, slug, days, ...options } = {},
 ) {
-	data = data.map((d) => {
+	data = data?.map((d) => {
 		return {
 			date: new Date(d.date),
 			year: Number(d.year),
@@ -13,10 +13,18 @@ export default function heatmap(
 			total: Number(d.total),
 		};
 	});
+	let slugLabel = slug ? `for ${slug}` : "";
+	let label = `Jobs postings over the last ${days} day${days > 1 ? "s" : ""} ${slugLabel}`;
 	return Plot.plot({
 		width,
 		height,
-		color: { type: "linear", scheme: "Turbo" },
+		color: {
+			type: "linear",
+			scheme: "Turbo",
+			legend: true,
+			label,
+			className: "joblist-legend",
+		},
 		...options,
 		marks: [
 			Plot.cell(data, {
@@ -34,7 +42,7 @@ export default function heatmap(
 						month: "short",
 						day: "numeric",
 					});
-					return `${d.total || "No"} job${d.total > 1 ? "s" : ""} published on ${date}, ${d.woy}`;
+					return `${d.total || "No"} job${d.total > 1 ? "s" : ""} published on ${date}`;
 				},
 			}),
 		],

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" joblist-layout>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,15 +8,28 @@
 	</head>
 	<body>
 		<joblist-layout>
-			<header>
-				Hello header
-			</header>
-			<main>
-				Hello main
-			</main>
-			<footer>
-				Hello footer
-			</footer>
+			<joblist-page>
+				<header>
+					<h1>The header</h1>
+					<p>This is the header of the <code>joblist-page</code></p>
+				</header>
+				<main>
+					<section>
+						<h1>The main</h1>
+						<p>This is the main part of the page, with an example job-board.</p>
+					</section>
+					<section>
+						<joblist-board
+							provider-name="greenhouse"
+							provider-hostname="greenhouse"
+						></joblist-board>
+					</section>
+				</main>
+				<footer>
+					<h2>The footer</h2>
+					<p>This is the footer, bottom of the page, thanks for reading!</p>
+				</footer>
+			</joblist-page>
 		</joblist-layout>
 	</body>
 </html>

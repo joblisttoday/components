@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" joblist-layout>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,76 +8,102 @@
 	</head>
 	<body>
 		<joblist-layout>
-			<main>
-				<section>
-					<h2>sites</h2>
-					<menu>
-						<li>
-							<a href="./favicon/"> favicon </a>
-						</li>
-						<li>
-							<a href="./typography/"> typography </a>
-						</li>
-						<li>
-							<a href="./umami-script/"> umami-script </a>
-						</li>
-					</menu>
-				</section>
-				<section>
-					<h2>job board providers</h2>
-					<menu>
-						<li>
-							<a href="./boards/"> boards </a>
-						</li>
-						<li>
-							<a href="./board/"> board </a>
-						</li>
-						<li>
-							<a href="./board-provider/"> board-provider </a>
-						</li>
-						<li>
-							<a href="./board-job/"> board-job </a>
-						</li>
-					</menu>
-				</section>
-				<section>
-					<h2>sqlite</h2>
-					<menu>
-						<li>
-							<a href="./search/"> search </a>
-						</li>
-						<li>
-							<a href="./map/"> map </a>
-						</li>
-						<li>
-							<a href="./heatmap/"> heatmap </a>
-						</li>
-					</menu>
-				</section>
-				<section>
-					<h2>matrix</h2>
-					<menu>
-						<li>
-							<a href="./matrix-auth/">matrix-auth</a>
-						</li>
-						<li>
-							<a href="./matrix-jobs/">matrix-jobs</a>
-						</li>
-						<li>
-							<a href="./matrix-job/">matrix-job</a>
-						</li>
-						<li>
-							<a href="./matrix-send-job/">matrix-send-job</a>
-						</li>
-						<li>
-							<a href="./matrix-send-job-form/">matrix-send-job-form</a>
-						</li>
-						<li>
-							<a href="./matrix-widget-send-job/">matrix-widget-send-job</a>
-						</li>
-					</menu>
-				</section>
-			</main>
+			<joblist-menu>
+				<label for="joblist-menu"></label>
+				<input type="checkbox" id="joblist-menu" />
+				<menu>
+					<li>
+						<a href="../">home</a>
+					</li>
+					<li>
+						<a href="https://gitlab.com/joblist/components">
+							gitlab/joblist/components
+						</a>
+					</li>
+					<li>
+						<a href="https://joblist.today"> joblist.today </a>
+					</li>
+				</menu>
+			</joblist-menu>
+			<joblist-page>
+				<h1>Application components</h1>
+				<p>All components used accross the projects and web applications.</p>
+				<div grid padding>
+					<section>
+						<h2>Site</h2>
+						<menu>
+							<li>
+								<a href="./favicon/"> favicon </a>
+							</li>
+							<li>
+								<a href="./typography/"> typography </a>
+							</li>
+							<li>
+								<a href="./layout/"> layout </a>
+							</li>
+							<li>
+								<a href="./umami-script/"> umami-script </a>
+							</li>
+						</menu>
+					</section>
+					<section>
+						<h2>Sqlite</h2>
+						<menu>
+							<li>
+								<a href="./search/"> search </a>
+							</li>
+							<li>
+								<a href="./map/"> map </a>
+							</li>
+							<li>
+								<a href="./heatmap/"> heatmap </a>
+							</li>
+						</menu>
+					</section>
+				</div>
+				<div grid>
+					<section>
+						<h2>Board providers</h2>
+						<menu>
+							<li>
+								<a href="./boards/"> boards </a>
+							</li>
+							<li>
+								<a href="./board/"> board </a>
+							</li>
+							<li>
+								<a href="./board-provider/"> board-provider </a>
+							</li>
+							<li>
+								<a href="./board-job/"> board-job </a>
+							</li>
+						</menu>
+					</section>
+					<section>
+						<h2>Matrix</h2>
+						<menu>
+							<li>
+								<a href="./matrix-auth/">matrix-auth</a>
+							</li>
+							<li>
+								<a href="./matrix-jobs/">matrix-jobs</a>
+							</li>
+							<li>
+								<a href="./matrix-job/">matrix-job</a>
+							</li>
+							<li>
+								<a href="./matrix-send-job/">matrix-send-job</a>
+							</li>
+							<li>
+								<a href="./matrix-send-job-form/">matrix-send-job-form</a>
+							</li>
+							<li>
+								<a href="./matrix-widget-send-job/">matrix-widget-send-job</a>
+							</li>
+						</menu>
+					</section>
+				</div>
+			</joblist-page>
 		</joblist-layout>
 	</body>
 </html>

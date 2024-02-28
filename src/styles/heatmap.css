@@ -1,9 +1,29 @@
 joblist-heatmap {
 	:is(svg) {
-		width: 100%;
-		min-width: calc(var(--s) * 20);
-		max-height: calc(var(--s) * 10);
+		border-radius: var(--s-border-radius);
 	}
-	overflow-x: scroll;
-	display: flex;
+	:is(figure) {
+		:is(.joblist-legend-ramp) {
+			order: 1;
+			max-width: calc(var(--s) * 10);
+			position: sticky;
+			left: 0;
+			padding: calc(var(--s) / 3);
+		}
+		:is([class^="plot-"]) {
+			width: 100%;
+			min-width: calc(var(--s) * 30);
+		}
+		display: flex;
+		flex-direction: column;
+		display: flex;
+		overflow-x: scroll;
+		margin: 0;
+	}
+	&:is([show-legend="false"]) {
+		:is(.joblist-legend-ramp) {
+			display: none;
+		}
+	}
+	padding: calc(var(--s) / 2);
 }

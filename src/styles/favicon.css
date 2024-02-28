@@ -1,5 +1,6 @@
 /* favicon svg image */
 joblist-favicon {
+	display: inline-flex;
 	max-height: var(--s-favicon);
 	max-width: var(--s-favicon);
 }

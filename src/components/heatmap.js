@@ -39,7 +39,15 @@ export default class JoblistHeatmap extends HTMLElement {
 	}
 
 	async connectedCallback() {
-		this.init();
+		await this.init();
+	}
+	scrollToEnd() {
+		const $figure = this.querySelector("figure");
+		if ($figure) {
+			$figure.scrollLeft = $figure.scrollLeftMax;
+		} else {
+			this.scrollLeft = this.scrollLeftMax;
+		}
 	}
 
 	async init() {
@@ -80,8 +88,12 @@ export default class JoblistHeatmap extends HTMLElement {
 
 	render() {
 		if (this.heatmap) {
-			const heatmap = heatmapCompany(this.heatmap);
+			const heatmap = heatmapCompany(this.heatmap, {
+				slug: this.slug,
+				days: this.days,
+			});
 			this.replaceChildren(heatmap);
+			this.scrollToEnd();
 		}
 	}
 }
