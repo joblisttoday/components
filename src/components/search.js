@@ -26,7 +26,8 @@ export default class JoblistSearch extends HTMLElement {
 		this.innerHTML = "";
 		const $input = document.createElement("input");
 		$input.type = "search";
-		$input.placeholder = this.placeholder || "Search (eg. test OR free*)";
+		$input.placeholder =
+			this.placeholder || "Search (e.g., apple* OR orange AND banana NOT pear ";
 		$input.addEventListener("input", this._debounceOnInput.bind(this));
 		this.append($input);
 	}
