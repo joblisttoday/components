@@ -8,6 +8,7 @@ import mwc from "./libs/mwc.js";
 import * as SDK from "./libs/sdk.js";
 import joblistSqlSDK, { JoblistSqlSDK } from "./libs/sdk-sql.js";
 import joblistApiSDK, { JoblistApiSDK } from "./libs/sdk-api.js";
+import joblistGithubSDK, { JoblistGithubSDK } from "./libs/sdk-github.js";
 import * as joblistMapSDK from "./libs/map.js";
 import joblistBoardProviders from "./providers/index.js";
 
@@ -34,9 +35,11 @@ defineComponents(providerDefinitions);
 const joblist = {
 	JoblistSqlSDK,
 	JoblistApiSDK,
+	JoblistGithubSDK,
 	sdk: SDK,
 	sqlSdk: joblistSqlSDK,
 	apiSdk: joblistApiSDK,
+	githubSdk: joblistGithubSDK,
 	mapSdk: joblistMapSDK,
 	providers: joblistBoardProviders,
 	componentDefinitions,

@@ -64,6 +64,7 @@ joblist-layout {
 }
 @media (min-width: 40rem) {
 	joblist-layout {
-		flex-direction: row;
+		/* flex-direction: row; */
+		/* align-items: flex-start; */
 	}
 }

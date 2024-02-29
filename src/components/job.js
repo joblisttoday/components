@@ -51,67 +51,66 @@ function timeSince(inputDate) {
 
 export default class JoblistJob extends HTMLElement {
 	static get observedAttributes() {
-		return [
-			"objectID",
-			"name",
-			"url",
-			"location",
-			"published_date",
-			"company_slug",
-			"company_title",
-		];
+		return ["job"];
 	}
-
-	get attributesToRender() {
-		return ["company_title", "name", "location", "published_date"];
+	get job() {
+		return JSON.parse(this.getAttribute("job"));
 	}
-
 	connectedCallback() {
-		this._render();
+		this.render();
 	}
+	render() {
+		const $doms = [];
 
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (oldValue !== newValue) {
-			this._render();
+		// Check if all necessary attributes are available
+		if (this.job) {
+			$doms.push(
+				this.createCompanyUrl(this.job),
+				this.createNameLink(this.job),
+				this.createLocation(this.job),
+				this.createPublishedDate(this.job),
+			);
+		} else {
+			$doms.push(`Missing job information`);
 		}
+
+		this.append(...$doms);
 	}
 
-	_render() {
-		this.textContent = "";
-		const attributes = this.getAttributeNames();
-		const companySlug = this.getAttribute("company_slug");
-		this.attributesToRender.map((attrName) => {
-			const attrValue = this.getAttribute(attrName);
-			const element = document.createElement(`joblist-job-${attrName}`);
-			if (attrName === "name") {
-				const href =
-					this.getAttribute("url") ||
-					"https://matrix.to/#/#joblisttoday:matrix.org";
-				const link = document.createElement("a");
-				link.href = href;
-				link.target = "_blank";
-				link.textContent = attrValue;
-				element.appendChild(link);
-			} else if (attrName === "published_date") {
-				if (attrValue) {
-					try {
-						const dateValue = new Date(attrValue);
-						element.textContent = timeSince(dateValue);
-					} catch (e) {
-						element.textContent = attrValue;
-					}
-				}
-			} else if (attrName === "company_title") {
-				const href = `https://profiles.joblist.today/companies/${companySlug}`;
-				const link = document.createElement("a");
-				link.href = href;
-				link.target = "_blank";
-				link.textContent = companySlug;
-				element.appendChild(link);
-			} else {
-				element.textContent = attrValue;
-			}
-			this.appendChild(element);
-		});
+	createNameLink({ url, name }) {
+		const nameLink = document.createElement("a");
+		nameLink.target = "_blank";
+		nameLink.textContent = name;
+		nameLink.setAttribute("href", url);
+		const $wrapper = document.createElement("joblist-job-name");
+		$wrapper.append(nameLink);
+		return $wrapper;
+	}
+
+	createPublishedDate({ published_date }) {
+		const $element = document.createElement("joblist-job-published-date");
+		const parsedDate = new Date(published_date);
+		$element.textContent = `Published ${timeSince(parsedDate)}`;
+		return $element;
+	}
+
+	createCompanyUrl({ company_slug, company_title }) {
+		const $companyUrl = document.createElement("a");
+		$companyUrl.target = "_blank";
+		$companyUrl.textContent = `@${company_slug}`;
+		$companyUrl.title = company_title;
+		$companyUrl.setAttribute(
+			"href",
+			`https://profiles.joblist.today/companies/${company_slug}`,
+		);
+		const $wrapper = document.createElement("joblist-job-company-title");
+		$wrapper.append($companyUrl);
+		return $wrapper;
+	}
+
+	createLocation({ location }) {
+		const $location = document.createElement("joblist-job-location");
+		$location.textContent = `${location}`;
+		return $location;
 	}
 }

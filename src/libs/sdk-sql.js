@@ -1,4 +1,5 @@
 /* import { createDbWorker } from 'sql.js-httpvfs'; */
+import { sqliteToJson } from "../utils/sqlite.js";
 import initSqlJs from "sql.js";
 
 export class JoblistSqlSDK {
@@ -17,7 +18,7 @@ export class JoblistSqlSDK {
 
 	async executeQuery(exec = "", params = []) {
 		const result = await this.db.exec(exec, [...params]);
-		return result;
+		return sqliteToJson(result);
 	}
 
 	async getAllCompaniesData() {

@@ -1,17 +1,17 @@
 joblist-job {
 	display: flex;
 	flex-wrap: wrap;
-	padding: 0.5rem;
+	padding: calc(var(--s) / 2);
 }
-joblist-job-company_title,
+joblist-job-company-title,
 joblist-job-name,
 joblist-job-location {
-	margin-right: 0.25rem;
+	margin-right: calc(var(--s) / 3);
 }
 joblist-job-location {
-	text-decoration: underline;
+	/* text-decoration: underline; */
 }
 
-joblist-job-published_date {
+joblist-job-published-date {
 	font-style: italic;
 }

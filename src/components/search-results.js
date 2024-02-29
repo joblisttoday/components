@@ -34,30 +34,16 @@ export default class JoblistSearchResults extends HTMLElement {
 			return;
 		}
 
-		// Render companies
-		if (companies && companies.length) {
-			const companyColumns = companies[0].columns;
-			for (const companyValues of companies[0].values) {
-				const companyEl = document.createElement("joblist-company");
-				companyColumns.forEach((column, index) => {
-					const value = companyValues[index];
-					value && companyEl.setAttribute(column, value);
-				});
-				this.appendChild(companyEl);
-			}
-		}
+		companies?.forEach((company) => {
+			const companyEl = document.createElement("joblist-company");
+			companyEl.setAttribute("company", JSON.stringify(company));
+			this.appendChild(companyEl);
+		});
 
-		// Render jobs
-		if (jobs && jobs.length) {
-			const jobColumns = jobs[0].columns;
-			for (const jobValues of jobs[0].values) {
-				const jobEl = document.createElement("joblist-job");
-				jobColumns.forEach((column, index) => {
-					const value = jobValues[index];
-					value && jobEl.setAttribute(column, value);
-				});
-				this.appendChild(jobEl);
-			}
-		}
+		jobs?.forEach((job) => {
+			const jobEl = document.createElement("joblist-job");
+			jobEl.setAttribute("job", JSON.stringify(job));
+			this.appendChild(jobEl);
+		});
 	}
 }
