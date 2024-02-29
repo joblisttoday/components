@@ -4,23 +4,38 @@ export class JoblistApiSDK {
 	constructor(url = "https://api.joblist.today") {
 		this.url = url;
 	}
-
-	fetch(endpoint = "", params = [], signal = new AbortController()) {
+	fetch(endpoint = "", params = [], signal) {
 		let url = this.url;
 		url += endpoint;
-		if (params) {
+		if (params && params.length) {
 			const sp = new URLSearchParams(Object.fromEntries(params));
 			url += `?${sp.toString()}`;
 		}
-		return fetch(`${url}`, { signal }).then((res) => res.json());
+		const config = {};
+		if (signal) {
+			config.signal = signal;
+		}
+		return fetch(`${url}`, config).then((res) => res.json());
 	}
-
-	getAllCompaniesData(signal) {
-		return this.fetch("/sqlite/companies", [], signal);
+	getCompanies() {
+		return this.fetch("/sqlite/companies");
 	}
-
-	async getAllJobsData(signal) {
-		return this.fetch("/sqlite/jobs", [], signal);
+	async getCompany(slug) {
+		const res = await this.fetch(`/sqlite/companies/${slug}`);
+		const data = res[0];
+		if (data) {
+			return {
+				...data,
+				tags: JSON.parse(data?.tags || []),
+				positions: JSON.parse(data?.positions || []),
+			};
+		}
+	}
+	getJobs(signal) {
+		return this.fetch("/sqlite/jobs");
+	}
+	getJob(objectId) {
+		return this.fetch(`/sqlite/job/${objectId}`);
 	}
 
 	async getCompanyHeatmap(slug, days = 365, signal) {
@@ -35,8 +50,6 @@ export class JoblistApiSDK {
 			data = [];
 		}
 		return generateMissingDates(data, days);
-		/* if (!signal?.aborted) {
-			 } */
 	}
 
 	async getJobsHeatmap(days = 365, signal) {

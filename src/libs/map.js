@@ -3,11 +3,15 @@ import "leaflet";
 const parsePosition = (position) => {
 	if (!position.map) return null;
 	let mapData;
-	try {
-		mapData = JSON.parse(position.map);
-	} catch (error) {
-		console.log("error parsing map data", error);
-		return null;
+	if (typeof position.map === "string") {
+		try {
+			mapData = JSON.parse(position.map);
+		} catch (error) {
+			console.log("error parsing map data", error);
+			return null;
+		}
+	} else if (typeof position.map === "object") {
+		mapData = position;
 	}
 	if (
 		mapData &&
@@ -107,9 +111,30 @@ const companiesResultsToMapMarkers = (companies) => {
 	return companiesAlgoliaResultsToMapMarkers(companies);
 };
 
+const companyToMapMarkers = (company) => {
+	const { positions, title, slug } = company;
+	if (!positions) {
+		/* no markers for this company */
+		return [];
+	}
+	const markers = [];
+	positions.forEach((position) => {
+		const mapData = parsePosition(position);
+		if (mapData) {
+			markers.push({
+				text: title,
+				slug: slug,
+				...mapData,
+			});
+		}
+	});
+	return markers;
+};
+
 export {
 	companiesResultsToMapMarkers,
 	companiesFileToMapMarkers,
 	companiesSqliteResultsToMapMarkers,
 	companiesAlgoliaResultsToMapMarkers,
+	companyToMapMarkers,
 };

@@ -20,7 +20,7 @@ export class JoblistGithubSDK {
 		let hostUrl;
 		if (this.host === HOSTS["cdn.jsdelivr.net"]) {
 			return new URL(
-				`https://${this.host}/gh/${this.actor}/${this.repository}`,
+				`https://${this.host}/gh/${this.actor}/${this.repository}@latest`,
 			);
 		} else if (this.host === HOSTS["github.com"]) {
 			return new URL(
@@ -31,7 +31,7 @@ export class JoblistGithubSDK {
 	buildCompanyUrl(slug) {
 		return `${this.url}/companies/${slug}/index.md`;
 	}
-	async fetchCompany(slug) {
+	async getCompany(slug) {
 		const data = await fetch(this.buildCompanyUrl(slug)).then((res) => {
 			return res.text();
 		});

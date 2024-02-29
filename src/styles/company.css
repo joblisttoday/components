@@ -1,24 +1,40 @@
 joblist-company {
+	&:is([full]) {
+		flex-direction: column;
+		flex-wrap: nowrap;
+	}
+	&:is(:not([full])) {
+		flex-wrap: wrap;
+		align-items: center;
+	}
+	:is(menu) {
+		:is(li) {
+			display: flex;
+		}
+		:is(a) {
+			padding: calc(var(--s) / 5);
+		}
+	}
 	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
 	padding: calc(var(--s) / 2);
 }
 joblist-company-title {
 	:is(h1) {
 		margin: 0;
 	}
-	font-weight: bold;
-}
-joblist-company-slug {
-	:is(a) {
-		padding: calc(var(--s) / 3);
-	}
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
 }
 joblist-company-tags {
 	:is(menu) {
-		:is(a) {
-			padding: calc(var(--s) / 3);
+		:is(joblist-company-tag) {
+			:is(a) {
+				&::before {
+					content: "#";
+				}
+			}
+			display: flex;
 		}
 		list-style: none;
 		display: flex;
@@ -27,7 +43,24 @@ joblist-company-tags {
 	}
 }
 joblist-company-description {
-	:is(p) {
+	:is(joblist-company:not([full])) & :is(p) {
 		margin: 0;
+		text-overflow: "…";
 	}
+	max-width: var(--s-container);
+}
+joblist-company-links {
+	:is(menu) {
+		margin-right: var(--s);
+	}
+	display: flex;
+	flex-wrap: wrap;
+}
+
+joblist-company-widgets {
+	:is(joblist-heatmap, joblist-map-list) {
+		flex-basis: 50%;
+	}
+	display: flex;
+	flex-wrap: wrap;
 }
