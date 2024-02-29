@@ -4,48 +4,42 @@ joblist-boards {
 		display: flex;
 		position: sticky;
 		top: 0;
-		padding: calc(var(--s) / 3);
 		background-color: var(--c-bg);
+		padding: calc(var(--s) / 2);
 	}
-	:is(input, select) {
+	:is(input, select, textarea) {
 		padding: calc(var(--s) / 3);
-	}
-	:is(input) {
-		flex-grow: 1;
-		width: 100%;
 		background-color: transparent;
+		flex-grow: 1;
+		font-size: 1rem;
 		color: var(--c-fg);
 	}
 	:is(textarea) {
-		min-height: 5rem;
+		resize: vertical;
 		white-space: pre-wrap;
 		word-break: break-all;
-		padding: var(--s);
-		color: var(--c-fg);
+		padding: calc(var(--s) / 2);
 		font-size: 1rem;
-		min-height: calc(var(--s) * 6);
-		background-color: transparent;
-		border: 1px solid var(--c-fg);
-		margin-bottom: 0;
-		margin: calc(var(--s) / 2) 0;
 		cursor: copy;
+		margin: calc(var(--s) / 2);
 	}
 	&::before {
 		display: block;
 		font-style: italic;
 		color: var(--c-fg);
+		padding: calc(var(--s) / 2);
 	}
 	&[provider-hostname][provider-name]::before {
-		content: "Copy this HTML code, into the HTML code of any webpage";
+		content: "Copy this HTML code, into the HTML code of any webpage, to display the list of jobs";
 	}
 	&:not([provider-hostname]):not([provider-name])::before {
-		content: "Snippet will be displayed below (fill in a provider name and hostname)";
+		content: "Embeddable code snippet will be displayed below, fill in a <provider-name> and <provider-hostname> to display a list of jobs";
 	}
 	&:not([provider-name])::before {
 		content: "Select a provider-name";
 	}
 	&:not([provider-hostname])::before {
-		content: "Enter a provider-hostname (the project/company ID found in the provider job-board's URL of the provider site)";
+		content: "Enter a <provider-hostname> for the project/company/room ID, found in the job-board's URL of the <provider-name> site";
 	}
 	display: flex;
 	flex-direction: column;

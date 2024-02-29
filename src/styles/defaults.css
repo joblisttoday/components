@@ -27,7 +27,6 @@ form {
 	:is(input, textarea) {
 		background-color: var(--c-bg);
 		color: var(--c-fg);
-		border-color: var(--c-company);
 		padding: calc(var(--s) / 3);
 	}
 	:is(input):focus-visible {
