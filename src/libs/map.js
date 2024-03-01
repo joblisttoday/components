@@ -131,10 +131,18 @@ const companyToMapMarkers = (company) => {
 	return markers;
 };
 
+const companiesToMapMarkers = (companies = []) => {
+	return companies.reduce((acc, company) => {
+		acc.push(...companyToMapMarkers(company));
+		return acc;
+	}, []);
+};
+
 export {
 	companiesResultsToMapMarkers,
 	companiesFileToMapMarkers,
 	companiesSqliteResultsToMapMarkers,
 	companiesAlgoliaResultsToMapMarkers,
 	companyToMapMarkers,
+	companiesToMapMarkers,
 };

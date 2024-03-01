@@ -7,7 +7,7 @@
 		<script type="module">
 			import joblist from "../../src/index.js";
 			const { sqlSdk, mapSdk } = joblist;
-			const { companiesSqliteResultsToMapMarkers } = mapSdk;
+			const { companiesToMapMarkers } = mapSdk;
 			(async ({
 				$search = document.querySelector("joblist-search"),
 				$map = document.querySelector("joblist-map-list"),
@@ -19,7 +19,7 @@
 					} else if (query && companies) {
 						/* @TODO there are no position on jobs yet */
 						delete detail.jobs;
-						const itemMarkers = companiesSqliteResultsToMapMarkers(companies);
+						const itemMarkers = companiesToMapMarkers(companies);
 						$map.setAttribute("markers", JSON.stringify(itemMarkers));
 					} else if (!companies) {
 						$map.removeAttribute("results");
@@ -27,7 +27,7 @@
 				};
 				await sqlSdk.initialize();
 				const allCompanies = await sqlSdk.getAllCompaniesData();
-				const allMarkers = companiesSqliteResultsToMapMarkers(allCompanies);
+				const allMarkers = companiesToMapMarkers(allCompanies);
 				$search.addEventListener("search", handleSearch);
 				$map.setAttribute("markers", JSON.stringify(allMarkers));
 			})();
