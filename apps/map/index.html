@@ -6,7 +6,7 @@
 		<title>@joblist/components/map</title>
 		<script type="module">
 			import joblist from "../../src/index.js";
-			const { sqlSdk, mapSdk } = joblist;
+			const { apiSdk, mapSdk } = joblist;
 			const { companiesToMapMarkers } = mapSdk;
 			(async ({
 				$search = document.querySelector("joblist-search"),
@@ -25,8 +25,8 @@
 						$map.removeAttribute("results");
 					}
 				};
-				await sqlSdk.initialize();
-				const allCompanies = await sqlSdk.getAllCompaniesData();
+				// getCompaniesWithPositions ?
+				const allCompanies = await apiSdk.getCompanies();
 				const allMarkers = companiesToMapMarkers(allCompanies);
 				$search.addEventListener("search", handleSearch);
 				$map.setAttribute("markers", JSON.stringify(allMarkers));

@@ -1,7 +1,56 @@
+class Company {
+	get attributes() {
+		return [
+			// could delete the dates and get info from git-repo/github
+			"created_at",
+			"updated_at",
+			// id
+			"slug",
+			"title",
+			"description",
+			"tags",
+			"positions",
+			// for jobs
+			"job_board_provider",
+			"job_board_hostname",
+			// urls
+			"company_url",
+			"job_board_url",
+			"twitter_url",
+			"linkedin_url",
+			"youtube_url",
+			"instagram_url",
+			"facebook_url",
+			"github_url",
+			"wikipedia_url",
+		];
+	}
+	constructor(data) {
+		this.create(data);
+	}
+	create(data) {
+		this.attributes.forEach((attr) => {
+			const attrVal = data[attr];
+			if (attrVal) {
+				if (["tags", "positions"].includes(attr)) {
+					try {
+						this[attr] = JSON.parse(attrVal);
+					} catch (e) {}
+				} else {
+					this[attr] = attrVal;
+				}
+			}
+			if (!this[attr] || !attrVal) {
+				this[attr] = undefined;
+			}
+		});
+	}
+}
+
 /* a job, used in joblist.today systems */
 class Job {
-	constructor(data) {
-		const attributes = [
+	get attributes() {
+		return [
 			/* job data */
 			"id",
 			"name",
@@ -15,12 +64,13 @@ class Job {
 			"providerId",
 			"providerHostname",
 		];
-
+	}
+	constructor(data) {
 		/* if not company title, use providerHostname */
 		data.companyTitle = data.companyTitle || data.providerHostname;
 		data.location = data.location || "Not specified";
 
-		const missingAttr = this.getMissingAttributes(attributes, data);
+		const missingAttr = this.getMissingAttributes(this.attributes, data);
 		if (missingAttr && missingAttr.length) {
 			console.log("Error creating job", missingAttr, data);
 		} else {
@@ -62,4 +112,4 @@ class Provider {
 	async getJobs() {}
 }
 
-export { Job, Provider };
+export { Company, Job, Provider };

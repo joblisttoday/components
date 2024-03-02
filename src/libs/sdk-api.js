@@ -1,4 +1,5 @@
 import { generateMissingDates } from "../utils/heatmap.js";
+import { Company } from "../utils/models.js";
 
 export class JoblistApiSDK {
 	constructor(url = "https://api.joblist.today") {
@@ -17,18 +18,15 @@ export class JoblistApiSDK {
 		}
 		return fetch(`${url}`, config).then((res) => res.json());
 	}
-	getCompanies() {
-		return this.fetch("/sqlite/companies");
+	async getCompanies() {
+		const companies = await this.fetch("/sqlite/companies");
+		return companies?.map((c) => new Company(c)) || [];
 	}
 	async getCompany(slug) {
 		const res = await this.fetch(`/sqlite/companies/${slug}`);
 		const data = res[0];
 		if (data) {
-			return {
-				...data,
-				tags: JSON.parse(data?.tags || []),
-				positions: JSON.parse(data?.positions || []),
-			};
+			return new Company(data);
 		}
 	}
 	getJobs(signal) {
@@ -62,6 +60,12 @@ export class JoblistApiSDK {
 		if (!signal?.aborted) {
 			return generateMissingDates(data, days);
 		}
+	}
+	getTagsCompanies() {
+		return this.fetch("/sqlite/tags/companies");
+	}
+	getTagCompanies(tag) {
+		return this.fetch(`/sqlite/tags/companies/${tag}`);
 	}
 }
 
