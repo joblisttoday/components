@@ -64,3 +64,13 @@ joblist-company-widgets {
 	display: flex;
 	flex-wrap: wrap;
 }
+
+joblist-company-edit {
+	:is(summary) {
+		padding: calc(var(--s) / 2);
+	}
+	:is(menu) {
+		display: flex;
+		flex-wrap: wrap;
+	}
+}

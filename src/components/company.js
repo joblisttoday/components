@@ -50,6 +50,7 @@ export default class JoblistCompany extends HTMLElement {
 					...this.createCardDoms(this.company),
 					this.createDescription(this.company),
 					this.createLinks(this.company),
+					this.createEdit(this.company),
 					this.createWidgets(this.company),
 					this.createBoard(this.company),
 				);
@@ -170,5 +171,51 @@ export default class JoblistCompany extends HTMLElement {
 		$board.setAttribute("provider-name", job_board_provider);
 		$board.setAttribute("provider-hostname", job_board_hostname);
 		return $board;
+	}
+	createEdit({ slug }) {
+		const editLinks = [
+			{
+				text: "edit",
+				href: `https://edit.joblist.today/#/collections/companies/entries/${slug}/index`,
+				title: "Edit with a github account in netlify-cms",
+			},
+			{
+				text: "file",
+				href: `https://github.com/joblisttoday/data/edit/main/companies/${slug}/index.md`,
+				title: "Edit with github directly",
+			},
+			{
+				text: "delete",
+				href: `https://github.com/joblisttoday/data/issues/new?labels=delete-company&template=delete_company.yml&title=%5Bdelete%5D+${slug}`,
+				title: "Request company deletion",
+			},
+			{
+				text: "issue",
+				href: `https://github.com/joblisttoday/data/issues/new?labels=update-company&template=update_company.yml&title=%5Bupdate%5D+${slug}`,
+				title: "New issue to update or dissuss this company",
+			},
+		];
+
+		const links = editLinks.map((linkInfo) => {
+			const { text, href, title } = linkInfo;
+			const listItem = document.createElement("li");
+			const anchor = document.createElement("a");
+			anchor.textContent = text;
+			anchor.href = href;
+			anchor.title = title;
+			listItem.appendChild(anchor);
+			return listItem;
+		});
+		const menu = document.createElement("menu");
+		menu.append(...links);
+
+		const details = document.createElement("details");
+		const summary = document.createElement("summary");
+		summary.textContent = "Edit";
+		details.append(summary, menu);
+
+		const edit = document.createElement("joblist-company-edit");
+		edit.append(details);
+		return edit;
 	}
 }
