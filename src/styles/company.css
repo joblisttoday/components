@@ -13,6 +13,23 @@ joblist-company {
 			padding: calc(var(--s) / 5);
 		}
 	}
+	:is(summary) {
+		padding: calc(var(--s) / 4);
+	}
+	:is(joblist-giscus, joblist-company-edit) {
+		:is(details) {
+			&:is([open]) {
+				background-color: var(--c-bg);
+			}
+			flex-grow: 1;
+		}
+		:is(summary) {
+			text-align: right;
+		}
+		display: flex;
+		justify-content: flex-end;
+		margin: calc(var(--s) / 4);
+	}
 	display: flex;
 	flex-direction: column;
 	padding: calc(var(--s) / 2);
@@ -66,11 +83,9 @@ joblist-company-widgets {
 }
 
 joblist-company-edit {
-	:is(summary) {
-		padding: calc(var(--s) / 2);
-	}
 	:is(menu) {
 		display: flex;
 		flex-wrap: wrap;
+		justify-content: flex-end;
 	}
 }

@@ -1,5 +1,6 @@
 import apiSdk from "../libs/sdk-api.js";
 import { companyToMapMarkers } from "../libs/map.js";
+import "giscus";
 
 export default class JoblistCompany extends HTMLElement {
 	get full() {
@@ -50,8 +51,9 @@ export default class JoblistCompany extends HTMLElement {
 					...this.createCardDoms(this.company),
 					this.createDescription(this.company),
 					this.createLinks(this.company),
-					this.createEdit(this.company),
 					this.createWidgets(this.company),
+					this.createEdit(this.company),
+					this.createGiscus(),
 					this.createBoard(this.company),
 				);
 			} else {
@@ -217,5 +219,29 @@ export default class JoblistCompany extends HTMLElement {
 		const edit = document.createElement("joblist-company-edit");
 		edit.append(details);
 		return edit;
+	}
+	createGiscus() {
+		const giscus = document.createElement("giscus-widget");
+		giscus.setAttribute("id", "comments");
+		giscus.setAttribute("repo", "joblisttoday/data");
+		giscus.setAttribute("repoid", "MDEwOlJlcG9zaXRvcnkzMDA2ODcyNDc");
+		giscus.setAttribute("category", "Companies");
+		giscus.setAttribute("categoryid", "DIC_kwDOEewfj84CTgrN");
+		giscus.setAttribute("mapping", "pathname");
+		giscus.setAttribute("strict", "1");
+		giscus.setAttribute("reactionsenabled", "1");
+		giscus.setAttribute("emitmetadata", "0");
+		giscus.setAttribute("inputposition", "top");
+		giscus.setAttribute("theme", "preferred_color_scheme");
+		giscus.setAttribute("lang", "en");
+		giscus.setAttribute("loading", "lazy");
+
+		const details = document.createElement("details");
+		const summary = document.createElement("summary");
+		summary.textContent = "Discussion";
+		details.append(summary, giscus);
+		const wrapper = document.createElement("joblist-giscus");
+		wrapper.append(details);
+		return wrapper;
 	}
 }
