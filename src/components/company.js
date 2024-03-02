@@ -69,7 +69,7 @@ export default class JoblistCompany extends HTMLElement {
 		return $wrapper;
 	}
 	createDescription({ description }) {
-		if (!description) return;
+		if (!description) return "";
 		const $wrapper = document.createElement("joblist-company-description");
 		const $element = document.createElement("p");
 		$element.textContent = description;
@@ -77,7 +77,7 @@ export default class JoblistCompany extends HTMLElement {
 		return $wrapper;
 	}
 	createTags({ tags }) {
-		if (!tags || !tags.length) return;
+		if (!tags || !tags.length) return "";
 		const $wrapper = document.createElement("joblist-company-tags");
 		const $menu = document.createElement("menu");
 		$menu.append(
@@ -125,14 +125,18 @@ export default class JoblistCompany extends HTMLElement {
 			}
 			return acc;
 		}, []);
-		const $listItems = $links.map(($link) => {
-			const $li = document.createElement("li");
-			$li.append($link);
-			return $li;
-		});
-		const $menu = document.createElement("menu");
-		$menu.append(...$listItems);
-		return $menu;
+		if ($links) {
+			const $listItems = $links.map(($link) => {
+				const $li = document.createElement("li");
+				$li.append($link);
+				return $li;
+			});
+			const $menu = document.createElement("menu");
+			$menu.append(...$listItems);
+			return $menu;
+		} else {
+			return "";
+		}
 	}
 	createWidgets(company) {
 		const $widgets = document.createElement("joblist-company-widgets");
@@ -146,7 +150,7 @@ export default class JoblistCompany extends HTMLElement {
 		return $heatmap;
 	}
 	createPositions(company) {
-		if (!company.positions) return;
+		if (!company.positions) return "";
 		const $map = document.createElement("joblist-map-list");
 		$map.setAttribute("markers", JSON.stringify(companyToMapMarkers(company)));
 		return $map;

@@ -4,15 +4,25 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>@joblist/components/company</title>
-		<script type="module" src="../../src/index.js"></script>
+		<script type="module">
+			import "../../src/index.js";
+
+			(({ slug = "ableton" }) => {
+				const $company = document.createElement("joblist-company");
+				if (slug) {
+					$company.setAttribute("slug", slug);
+				}
+				const $companyFull = $company.cloneNode();
+				$companyFull.setAttribute("full", true);
+				document
+					.querySelector("joblist-page")
+					.append($company, document.createElement("hr"), $companyFull);
+			})(Object.fromEntries(new URLSearchParams(window.location.search)));
+		</script>
 	</head>
 	<body>
 		<joblist-layout>
-			<joblist-page>
-				<joblist-company slug="ableton"></joblist-company>
-				<hr />
-				<joblist-company slug="ableton" full="true"></joblist-company>
-			</joblist-page>
+			<joblist-page> </joblist-page>
 		</joblist-layout>
 	</body>
 </html>
