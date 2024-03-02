@@ -51,10 +51,7 @@ export default class JoblistMapList extends HTMLElement {
 
 	/* used to build the url of the marker link */
 	get origin() {
-		return (
-			this.getAttribute("origin") ||
-			"https://profiles.joblist.today/companies/{}"
-		);
+		return this.getAttribute("origin") || "https://joblist.today/{}";
 	}
 
 	get markers() {
