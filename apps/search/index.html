@@ -6,15 +6,31 @@
 		<title>@joblist/components/search</title>
 		<script type="module" src="../../src/index.js"></script>
 		<script type="module">
-			const $search = document.querySelector("joblist-search");
-			const $results = document.querySelector("joblist-results");
-			$search.addEventListener("search", ({ detail }) => {
-				if (detail.companies || detail.jobs) {
-					$results.setAttribute("results", JSON.stringify(detail));
-				} else {
-					$results.removeAttribute("results");
+			(({ query = "" }) => {
+				const $search = document.createElement("joblist-search");
+				const $results = document.createElement("joblist-results");
+				$search.addEventListener("search", ({ detail }) => {
+					if (detail.companies || detail.jobs) {
+						$results.setAttribute("results", JSON.stringify(detail));
+					} else {
+						$results.removeAttribute("results");
+					}
+				});
+				if (query) {
+					$search.setAttribute("query", query);
+					/* const search = new URLSearchParams(window.location.search);
+						 search.delete("query");
+						 window.location.search = search; */
 				}
-			});
+				document
+					.querySelector("joblist-page")
+					.append(
+						$search,
+						document.createElement("hr"),
+						$results,
+						document.createElement("hr"),
+					);
+			})(Object.fromEntries(new URLSearchParams(window.location.search)));
 		</script>
 	</head>
 	<body>
@@ -36,9 +52,8 @@
 					</li>
 				</menu>
 			</joblist-menu>
-			<joblist-page>
-				<joblist-search></joblist-search>
-				<joblist-results></joblist-results>
+			<joblist-page> </joblist-page>
+			<joblist-footer>
 				<footer>
 					<hr />
 					<dl>
@@ -57,7 +72,7 @@
 						</dd>
 					</dl>
 				</footer>
-			</joblist-page>
+			</joblist-footer>
 		</joblist-layout>
 	</body>
 </html>

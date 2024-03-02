@@ -10,40 +10,11 @@ export default class JoblistSearch extends HTMLElement {
 			`https://joblist.gitlab.io/workers/joblist.db`
 		);
 	}
-
-	constructor() {
-		super();
-		this.debounceTimeout = null;
-		this.debouncingDelay = 333;
+	get query() {
+		return this.getAttribute("query");
 	}
 
-	async connectedCallback() {
-		this.joblistSDK = new JoblistSqlSDK(this.databaseUrl);
-		await this.joblistSDK.initialize();
-		this._render();
-	}
-	_render() {
-		this.innerHTML = "";
-		const $input = document.createElement("input");
-		$input.type = "search";
-		$input.placeholder =
-			this.placeholder || "Search (e.g., apple* OR orange AND banana NOT pear ";
-		$input.addEventListener("input", this._debounceOnInput.bind(this));
-		this.append($input);
-	}
-
-	_debounceOnInput(event) {
-		if (this.debounceTimeout) {
-			clearTimeout(this.debounceTimeout);
-		}
-		this.debounceTimeout = setTimeout(
-			() => this._onInput(event),
-			this.debouncingDelay,
-		);
-	}
-
-	async _onInput(event) {
-		const { value: query } = event.target;
+	async search(query = "") {
 		let companies, jobs;
 		try {
 			companies = await this.joblistSDK.searchCompanies(query);
@@ -58,6 +29,47 @@ export default class JoblistSearch extends HTMLElement {
 		});
 		this.dispatchEvent(resultEvent);
 		return result;
+	}
+
+	constructor() {
+		super();
+		this.debounceTimeout = null;
+		this.debouncingDelay = 333;
+	}
+
+	async connectedCallback() {
+		this.joblistSDK = new JoblistSqlSDK(this.databaseUrl);
+		await this.joblistSDK.initialize();
+		if (this.query) {
+			this.search(this.query);
+		}
+		this._render(this.query);
+	}
+	_render(query = "") {
+		const $input = document.createElement("input");
+		$input.type = "search";
+		$input.placeholder =
+			this.placeholder || "Search (e.g., apple* OR orange AND banana NOT pear ";
+		$input.addEventListener("input", this._debounceOnInput.bind(this));
+		if (query) {
+			$input.value = query;
+		}
+		this.replaceChildren($input);
+	}
+
+	_debounceOnInput(event) {
+		if (this.debounceTimeout) {
+			clearTimeout(this.debounceTimeout);
+		}
+		this.debounceTimeout = setTimeout(
+			() => this._onInput(event),
+			this.debouncingDelay,
+		);
+	}
+
+	async _onInput(event) {
+		const { value: query } = event.target;
+		this.search(query);
 	}
 
 	async _onCoordinatesInput(event = { target: { value: {} } }) {
