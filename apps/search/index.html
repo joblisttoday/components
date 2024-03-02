@@ -21,12 +21,7 @@
 				}
 				document
 					.querySelector("joblist-page")
-					.append(
-						$search,
-						document.createElement("hr"),
-						$results,
-						document.createElement("hr"),
-					);
+					.append($search, document.createElement("hr"), $results);
 			})(Object.fromEntries(new URLSearchParams(window.location.search)));
 		</script>
 	</head>

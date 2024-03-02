@@ -5,6 +5,15 @@ export default class JoblistCompany extends HTMLElement {
 	get full() {
 		return this.getAttribute("full") === "true";
 	}
+	get origin() {
+		return this.getAttribute("origin") || "https://joblist.today";
+	}
+	get tagsOrigin() {
+		return (
+			this.getAttribute("tagsOrigin") ||
+			"https://profiles.joblist.today/tags/companies"
+		);
+	}
 	get slug() {
 		return this.getAttribute("slug");
 	}
@@ -15,10 +24,10 @@ export default class JoblistCompany extends HTMLElement {
 		this.setAttribute("company", JSON.stringify(obj));
 	}
 	buildProfileUrl(slug) {
-		return `https://profiles.joblist.today/companies/${slug}`;
+		return `${this.origin}/${slug}`;
 	}
 	buildTagUrl(tag) {
-		return `https://profiles.joblist.today/tags/companies/${tag}`;
+		return `${this.tagsOrigin}/${tag}`;
 	}
 	constructor() {
 		super();

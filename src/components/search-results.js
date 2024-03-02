@@ -2,12 +2,10 @@ export default class JoblistSearchResults extends HTMLElement {
 	static get observedAttributes() {
 		return ["results"];
 	}
-
 	get results() {
 		const resultsAttr = this.getAttribute("results");
 		return resultsAttr ? JSON.parse(resultsAttr) : {};
 	}
-
 	connectedCallback() {
 		this._render();
 	}

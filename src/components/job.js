@@ -56,6 +56,9 @@ export default class JoblistJob extends HTMLElement {
 	get job() {
 		return JSON.parse(this.getAttribute("job"));
 	}
+	get origin() {
+		return this.getAttribute("origin") || "https://joblist.today";
+	}
 	connectedCallback() {
 		this.render();
 	}
@@ -99,10 +102,7 @@ export default class JoblistJob extends HTMLElement {
 		$companyUrl.target = "_blank";
 		$companyUrl.textContent = `@${company_slug}`;
 		$companyUrl.title = company_title;
-		$companyUrl.setAttribute(
-			"href",
-			`https://profiles.joblist.today/companies/${company_slug}`,
-		);
+		$companyUrl.setAttribute("href", `${this.origin}/${company_slug}`);
 		const $wrapper = document.createElement("joblist-job-company-title");
 		$wrapper.append($companyUrl);
 		return $wrapper;

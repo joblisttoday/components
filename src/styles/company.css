@@ -1,11 +1,9 @@
 joblist-company {
 	&:is([full]) {
-		flex-direction: column;
 		flex-wrap: nowrap;
 	}
 	&:is(:not([full])) {
 		flex-wrap: wrap;
-		align-items: center;
 	}
 	:is(menu) {
 		:is(li) {
@@ -16,6 +14,7 @@ joblist-company {
 		}
 	}
 	display: flex;
+	flex-direction: column;
 	padding: calc(var(--s) / 2);
 }
 joblist-company-title {
@@ -46,6 +45,7 @@ joblist-company-description {
 	:is(joblist-company:not([full])) & :is(p) {
 		margin: 0;
 		text-overflow: "…";
+		overflow: hidden;
 	}
 	max-width: var(--s-container);
 }
