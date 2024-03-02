@@ -8,10 +8,7 @@
 			import joblist from "../../src/index.js";
 			const { apiSdk, mapSdk } = joblist;
 			const { companiesToMapMarkers } = mapSdk;
-			(async ({
-				$search = document.querySelector("joblist-search"),
-				$map = document.querySelector("joblist-map-list"),
-			} = {}) => {
+			(async ({ query = "", latitude = "", longitude = "", zoom = 3 }) => {
 				const handleSearch = ({ detail }) => {
 					const { companies, query } = detail;
 					if (!query) {
@@ -28,9 +25,23 @@
 				// getCompaniesWithPositions ?
 				const allCompanies = await apiSdk.getCompanies();
 				const allMarkers = companiesToMapMarkers(allCompanies);
+
+				/* apply attributes to elements */
+				const $search = document.createElement("joblist-search");
 				$search.addEventListener("search", handleSearch);
+				if (query) {
+					$search.setAttribute("query", query);
+				}
+
+				const $map = document.createElement("joblist-map-list");
+				$map.setAttribute("latitude", latitude);
+				$map.setAttribute("longitude", longitude);
+				$map.setAttribute("zoom", zoom);
+				$map.setAttribute("origin", "https://profiles.joblist.today/companies");
 				$map.setAttribute("markers", JSON.stringify(allMarkers));
-			})();
+
+				document.querySelector("joblist-page").append($search, $map);
+			})(Object.fromEntries(new URLSearchParams(window.location.search)));
 		</script>
 	</head>
 	<body>
@@ -52,15 +63,7 @@
 					</li>
 				</menu>
 			</joblist-menu>
-			<joblist-page full>
-				<joblist-search></joblist-search>
-				<joblist-map-list
-					latitude=""
-					longitude=""
-					zoom="3"
-					origin="https://profiles.joblist.today/companies"
-				></joblist-map-list>
-			</joblist-page>
+			<joblist-page full> </joblist-page>
 		</joblist-layout>
 	</body>
 </html>
