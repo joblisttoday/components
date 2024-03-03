@@ -1,0 +1,7 @@
+joblist-pricing-table {
+	display: flex;
+	justify-content: center;
+	padding: calc(var(--s) / 2);
+}
+stripe-pricing-table {
+}

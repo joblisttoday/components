@@ -16,6 +16,7 @@ import JoblistBoard from "./board.js";
 import JoblistBoardProvider, { providerDefinitions } from "./board-provider.js";
 import JoblistBoardJob from "./board-job.js";
 import JoblistHeatmap from "./heatmap.js";
+import JoblistPricingTable from "./pricing-table.js";
 
 const componentDefinitions = {
 	"joblist-umami-script": JoblistUmamiScript,
@@ -42,6 +43,9 @@ const componentDefinitions = {
 	"joblist-board": JoblistBoard,
 	"joblist-board-provider": JoblistBoardProvider,
 	"joblist-board-job": JoblistBoardJob,
+
+	/* stripe */
+	"joblist-pricing-table": JoblistPricingTable,
 };
 
 export { componentDefinitions, providerDefinitions };
