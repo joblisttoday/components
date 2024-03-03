@@ -17,6 +17,7 @@ import JoblistBoardProvider, { providerDefinitions } from "./board-provider.js";
 import JoblistBoardJob from "./board-job.js";
 import JoblistHeatmap from "./heatmap.js";
 import JoblistPricingTable from "./pricing-table.js";
+import JoblistBilling from "./billing.js";
 
 const componentDefinitions = {
 	"joblist-umami-script": JoblistUmamiScript,
@@ -46,6 +47,7 @@ const componentDefinitions = {
 
 	/* stripe */
 	"joblist-pricing-table": JoblistPricingTable,
+	"joblist-billing": JoblistBilling,
 };
 
 export { componentDefinitions, providerDefinitions };
