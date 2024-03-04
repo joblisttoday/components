@@ -37,7 +37,6 @@ export default class JoblistCompany extends HTMLElement {
 	async connectedCallback() {
 		if (this.slug) {
 			this.company = await this.sdk.getCompany(this.slug);
-			console.log("company", this.company);
 		}
 		this.render();
 	}
@@ -66,9 +65,13 @@ export default class JoblistCompany extends HTMLElement {
 		this.append(...$doms);
 	}
 	createCardDoms(company) {
-		return [this.createTitle(this.company), this.createTags(this.company)];
+		const doms = [
+			this.createTitle(this.company),
+			this.createTags(this.company),
+		];
+		return doms;
 	}
-	createTitle({ slug, title }) {
+	createTitle({ slug, title, ...company }) {
 		const $title = document.createElement("h1");
 		$title.textContent = title;
 
@@ -78,6 +81,9 @@ export default class JoblistCompany extends HTMLElement {
 		$link.append($title);
 		const $wrapper = document.createElement("joblist-company-title");
 		$wrapper.append($link);
+		if (company?.is_highlighted) {
+			$wrapper.append(this.createHighlight(this.company));
+		}
 		return $wrapper;
 	}
 	createDescription({ description }) {
@@ -243,5 +249,15 @@ export default class JoblistCompany extends HTMLElement {
 		const wrapper = document.createElement("joblist-giscus");
 		wrapper.append(details);
 		return wrapper;
+	}
+	createHighlight(company) {
+		const highlighted = document.createElement("joblist-highlight");
+		highlighted.setAttribute("type", "company");
+		highlighted.setAttribute("text", company.title);
+		highlighted.setAttribute(
+			"title",
+			`${company.title} is currently highlighted`,
+		);
+		return highlighted;
 	}
 }

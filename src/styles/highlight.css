@@ -1,0 +1,25 @@
+joblist-highlight {
+	height: calc(var(--s) / 2);
+	width: calc(var(--s) / 2);
+	margin: calc(var(--s) / 3);
+	display: inline-flex;
+	background-color: var(--c-link);
+	animation: highlight 24s linear infinite;
+	animation-direction: alternate;
+	cursor: cell;
+}
+
+@keyframes highlight {
+	0% {
+		transform: rotate(0deg);
+		border-radius: 0%;
+	}
+	50% {
+		transform: rotate(360deg);
+		border-radius: 50%;
+	}
+	100% {
+		transform: rotate(-360deg);
+		border-radius: 0;
+	}
+}

@@ -23,6 +23,8 @@ class Company {
 			"facebook_url",
 			"github_url",
 			"wikipedia_url",
+			// from stripe.db merge
+			"is_highlighted",
 		];
 	}
 	constructor(data) {
@@ -35,6 +37,10 @@ class Company {
 				if (["tags", "positions"].includes(attr)) {
 					try {
 						this[attr] = JSON.parse(attrVal);
+					} catch (e) {}
+				} else if (["is_highlighted"].includes(attr)) {
+					try {
+						this[attr] = Boolean(attrVal);
 					} catch (e) {}
 				} else {
 					this[attr] = attrVal;

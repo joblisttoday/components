@@ -25,5 +25,7 @@ joblist-heatmap {
 			display: none;
 		}
 	}
+	display: flex;
+	max-width: 90vmin;
 	padding: calc(var(--s) / 2);
 }

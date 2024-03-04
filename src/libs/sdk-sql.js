@@ -1,5 +1,6 @@
 /* import { createDbWorker } from 'sql.js-httpvfs'; */
 import { sqliteToJson } from "../utils/sqlite.js";
+import { Company } from "../utils/models.js";
 import initSqlJs from "sql.js";
 
 export class JoblistSqlSDK {
@@ -22,7 +23,13 @@ export class JoblistSqlSDK {
 	}
 
 	async getAllCompaniesData() {
-		return await this.executeQuery(`SELECT * FROM companies`);
+		let res;
+		try {
+			res = await this.executeQuery(`SELECT * FROM companies`);
+		} catch (e) {
+			throw e;
+		}
+		return res.map((c) => new Company(c));
 	}
 
 	async getAllJobsData() {
@@ -30,15 +37,25 @@ export class JoblistSqlSDK {
 	}
 
 	async searchCompanies(query = "") {
-		return await this.executeQuery(
-			`SELECT * FROM companies_fts WHERE companies_fts MATCH ?`,
-			[query],
-		);
+		let res;
+		try {
+			res = await this.executeQuery(
+				`SELECT companies.*, companies_fts.* FROM companies
+				 JOIN companies_fts ON companies.slug = companies_fts.slug
+				 WHERE companies_fts MATCH ?`,
+				[query],
+			);
+		} catch (e) {
+			throw e;
+		}
+		return res.map((c) => new Company(c));
 	}
 
 	async searchJobs(query = "") {
 		return await this.executeQuery(
-			`SELECT * FROM jobs_fts WHERE jobs_fts MATCH ?`,
+			`SELECT jobs.*, jobs_fts.* FROM jobs
+				 JOIN jobs_fts ON jobs.objectID = jobs_fts.objectID
+				 WHERE jobs_fts MATCH ?`,
 			[query],
 		);
 	}
@@ -79,22 +96,22 @@ export class JoblistSqlSDK {
 	async getCompanyHeatmap(slug, days = 365) {
 		const sql = `
 WITH RECURSIVE date_range AS (
-  SELECT MIN(published_date) AS min_date, MAX(published_date) AS max_date FROM jobs
-  WHERE published_date > DATE('now', '-' || ? || ' ' || 'days')
-  UNION ALL
-  SELECT date(min_date, '+1 day'), max_date FROM date_range WHERE min_date < max_date
+	SELECT MIN(published_date) AS min_date, MAX(published_date) AS max_date FROM jobs
+	WHERE published_date > DATE('now', '-' || ? || ' ' || 'days')
+	UNION ALL
+	SELECT date(min_date, '+1 day'), max_date FROM date_range WHERE min_date < max_date
 )
 SELECT
-  COALESCE(company_slug, ?) AS company_slug,
-  date_range.min_date AS date,
-  COALESCE(COUNT(DISTINCT ObjectId), 0) AS total,
-  strftime('%Y', date_range.min_date) AS year,
-  strftime('%w', date_range.min_date) AS dow,
-  strftime('%W', date_range.min_date) AS woy
+	COALESCE(company_slug, ?) AS company_slug,
+	date_range.min_date AS date,
+	COALESCE(COUNT(DISTINCT ObjectId), 0) AS total,
+	strftime('%Y', date_range.min_date) AS year,
+	strftime('%w', date_range.min_date) AS dow,
+	strftime('%W', date_range.min_date) AS woy
 FROM
-  date_range
+	date_range
 LEFT JOIN
-  jobs ON date_range.min_date = jobs.published_date
+	jobs ON date_range.min_date = jobs.published_date
 AND company_slug = ?
 OR company_slug is null
 GROUP BY 1,2
@@ -115,32 +132,32 @@ ORDER BY published_date ASC;
 	async getJobsHeatmap(days = 365) {
 		const sql = `
 WITH RECURSIVE date_range AS (
-  SELECT
-    MIN(published_date) AS min_date,
-    MAX(published_date) AS max_date
-  FROM jobs
-  WHERE published_date > DATE('now', '-' || ? || ' days')
-  UNION ALL
-  SELECT DATE(min_date, '+1 day'), max_date
-  FROM date_range
-  WHERE min_date < max_date
+	SELECT
+		MIN(published_date) AS min_date,
+		MAX(published_date) AS max_date
+	FROM jobs
+	WHERE published_date > DATE('now', '-' || ? || ' days')
+	UNION ALL
+	SELECT DATE(min_date, '+1 day'), max_date
+	FROM date_range
+	WHERE min_date < max_date
 )
 SELECT
-  date_range.min_date AS date,
-  COALESCE(COUNT(DISTINCT jobs.ObjectId), 0) AS total,
-  strftime('%Y', date_range.min_date) AS year,
-  strftime('%m', date_range.min_date) AS month,
-  strftime('%w', date_range.min_date) AS dow,
-  strftime('%j', date_range.min_date) AS doy,
-  strftime('%W', date_range.min_date) AS woy
+	date_range.min_date AS date,
+	COALESCE(COUNT(DISTINCT jobs.ObjectId), 0) AS total,
+	strftime('%Y', date_range.min_date) AS year,
+	strftime('%m', date_range.min_date) AS month,
+	strftime('%w', date_range.min_date) AS dow,
+	strftime('%j', date_range.min_date) AS doy,
+	strftime('%W', date_range.min_date) AS woy
 FROM
-  date_range
+	date_range
 LEFT JOIN
-  jobs ON DATE(date_range.min_date) = DATE(jobs.published_date)
+	jobs ON DATE(date_range.min_date) = DATE(jobs.published_date)
 GROUP BY
-  date_range.min_date
+	date_range.min_date
 ORDER BY
-  date_range.min_date ASC;
+	date_range.min_date ASC;
 		`;
 		const params = [days];
 		const result = await this.executeQuery(sql, params);

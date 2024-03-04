@@ -34,9 +34,24 @@ joblist-company {
 	flex-direction: column;
 	padding: calc(var(--s) / 2);
 }
+joblist-company {
+	&:is([is-highlighted="true"]) {
+		:is(joblist-company-title a) {
+			border-right: 1px dashed var(--c-link);
+			padding-right: var(--s);
+		}
+	}
+}
+
+/* chidlren dom */
 joblist-company-title {
 	:is(h1) {
 		margin: 0;
+	}
+	&:has(joblist-highlight) {
+		text-decoration: underline;
+		text-decoration-thickness: 0.1rem;
+		text-decoration-color: var(--c-link);
 	}
 	display: flex;
 	flex-wrap: wrap;
