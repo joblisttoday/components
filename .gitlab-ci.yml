@@ -20,7 +20,7 @@ pages:
   stage: site-publish
   image: node:latest
   variables:
-    VITE_BASE: "/"
+    VITE_BASE: "/components/"
   cache:
     key:
       files:
