@@ -12,7 +12,7 @@ export default class JoblistCompany extends HTMLElement {
 	get tagsOrigin() {
 		return (
 			this.getAttribute("tagsOrigin") ||
-			"https://profiles.joblist.today/tags/companies"
+			"https://joblist.gitlab.io/profiles/tags/companies"
 		);
 	}
 	get slug() {
