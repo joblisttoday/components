@@ -1,4 +1,4 @@
-import "https://js.stripe.com/v3/pricing-table.js";
+import "@stripe/stripe-js";
 
 export default class JoblistPricingTable extends HTMLElement {
 	get pricingTableId() {

@@ -2,6 +2,7 @@
 import "./styles/index.css";
 
 /* dependencies */
+import "@stripe/stripe-js";
 import mwc from "./libs/mwc.js";
 
 /* sdk */
