@@ -48,7 +48,7 @@ export class JoblistSqlSDK {
 		} catch (e) {
 			throw e;
 		}
-		return res.map((c) => new Company(c));
+		return res?.map((c) => new Company(c));
 	}
 
 	async searchJobs(query = "") {
