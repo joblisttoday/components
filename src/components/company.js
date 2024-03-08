@@ -20,7 +20,7 @@ export default class JoblistCompany extends HTMLElement {
 		return this.getAttribute("slug");
 	}
 	get company() {
-		return JSON.parse(this.getAttribute("company"));
+		return JSON.parse(this.getAttribute("company") || {});
 	}
 	set company(obj) {
 		this.setAttribute("company", JSON.stringify(obj));

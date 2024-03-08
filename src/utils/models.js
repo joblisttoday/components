@@ -27,14 +27,18 @@ class Company {
 			"is_highlighted",
 		];
 	}
-	constructor(data, { serializePositions, serializeTags } = {}) {
+	constructor(data, { serializePositions = true, serializeTags = true } = {}) {
 		this.create(data);
-		if (serializePositions && this.positions) {
+		if (
+			serializePositions &&
+			this.positions &&
+			typeof this.positions === "string"
+		) {
 			try {
 				this.positions = JSON.parse(this.positions);
 			} catch (e) {}
 		}
-		if (serializeTags && this.tags) {
+		if (serializeTags && this.tags && typeof this.tags === "string") {
 			try {
 				this.tags = JSON.parse(this.tags);
 			} catch (e) {}
@@ -44,7 +48,7 @@ class Company {
 		this.attributes.forEach((attr) => {
 			const attrVal = data[attr];
 			if (attrVal) {
-				if (["is_highlighted"].includes(attr)) {
+				if ("is_highlighted" === attr) {
 					try {
 						this[attr] = Boolean(attrVal);
 					} catch (e) {}

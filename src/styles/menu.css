@@ -31,8 +31,13 @@ joblist-menu {
 		&::before {
 			content: "⟻";
 			position: absolute;
-			margin-right: calc(var(--s) * 1.5);
+			top: 50%;
+			left: 25%;
+			transform: translateY(-50%);
 			opacity: 0;
+			line-height: 0.6;
+			transition: all 222ms ease-in-out;
+			font-size: 0.8rem;
 		}
 		&::after {
 			content: "≡";
@@ -44,6 +49,7 @@ joblist-menu {
 		&:active {
 			&::before {
 				opacity: 1;
+				left: 0;
 			}
 			&::after {
 				transform: rotateY(180deg);
@@ -58,8 +64,9 @@ joblist-menu {
 		padding: calc(var(--s) / 2);
 	}
 	:is(menu) {
-		:is(li)::before {
-			content: "—";
+		:is(a) {
+			display: inline-flex;
+			padding: calc(var(--s) / 3);
 		}
 		list-style-type: none;
 	}
