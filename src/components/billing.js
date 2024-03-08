@@ -1,5 +1,3 @@
-import "https://js.stripe.com/v3/pricing-table.js";
-
 export default class JoblistBilling extends HTMLElement {
 	get url() {
 		return this.getAttribute("url");
