@@ -1,15 +1,9 @@
 {
   "name": "@joblist/components",
   "private": false,
-  "version": "0.0.23",
+  "version": "0.0.24",
   "homepage": "https://gitlab.com/joblist/components",
-  "keywords": [
-    "web-components",
-    "leaflet",
-    "sqlite3",
-    "wasm",
-    "joblist"
-  ],
+  "keywords": ["web-components", "leaflet", "sqlite3", "wasm", "joblist"],
   "author": "joblist",
   "license": "GPL-3.0-or-later",
   "type": "module",
@@ -21,10 +15,7 @@
     "./mwc": "./src/libs/mwc.js"
   },
   "main": "./dist-lib/index.js",
-  "files": [
-    "**/*",
-    "dist-lib/*"
-  ],
+  "files": ["**/*", "dist-lib/*"],
   "scripts": {
     "dev": "vite",
     "build": "npm run build-website; npm run build-lib;",
