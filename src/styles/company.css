@@ -84,6 +84,8 @@ joblist-company-description {
 joblist-company-links {
 	:is(menu) {
 		margin-right: var(--s);
+		display: flex;
+		flex-wrap: wrap;
 	}
 	display: flex;
 	flex-wrap: wrap;

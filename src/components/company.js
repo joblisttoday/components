@@ -1,5 +1,6 @@
 import apiSdk from "../libs/sdk-api.js";
 import { companyToMapMarkers } from "../libs/map.js";
+import icons from "../utils/icons.js";
 import "giscus";
 
 export default class JoblistCompany extends HTMLElement {
@@ -37,6 +38,9 @@ export default class JoblistCompany extends HTMLElement {
 	async connectedCallback() {
 		if (this.slug) {
 			this.company = await this.sdk.getCompany(this.slug);
+		}
+		if (this.company?.company_url) {
+			this.faviconUrl = this.company.company_url;
 		}
 		this.render();
 	}
@@ -119,6 +123,7 @@ export default class JoblistCompany extends HTMLElement {
 	createLinks(company) {
 		const companyLinks = ["company_url", "job_board_url", "wikipedia_url"];
 		const socialLinks = [
+			"linkedin_url",
 			"twitter_url",
 			"youtube_url",
 			"facebook_url",
@@ -137,8 +142,10 @@ export default class JoblistCompany extends HTMLElement {
 			const $link = document.createElement("a");
 			const linkVal = company[linkKey];
 			if (linkVal) {
+				$link.setAttribute("data-icon", linkKey);
+				$link.setAttribute("data-href", linkVal);
 				$link.setAttribute("href", linkVal);
-				$link.textContent = linkKey;
+				$link.textContent = icons(linkKey);
 				acc.push($link);
 			}
 			return acc;

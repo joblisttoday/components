@@ -40,10 +40,25 @@ joblist-layout {
 }
 
 /* menu */
+/* Define a CSS variable */
 joblist-layout {
+	--favicon-url: "https://s2.googleusercontent.com/s2/favicons?domain=";
+
 	:is(joblist-menu) {
 		display: flex;
 		flex-wrap: wrap;
+	}
+	:is(a[data-icon]) {
+		&:is([data-icon="company_url"]) {
+			&::before {
+				content: "";
+				width: var(--s);
+				height: var(--s);
+				/* Use the custom property within attr() */
+				background-image: url(var(--favicon-url)"https://joblist.today/favicon.png");
+				/* Other styles */
+			}
+		}
 	}
 }
 
