@@ -145,6 +145,8 @@ export default class JoblistCompany extends HTMLElement {
 				$link.setAttribute("data-icon", linkKey);
 				$link.setAttribute("data-href", linkVal);
 				$link.setAttribute("href", linkVal);
+				$link.setAttribute("target", "_blank");
+				$link.setAttribute("rel", "noreferrer noopener");
 				$link.textContent = icons(linkKey);
 				acc.push($link);
 			}
