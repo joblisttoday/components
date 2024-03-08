@@ -1,17 +1,26 @@
 export default class JoblistMenu extends HTMLElement {
-	get id() {
-		return "joblist-menu";
+	/* props */
+	get href() {
+		return this.getAttribute("href") || "https://joblist.today";
 	}
 	get collapse() {
 		return this.getAttribute("collapse") === "true";
+	}
+	get favicon() {
+		return this.getAttribute("favicon") === "true";
+	}
+	/* helpers */
+	get id() {
+		return "joblist-menu";
 	}
 	connectedCallback() {
 		this.render();
 	}
 	render() {
-		if (this.collapse) {
-		}
 		this.prepend(this.createToggle(), this.createLabel());
+		if (this.favicon) {
+			this.append(this.createFavicon(this.href));
+		}
 	}
 	createToggle() {
 		const input = document.createElement("input");
@@ -23,5 +32,10 @@ export default class JoblistMenu extends HTMLElement {
 		const label = document.createElement("label");
 		label.setAttribute("for", this.id);
 		return label;
+	}
+	createFavicon(href) {
+		const favicon = document.createElement("joblist-favicon");
+		favicon.setAttribute("href", href);
+		return favicon;
 	}
 }
