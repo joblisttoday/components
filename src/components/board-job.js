@@ -23,6 +23,8 @@ export default class JoblistBoardJob extends HTMLElement {
 		const $jobName = document.createElement("joblist-board-job-name");
 		const $jobNameAnchor = document.createElement("a");
 		$jobNameAnchor.setAttribute("href", url);
+		$jobNameAnchor.setAttribute("target", "_blank");
+		$jobNameAnchor.setAttribute("rel", "noreferrer noopener");
 		$jobNameAnchor.innerText = title;
 		$jobName.append($jobNameAnchor);
 
