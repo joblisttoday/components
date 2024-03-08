@@ -27,18 +27,24 @@ class Company {
 			"is_highlighted",
 		];
 	}
-	constructor(data) {
+	constructor(data, { serializePositions, serializeTags } = {}) {
 		this.create(data);
+		if (serializePositions && this.positions) {
+			try {
+				this.positions = JSON.parse(this.positions);
+			} catch (e) {}
+		}
+		if (serializeTags && this.tags) {
+			try {
+				this.tags = JSON.parse(this.tags);
+			} catch (e) {}
+		}
 	}
 	create(data) {
 		this.attributes.forEach((attr) => {
 			const attrVal = data[attr];
 			if (attrVal) {
-				if (["tags", "positions"].includes(attr)) {
-					try {
-						this[attr] = JSON.parse(attrVal);
-					} catch (e) {}
-				} else if (["is_highlighted"].includes(attr)) {
+				if (["is_highlighted"].includes(attr)) {
 					try {
 						this[attr] = Boolean(attrVal);
 					} catch (e) {}

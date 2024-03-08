@@ -20,7 +20,7 @@
 					$search.setAttribute("query", query);
 				}
 				document
-					.querySelector("joblist-page")
+					.querySelector("joblist-page-main")
 					.append($search, document.createElement("hr"), $results);
 			})(Object.fromEntries(new URLSearchParams(window.location.search)));
 		</script>
@@ -40,31 +40,34 @@
 				</menu>
 				<menu>
 					<li>
-						<a href="https://joblist.today">joblist.today</a>
+						<joblist-favicon href="./"></joblist-favicon>
 					</li>
 				</menu>
 			</joblist-menu>
-			<joblist-page> </joblist-page>
-			<joblist-footer>
-				<footer>
-					<hr />
-					<dl>
-						<dt>
-							<a href="./"> Search </a>
-						</dt>
-						<dd>
-							Explore companies and jobs indices with
-							<a href="https://www.sqlite.org/fts3.html#full_text_index_queries"
-								>full text (3) search syntax</a
-							>, or on the
-							<a
-								href="https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db"
-								>sqlite3 database</a
-							>.
-						</dd>
-					</dl>
-				</footer>
-			</joblist-footer>
+			<joblist-page>
+				<joblist-page-main> </joblist-page-main>
+				<joblist-page-footer>
+					<footer>
+						<hr />
+						<dl>
+							<dt>
+								<a href="./"> Search </a>
+							</dt>
+							<dd>
+								Explore companies and jobs indices with
+								<a
+									href="https://www.sqlite.org/fts3.html#full_text_index_queries"
+									>full text (3) search syntax</a
+								>, or on the
+								<a
+									href="https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db"
+									>sqlite3 database</a
+								>.
+							</dd>
+						</dl>
+					</footer>
+				</joblist-page-footer>
+			</joblist-page>
 		</joblist-layout>
 	</body>
 </html>

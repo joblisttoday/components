@@ -1,5 +1,6 @@
 import JoblistUmamiScript from "./umami-script.js";
 import JoblistFavicon from "./favicon.js";
+import JoblistMenu from "./menu.js";
 import JoblistCompany from "./company.js";
 import JoblistJob from "./job.js";
 import JoblistMapList from "./map-list.js";
@@ -22,6 +23,7 @@ import JoblistBilling from "./billing.js";
 const componentDefinitions = {
 	"joblist-umami-script": JoblistUmamiScript,
 	"joblist-favicon": JoblistFavicon,
+	"joblist-menu": JoblistMenu,
 	"joblist-search": JoblistSearch,
 	"joblist-results": JoblistSearchResults,
 	"joblist-map-list": JoblistMapList,

@@ -9,8 +9,6 @@
 	<body>
 		<joblist-layout>
 			<joblist-menu>
-				<label for="joblist-menu"></label>
-				<input type="checkbox" id="joblist-menu" />
 				<menu>
 					<li>
 						<a href="./apps/">apps</a>
@@ -22,14 +20,25 @@
 						<a href="https://joblist.today"> joblist.today </a>
 					</li>
 				</menu>
+				<joblist-favicon href="./"></joblist-favicon>
 			</joblist-menu>
 			<joblist-page>
+				<h1>
+					<a href="./">Joblist components</a>
+				</h1>
 				<p>
-					Presentation and development page for the
-					<a href="./apps/">components</a>, re-usable graphical interface
-					elements to build the
-					<a href="https://joblist.today">joblist.today</a> projects.
+					Presentation and development site for the
+					<a href="./apps/">components</a>.
 				</p>
+				<p>
+					They aim to be re-usable graphical interface elements to build the
+					<a href="https://joblist.today">joblist.today</a> projects and pages.
+				</p>
+				<joblist-company slug="joblist-today"></joblist-company>
+				<joblist-favicon
+					title="Thanks for passing by! <3"
+					href="https://joblist.today"
+				></joblist-favicon>
 			</joblist-page>
 		</joblist-layout>
 	</body>

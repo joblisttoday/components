@@ -22,9 +22,12 @@ joblist-company {
 				background-color: var(--c-bg);
 			}
 			flex-grow: 1;
+			padding: calc(var(--s) / 2);
 		}
 		:is(summary) {
+			float: right;
 			text-align: right;
+			background-color: var(--c-bg);
 		}
 		display: flex;
 		justify-content: flex-end;
@@ -79,6 +82,9 @@ joblist-company-description {
 		text-overflow: "…";
 		overflow: hidden;
 	}
+	:is(joblist-company[full]) & :is(p) {
+		white-space: pre-wrap;
+	}
 	max-width: var(--s-container);
 }
 joblist-company-links {
@@ -89,6 +95,7 @@ joblist-company-links {
 	}
 	display: flex;
 	flex-wrap: wrap;
+	padding: calc(var(--s) / 2);
 }
 
 joblist-company-widgets {

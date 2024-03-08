@@ -1,4 +1,4 @@
-const template = `
+export const JOBLIST_FAVICON_SVG = `
 	<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
 			 width="480.000000pt" height="480.000000pt" viewBox="0 0 480.000000 480.000000"
 			 preserveAspectRatio="xMidYMid meet">
@@ -41,15 +41,33 @@ const template = `
 	</svg>
 `;
 
+const template = document.createElement("template");
+template.innerHTML = JOBLIST_FAVICON_SVG;
+
 export default class JoblistFavicon extends HTMLElement {
 	get color() {
 		return `#${(0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6)}`;
 	}
+	get href() {
+		return this.getAttribute("href");
+	}
 	connectedCallback() {
 		this.style.setProperty("--c-svg", this.color);
-		this._render();
+		const svg = template.content.cloneNode(true);
+		this.render(svg);
 	}
-	_render() {
-		this.innerHTML = template;
+	render(svg) {
+		if (this.href) {
+			const anchor = this.createAnchor(this.href);
+			anchor.replaceChildren(svg);
+			this.replaceChildren(anchor);
+		} else {
+			this.replaceChildren(svg);
+		}
+	}
+	createAnchor(href) {
+		const anchor = document.createElement("a");
+		anchor.setAttribute("href", href);
+		return anchor;
 	}
 }

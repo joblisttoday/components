@@ -9,9 +9,9 @@ joblist-menu {
 		display: none;
 	}
 	:is(input[type="checkbox"]) {
-		&:checked {
+		&:not(:checked) {
 			& ~ :is(label:hover, label:active) {
-				&::after {
+				&::before {
 					content: "⟼";
 				}
 			}
@@ -19,9 +19,9 @@ joblist-menu {
 				display: none;
 			}
 		}
-		&:not(:checked) {
+		&:checked {
 			& ~ :is(label:hover, label:active) {
-				&::after {
+				&::before {
 					content: "⟻";
 				}
 			}
@@ -29,31 +29,39 @@ joblist-menu {
 	}
 	:is(label[for="joblist-menu"]) {
 		&::before {
-			content: "≡";
+			content: "⟻";
+			position: absolute;
+			margin-right: calc(var(--s) * 1.5);
+			opacity: 0;
 		}
 		&::after {
-			content: "";
-			position: absolute;
-			bottom: 100%;
-			right: 0;
+			content: "≡";
 			transform: rotateY(0);
+			transition: all 222ms ease-in-out;
+			font-size: var(--s);
 		}
 		&:hover,
 		&:active {
-			border-color: var(--c-fg);
+			&::before {
+				opacity: 1;
+			}
+			&::after {
+				transform: rotateY(180deg);
+			}
+			color: var(--c-link);
 		}
 		cursor: pointer;
 		position: relative;
-		border: 1px solid transparent;
-		transition: border-color 100ms ease-in-out;
 		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: calc(var(--s) / 2);
 	}
 	:is(menu) {
 		:is(li)::before {
 			content: "—";
 		}
 		list-style-type: none;
-		padding-left: calc(var(--s) / 2);
 	}
 	transition: transform 100ms ease-in-out;
 }

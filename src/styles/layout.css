@@ -1,13 +1,12 @@
 :root[joblist-layout] {
-	& {
-		height: 100%;
-		display: flex;
-	}
 	:is(body) {
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+		margin: 0;
 	}
+	height: 100%;
+	display: flex;
 }
 
 joblist-layout {
@@ -25,17 +24,25 @@ joblist-layout {
 			display: flex;
 			flex-direction: column;
 		}
-	}
-	&:has(joblist-menu) {
-		:is(joblist-menu) {
-			position: sticky;
-			top: 0;
-			background-color: var(--c-bg);
+		&:is(:not([full])) {
+			padding: calc(var(--s) / 2);
 		}
+		:is(h1:first-of-type) {
+			margin-top: 0;
+		}
+		display: flex;
+		flex-direction: column;
+	}
+	:is(joblist-menu) {
+		position: sticky;
+		top: 0;
+		max-height: 100vh;
+		background-color: var(--c-bg);
+		display: flex;
+		flex-direction: column;
 	}
 	display: flex;
-	flex-direction: column;
-	flex-wrap: wrap;
+	flex-direction: row;
 	flex-grow: 1;
 }
 
@@ -43,11 +50,6 @@ joblist-layout {
 /* Define a CSS variable */
 joblist-layout {
 	--favicon-url: "https://s2.googleusercontent.com/s2/favicons?domain=";
-
-	:is(joblist-menu) {
-		display: flex;
-		flex-wrap: wrap;
-	}
 	:is(a[data-icon]) {
 		&:is([data-icon="company_url"]) {
 			&::before {

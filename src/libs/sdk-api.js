@@ -20,7 +20,14 @@ export class JoblistApiSDK {
 	}
 	async getCompanies() {
 		const companies = await this.fetch("/sqlite/companies");
-		return companies?.map((c) => new Company(c)) || [];
+		return (
+			companies?.map(
+				(c) =>
+					new Company(c, {
+						serializePositions: true,
+					}),
+			) || []
+		);
 	}
 	async getCompany(slug) {
 		const res = await this.fetch(`/sqlite/companies/${slug}`);

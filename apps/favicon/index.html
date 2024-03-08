@@ -8,7 +8,20 @@
 	</head>
 	<body>
 		<joblist-layout>
-			<joblist-favicon></joblist-favicon>
+			<joblist-page>
+				<details open>
+					<summary>Default</summary>
+					<joblist-favicon></joblist-favicon>
+				</details>
+				<details open>
+					<summary>Wrapped into an anchor</summary>
+					<a href="#anchor-out"><joblist-favicon></joblist-favicon></a>
+				</details>
+				<details open>
+					<summary>with <code>href</code> attribute directly</summary>
+					<joblist-favicon href="#anchor-in"></joblist-favicon>
+				</details>
+			</joblist-page>
 		</joblist-layout>
 	</body>
 </html>

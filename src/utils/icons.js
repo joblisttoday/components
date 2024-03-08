@@ -1,6 +1,6 @@
 const ICONS_DICT = [
 	["company_url", "www"],
-	["job_board_url", "jobs"],
+	["job_board_url", "careers"],
 	["wikipedia_url", "wiki"],
 	["linkedin_url", "ln"],
 	["twitter_url", "x"],

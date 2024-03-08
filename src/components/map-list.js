@@ -18,6 +18,9 @@ const buildTemplate = () => {
 				width: 100%;
 			}
 			joblist-leaflet {
+				&:is(.leaflet-container) {
+					background-color: var(--c-bg);
+				}
 				height: 100%;
 				min-height: 17rem;
 				flex-grow: 1;

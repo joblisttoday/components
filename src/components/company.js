@@ -169,7 +169,7 @@ export default class JoblistCompany extends HTMLElement {
 		return $widgets;
 	}
 	createHeatmap({ slug, job_board_provider, job_board_hostname }) {
-		if (!job_board_provider || !job_board_hostname) return;
+		if (!job_board_provider || !job_board_hostname) return "";
 		const $heatmap = document.createElement("joblist-heatmap");
 		$heatmap.setAttribute("slug", slug);
 		return $heatmap;
@@ -181,7 +181,7 @@ export default class JoblistCompany extends HTMLElement {
 		return $map;
 	}
 	createBoard({ job_board_provider, job_board_hostname }) {
-		if (!job_board_provider || !job_board_hostname) return;
+		if (!job_board_provider || !job_board_hostname) return "";
 		const $board = document.createElement("joblist-board");
 		$board.setAttribute("provider-name", job_board_provider);
 		$board.setAttribute("provider-hostname", job_board_hostname);
