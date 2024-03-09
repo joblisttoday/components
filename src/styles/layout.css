@@ -30,11 +30,22 @@ joblist-layout {
 		:is(h1:first-of-type) {
 			margin-top: 0;
 		}
+		:is(hr) {
+			flex-basis: 100%;
+			flex-grow: 1;
+			width: 100%;
+			max-width: 80vw;
+			justify-self: flex-end;
+			border-bottom: none;
+			border-left: 0;
+			border-right: 0;
+		}
 		display: flex;
 		flex-direction: column;
 	}
 	:is(joblist-menu) {
 		position: sticky;
+		bottom: 0;
 		top: 0;
 		max-height: 100vh;
 		background-color: var(--c-bg);
@@ -45,7 +56,7 @@ joblist-layout {
 		:is(label[for="joblist-menu"]) {
 			padding: calc(var(--s) / 3);
 			position: sticky;
-			top: 0;
+			bottom: 0;
 		}
 		:is(joblist-favicon) {
 			position: sticky;
@@ -58,10 +69,13 @@ joblist-layout {
 			}
 			width: 100%;
 		}
-		overflow-y: scroll;
 		z-index: 1;
-		flex-direction: column;
+		flex-direction: column-reverse;
 		flex-shrink: 0;
+		order: 1;
+		overflow-y: scroll;
+		scrollbar-width: none;
+		/* -ms-overflow-style: none; */
 	}
 	flex-grow: 1;
 	display: flex;
@@ -95,12 +109,23 @@ joblist-layout {
 		&:is([row]) {
 			&:is([padding]) {
 				& > :is(*) {
-					padding: calc(var(--s) / 2);
+					padding: calc(var(--s) / 1);
+					flex-grow: 1;
+					flex-shrink: 0;
 				}
 			}
 			display: flex;
-			flex-direction: row;
 			flex-wrap: wrap;
+			/* flex-wrap: wrap; */
+			/* flex-shrink: 0; */
+		}
+		&:is([grid]) {
+			display: grid;
+			gap: var(--s);
+			@media (min-width: 50rem) {
+				grid-auto-flow: column;
+				grid-auto-columns: 1fr;
+			}
 		}
 	}
 }

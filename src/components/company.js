@@ -167,7 +167,7 @@ export default class JoblistCompany extends HTMLElement {
 	}
 	createWidgets(company) {
 		const $widgets = document.createElement("joblist-company-widgets");
-		$widgets.append(this.createHeatmap(company), this.createPositions(company));
+		$widgets.append(this.createPositions(company), this.createHeatmap(company));
 		return $widgets;
 	}
 	createHeatmap({ slug, job_board_provider, job_board_hostname }) {

@@ -7,77 +7,74 @@ joblist-layout {
 }
 
 /* resets */
-ul,
-ol {
-	padding-left: calc(var(--s) * 1.5);
-}
-a {
-	text-decoration: none;
-}
-a,
-a:visited {
-	color: var(--c-link);
-}
-a:active,
-a:hover {
-	color: var(--c-link--active);
-}
+joblist-layout {
+	:is(ul),
+	:is(ol) {
+		padding-left: calc(var(--s) * 1.5);
+	}
+	:is(a) {
+		text-decoration: none;
+	}
+	:is(a, a:visited) {
+		color: var(--c-link);
+	}
+	:is(a:active, a:hover) {
+		color: var(--c-link--active);
+	}
 
-form {
-	:is(input, textarea) {
-		background-color: var(--c-bg);
-		color: var(--c-fg);
-		padding: calc(var(--s) / 3);
-	}
-	:is(input):focus-visible {
-		outline: var(--outline-width) solid var(--c-company);
-	}
-	:is(fieldset) {
-		:is(input, textarea, select, option) {
-			font-size: 1rem;
-		}
+	:is(form) {
 		:is(input, textarea) {
-			flex-grow: 1;
-			width: 100%;
-		}
-		:is(textarea) {
-			min-height: calc(var(--s) * 3);
-			resize: vertical;
-		}
-		:is(button) {
-			background: transparent;
+			background-color: var(--c-bg);
 			color: var(--c-fg);
+			padding: calc(var(--s) / 3);
 		}
-		& + :is(fieldset) {
-			margin-top: calc(var(--s) / 4);
+		:is(input):focus-visible {
+			outline: var(--outline-width) solid var(--c-company);
 		}
-		border: none;
+		:is(fieldset) {
+			:is(input, textarea, select, option) {
+				font-size: 1rem;
+			}
+			:is(input, textarea) {
+				flex-grow: 1;
+				width: 100%;
+			}
+			:is(textarea) {
+				min-height: calc(var(--s) * 3);
+				resize: vertical;
+			}
+			:is(button) {
+				background: transparent;
+				color: var(--c-fg);
+			}
+			& + :is(fieldset) {
+				margin-top: calc(var(--s) / 4);
+			}
+			border: none;
+		}
 	}
-}
 
-button {
-	cursor: pointer;
-	padding: calc(var(--s) / 3) calc(var(--s) / 2);
-	border-width: var(--s-border);
-	background-color: var(--c-bg);
-	border-radius: var(--s-border-radius);
-	color: var(--c-fg);
-}
-menu,
-ol,
-ul {
-	padding: 0;
-	margin: 0;
-	list-style-position: inside;
-}
-
-img,
-video {
-	max-width: 100%;
-}
-
-details {
-	:is(summary) {
+	:is(button) {
 		cursor: pointer;
+		padding: calc(var(--s) / 3) calc(var(--s) / 2);
+		border-width: var(--s-border);
+		background-color: var(--c-bg);
+		border-radius: var(--s-border-radius);
+		color: var(--c-fg);
+	}
+	:is(menu, ol, ul) {
+		padding: 0;
+		margin: 0;
+		list-style-position: inside;
+	}
+
+	:is(img, video) {
+		max-width: 100%;
+	}
+
+	:is(details) {
+		:is(summary) {
+			cursor: pointer;
+		}
 	}
 }

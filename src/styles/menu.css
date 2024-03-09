@@ -12,7 +12,7 @@ joblist-menu {
 		&:not(:checked) {
 			& ~ :is(label:hover, label:active) {
 				&::before {
-					content: "⟼";
+					content: "⟻";
 				}
 			}
 			& ~ :is(*:not(label)) {
@@ -22,7 +22,7 @@ joblist-menu {
 		&:checked {
 			& ~ :is(label:hover, label:active) {
 				&::before {
-					content: "⟻";
+					content: "⟼";
 				}
 			}
 		}
@@ -69,9 +69,15 @@ joblist-menu {
 			padding: calc(var(--s) / 3);
 		}
 		list-style-type: none;
+		display: flex;
+		flex-direction: column-reverse;
+	}
+	:is(menu + menu) {
+		padding-top: calc(var(--s) / 2);
 	}
 	:is(joblist-favicon) {
-		position: absolute;
+		position: sticky;
+		top: 0;
 		bottom: 0;
 		right: 0;
 		padding: calc(var(--s) / 3);

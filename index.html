@@ -8,7 +8,7 @@
 	</head>
 	<body>
 		<joblist-layout>
-			<joblist-menu favicon="true">
+			<joblist-menu show-favicon="true">
 				<menu>
 					<li>
 						<a href="./apps/">apps</a>
@@ -22,22 +22,43 @@
 				</menu>
 			</joblist-menu>
 			<joblist-page>
-				<h1>
-					<a href="./">Joblist components</a>
-				</h1>
-				<p>
-					Presentation and development site for the
-					<a href="./apps/">components</a>.
-				</p>
-				<p>
-					They aim to be re-usable graphical interface elements to build the
-					<a href="https://joblist.today">joblist.today</a> projects and pages.
-				</p>
-				<joblist-favicon
-					title="Thanks for passing by! <3"
-					href="https://joblist.today"
-				></joblist-favicon>
-				<joblist-company slug="joblist-today"></joblist-company>
+				<header>
+					<h1>
+						<a href="./">Joblist components</a>
+					</h1>
+					<p>
+						Presentation and development site for the
+						<a href="./apps/">components</a>.
+					</p>
+				</header>
+				<main>
+					<section>
+						<p>
+							The application components aim to be re-usable graphical interface
+							elements to build the
+							<a href="https://joblist.today">joblist.today</a> projects and
+							pages.
+						</p>
+						<p>
+							Check out the code on
+							<a href="https://gitlab.com/joblist/components"> gitlab </a>
+							(GPLv3).
+						</p>
+					</section>
+				</main>
+				<hr />
+				<aside>
+					<joblist-company full="true" slug="joblist-today"></joblist-company>
+				</aside>
+				<hr />
+				<joblist-page-footer>
+					<footer>
+						<joblist-favicon
+							title="Thanks for passing by! <3"
+							href="https://joblist.today"
+						></joblist-favicon>
+					</footer>
+				</joblist-page-footer>
 			</joblist-page>
 		</joblist-layout>
 	</body>
