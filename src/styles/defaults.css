@@ -21,7 +21,25 @@ joblist-layout {
 	:is(a:active, a:hover) {
 		color: var(--c-link--active);
 	}
-
+	:is(a[href^="http"]) {
+		&:not(
+			[href^="https://joblist.today"],
+			[href^="https://joblist.gitlab.io"],
+			[href^="https://edit.joblist.today"],
+			[href^="https://api.joblist.today"]
+		) {
+			&::after {
+				content: "➶";
+				font-size: calc(var(--s-font) / 1.3);
+				display: inline;
+				vertical-align: super;
+			}
+		}
+		&::after {
+			align-self: flex-start;
+		}
+		display: inline-flex;
+	}
 	:is(form) {
 		:is(input, textarea) {
 			background-color: var(--c-bg);
@@ -76,5 +94,16 @@ joblist-layout {
 		:is(summary) {
 			cursor: pointer;
 		}
+	}
+
+	:is(hr) {
+		flex-basis: 100%;
+		flex-grow: 1;
+		width: 100%;
+		max-width: 80vw;
+		justify-self: flex-end;
+		border-bottom: none;
+		border-left: 0;
+		border-right: 0;
 	}
 }

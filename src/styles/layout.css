@@ -10,6 +10,10 @@
 }
 
 joblist-layout {
+	line-height: var(--line-height);
+}
+
+joblist-layout {
 	:is(joblist-search) {
 		width: 100%;
 		align-self: center;
@@ -29,16 +33,6 @@ joblist-layout {
 		}
 		:is(h1:first-of-type) {
 			margin-top: 0;
-		}
-		:is(hr) {
-			flex-basis: 100%;
-			flex-grow: 1;
-			width: 100%;
-			max-width: 80vw;
-			justify-self: flex-end;
-			border-bottom: none;
-			border-left: 0;
-			border-right: 0;
 		}
 		display: flex;
 		flex-direction: column;
@@ -67,7 +61,6 @@ joblist-layout {
 				word-break: break-all;
 				min-width: 10rem;
 			}
-			width: 100%;
 		}
 		z-index: 1;
 		flex-direction: column-reverse;
@@ -85,24 +78,6 @@ joblist-layout {
 	}
 }
 
-/* menu */
-/* Define a CSS variable */
-joblist-layout {
-	--favicon-url: "https://s2.googleusercontent.com/s2/favicons?domain=";
-	:is(a[data-icon]) {
-		&:is([data-icon="company_url"]) {
-			&::before {
-				content: "";
-				width: var(--s);
-				height: var(--s);
-				/* Use the custom property within attr() */
-				background-image: url(var(--favicon-url)"https://joblist.today/favicon.png");
-				/* Other styles */
-			}
-		}
-	}
-}
-
 /* layouting with div and their attributes */
 joblist-layout {
 	:is(div) {
@@ -116,8 +91,6 @@ joblist-layout {
 			}
 			display: flex;
 			flex-wrap: wrap;
-			/* flex-wrap: wrap; */
-			/* flex-shrink: 0; */
 		}
 		&:is([grid]) {
 			display: grid;
@@ -127,11 +100,5 @@ joblist-layout {
 				grid-auto-columns: 1fr;
 			}
 		}
-	}
-}
-@media (min-width: 40rem) {
-	joblist-layout {
-		/* flex-direction: row; */
-		/* align-items: flex-start; */
 	}
 }

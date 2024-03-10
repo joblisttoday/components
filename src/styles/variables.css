@@ -9,8 +9,10 @@
 		--c-whitesmoke: whitesmoke;
 		--c-blue: blue;
 		--c-orange: orange;
+		--c-social: rgb(255 255 0 / 50%), rgb(0 0 255 / 50%);
 
 		--font-family: "IBM Plex Serif", serif;
+		--line-height: 1.5;
 		--s-font: 17px;
 		--s: 1.5rem;
 		--s-favicon: calc(var(--s) * 2);

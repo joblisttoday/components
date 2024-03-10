@@ -15,16 +15,6 @@ const MENUS = [
 		{ href: "https://joblist.gitlab.io/profiles/tags", textContent: "tags" },
 	],
 	[
-		{ href: "https://joblist.gitlab.io/dashboards", textContent: "dashboards" },
-		{
-			href: "https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db",
-			textContent: "db.sqlite",
-		},
-		{ href: "https://api.joblist.today", textContent: "api" },
-		{
-			href: "https://joblist.gitlab.io/components/apps/boards",
-			textContent: "providers",
-		},
 		{ href: "https://edit.joblist.today", textContent: "edit" },
 		{
 			href: "https://edit.joblist.today/#/collections/companies/new",
@@ -33,6 +23,18 @@ const MENUS = [
 		{
 			href: "https://edit.joblist.today/#/collections/tags/new",
 			textContent: "new tag",
+		},
+	],
+	[
+		{ href: "https://api.joblist.today", textContent: "api" },
+		{
+			href: "https://joblist.gitlab.io/components/apps/boards",
+			textContent: "providers",
+		},
+		{ href: "https://joblist.gitlab.io/dashboards", textContent: "dashboards" },
+		{
+			href: "https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db",
+			textContent: "db.sqlite",
 		},
 	],
 	[

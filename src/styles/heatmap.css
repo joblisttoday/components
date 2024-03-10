@@ -5,14 +5,14 @@ joblist-heatmap {
 	:is(figure) {
 		:is(.joblist-legend-ramp) {
 			order: 1;
-			max-width: calc(var(--s) * 10);
+			/* max-width: calc(var(--s) * 10); */
 			position: sticky;
 			left: 0;
 			padding: calc(var(--s) / 3);
 		}
 		:is([class^="plot-"]) {
-			width: 100%;
-			min-width: 100%;
+			/* width: 100%; */
+			/* min-width: 100%; */
 		}
 		display: flex;
 		flex-direction: column;

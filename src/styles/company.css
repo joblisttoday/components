@@ -99,8 +99,14 @@ joblist-company-links {
 }
 
 joblist-company-widgets {
-	:is(joblist-heatmap, joblist-map-list) {
-		flex-basis: 50%;
+	:is(joblist-map-list) {
+		padding: calc(var(--s) / 2);
+		background-color: var(--c-bg);
+	}
+	:is(& > *) {
+		flex-basis: 50vmin;
+		flex-shrink: 0;
+		flex-grow: 1;
 	}
 	display: flex;
 	flex-wrap: wrap;

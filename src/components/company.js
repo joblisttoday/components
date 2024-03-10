@@ -1,6 +1,6 @@
 import apiSdk from "../libs/sdk-api.js";
 import { companyToMapMarkers } from "../libs/map.js";
-import icons from "../utils/icons.js";
+import text from "../utils/text.js";
 import "giscus";
 
 export default class JoblistCompany extends HTMLElement {
@@ -142,12 +142,11 @@ export default class JoblistCompany extends HTMLElement {
 			const $link = document.createElement("a");
 			const linkVal = company[linkKey];
 			if (linkVal) {
-				$link.setAttribute("data-icon", linkKey);
-				$link.setAttribute("data-href", linkVal);
 				$link.setAttribute("href", linkVal);
 				$link.setAttribute("target", "_blank");
+				$link.setAttribute("title", linkKey.split("_").join(" "));
 				$link.setAttribute("rel", "noreferrer noopener");
-				$link.textContent = icons(linkKey);
+				$link.textContent = text(linkKey);
 				acc.push($link);
 			}
 			return acc;
@@ -218,8 +217,10 @@ export default class JoblistCompany extends HTMLElement {
 			const listItem = document.createElement("li");
 			const anchor = document.createElement("a");
 			anchor.textContent = text;
-			anchor.href = href;
-			anchor.title = title;
+			anchor.setAttribute("href", href);
+			anchor.setAttribute("title", title);
+			anchor.setAttribute("target", "_blank");
+			anchor.setAttribute("rel", "noreferrer noopener");
 			listItem.appendChild(anchor);
 			return listItem;
 		});
