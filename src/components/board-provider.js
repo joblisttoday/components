@@ -43,7 +43,14 @@ export default class JoblistBoardProvider extends HTMLElement {
 			$doms.push(this.createError(this.error));
 		} else if (this.model && this.model.length) {
 			const $jobs = this.model.map(this.createJob);
-			$doms.push(...$jobs);
+			const $items = $jobs.map($job => {
+				const $li = document.createElement('li')
+				$li.append($job)
+				return $li
+			})
+			const $list = document.createElement('ul')
+			$list.append(...$items)
+			$doms.push($list);
 		} else {
 			const $noJob = document.createElement("joblist-board-job");
 			$noJob.textContent =
