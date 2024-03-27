@@ -62,13 +62,15 @@ joblist-layout {
 				min-width: 10rem;
 			}
 		}
+		&:has(input[type="checkbox"][id="joblist-menu"]:checked) {
+			overflow-y: scroll;
+			scrollbar-width: none;
+			-ms-overflow-style: none;
+		}
 		z-index: 1;
 		flex-direction: column-reverse;
 		flex-shrink: 0;
 		order: 1;
-		overflow-y: scroll;
-		scrollbar-width: none;
-		/* -ms-overflow-style: none; */
 	}
 	flex-grow: 1;
 	display: flex;

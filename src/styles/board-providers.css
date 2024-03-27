@@ -46,7 +46,10 @@ joblist-boards {
 }
 
 joblist-board {
-	padding: var(--s);
+	:is(ul) {
+		list-style: none;
+	}
+	padding: calc(var(--s) / 2);
 	display: flex;
 	flex-direction: column;
 }
@@ -59,6 +62,7 @@ joblist-board-job {
 	:is(joblist-board-job-location) {
 		margin-right: 0.5rem;
 	}
-	display: block;
+	display: inline-flex;
+	flex-wrap: wrap;
 	margin-bottom: 0.5rem;
 }

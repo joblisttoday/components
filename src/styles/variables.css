@@ -1,80 +1,78 @@
 /* variables */
-:root[joblist-layout] {
-	:is(joblist-layout) {
-		--c-white: white;
-		--c-black: black;
-		--c-green: darkgreen;
-		--c-gray: gray;
-		--c-purple: violet;
-		--c-whitesmoke: whitesmoke;
-		--c-blue: blue;
-		--c-orange: orange;
-		--c-social: rgb(255 255 0 / 50%), rgb(0 0 255 / 50%);
+joblist-layout {
+	--c-white: white;
+	--c-black: black;
+	--c-green: darkgreen;
+	--c-gray: gray;
+	--c-purple: violet;
+	--c-whitesmoke: whitesmoke;
+	--c-blue: blue;
+	--c-orange: orange;
+	--c-social: rgb(255 255 0 / 50%), rgb(0 0 255 / 50%);
 
-		--font-family: "IBM Plex Serif", serif;
-		--line-height: 1.5;
-		--s-font: 17px;
-		--s: 1.5rem;
-		--s-favicon: calc(var(--s) * 2);
-		--s-container: calc(var(--s) * 42);
-		--s-border: 0.15rem;
-		--s-border-radius: 0.2rem;
-	}
+	--font-family: "IBM Plex Serif", serif;
+	--line-height: 1.5;
+	--s-font: 17px;
+	--s: 1.5rem;
+	--s-favicon: calc(var(--s) * 1.5);
+	--s-container: calc(var(--s) * 42);
+	--s-border: 0.15rem;
+	--s-border-radius: 0.2rem;
+}
 
-	@media (prefers-color-scheme: dark) {
-		:is(joblist-layout) {
-			--c-bg: #151517f7;
-			--c-fg: lightgray;
-			--c-fg--info: gray;
-			--c-link: skyblue;
-			--c-link--active: var(--c-purple);
-			--c-company: violet;
-			--c-tag--fg: var(--c-fg);
-			--c-tag--bg: midnightblue;
-			--c-position: gray;
-			--c-svg: white;
-		}
+@media (prefers-color-scheme: dark) {
+	joblist-layout {
+		--c-bg: #151517f7;
+		--c-fg: lightgray;
+		--c-fg--info: gray;
+		--c-link: skyblue;
+		--c-link--active: var(--c-purple);
+		--c-company: violet;
+		--c-tag--fg: var(--c-fg);
+		--c-tag--bg: midnightblue;
+		--c-position: gray;
+		--c-svg: white;
 	}
-	@media (prefers-color-scheme: light) {
-		:is(joblist-layout) {
-			--c-bg: snow;
-			--c-fg: var(--c-black);
-			--c-fg--info: gray;
-			--c-link: var(--c-blue);
-			--c-link--active: var(--c-green);
-			--c-company: var(--c-green);
-			--c-tag--fg: var(--c-fg);
-			--c-tag--bg: darkturquoise;
-			--c-position: gray;
-			--c-svg: black;
-		}
+}
+@media (prefers-color-scheme: light) {
+	joblist-layout {
+		--c-bg: snow;
+		--c-fg: var(--c-black);
+		--c-fg--info: gray;
+		--c-link: var(--c-blue);
+		--c-link--active: var(--c-green);
+		--c-company: var(--c-green);
+		--c-tag--fg: var(--c-fg);
+		--c-tag--bg: darkturquoise;
+		--c-position: gray;
+		--c-svg: black;
 	}
+}
 
-	@media (min-width: 60rem) {
-		:is(joblist-layout) {
-			--s-font: 19px;
-		}
+@media (min-width: 60rem) {
+	joblist-layout {
+		--s-font: 19px;
 	}
+}
 
-	@media (min-width: 100rem) {
-		:is(joblist-layout) {
-			--s-font: 20px;
-		}
+@media (min-width: 100rem) {
+	joblist-layout {
+		--s-font: 20px;
 	}
-	@media (prefers-color-scheme: dark) {
-		&:is([joblist-layout]) {
-			color-scheme: dark;
-			--c-bg--company: black;
-			--c-border--company: gray;
-			--c-button: darkblue;
-		}
+}
+@media (prefers-color-scheme: dark) {
+	:root([joblist-layout]) {
+		color-scheme: dark;
+		--c-bg--company: black;
+		--c-border--company: gray;
+		--c-button: darkblue;
 	}
-	@media (prefers-color-scheme: light) {
-		&:is([joblist-layout]) {
-			color-scheme: light;
-			--c-bg--company: snow;
-			--c-border--company: lightgray;
-			--c-button: lightgray;
-		}
+}
+@media (prefers-color-scheme: light) {
+	:root([joblist-layout]) {
+		color-scheme: light;
+		--c-bg--company: snow;
+		--c-border--company: lightgray;
+		--c-button: lightgray;
 	}
 }
