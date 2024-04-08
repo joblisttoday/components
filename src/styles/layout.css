@@ -13,7 +13,8 @@ joblist-layout {
 	line-height: var(--line-height);
 }
 
-joblist-layout {
+joblist-layout,
+[is="joblist-layout"] {
 	:is(joblist-search) {
 		width: 100%;
 		align-self: center;
