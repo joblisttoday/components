@@ -4,11 +4,11 @@ import heatmapCompany from "../plots/heatmap.js";
 
 export default class JoblistHeatmap extends HTMLElement {
 	static get observedAttributes() {
-		return ["slug", "days", "database-url", "api-url"];
+		return ["company-id", "days", "database-url", "api-url"];
 	}
 
-	get slug() {
-		return this.getAttribute("slug");
+	get companyId() {
+		return this.getAttribute("company-id");
 	}
 
 	get days() {
@@ -63,9 +63,9 @@ export default class JoblistHeatmap extends HTMLElement {
 					await this.sdk.initialize();
 				}
 
-				if (this.slug) {
+				if (this.companyId) {
 					this.heatmap = await this.sdk.getCompanyHeatmap(
-						this.slug,
+						this.companyId,
 						this.days,
 						controller.signal,
 					);
@@ -89,7 +89,7 @@ export default class JoblistHeatmap extends HTMLElement {
 	render() {
 		if (this.heatmap) {
 			const heatmap = heatmapCompany(this.heatmap, {
-				slug: this.slug,
+				id: this.companyId,
 				days: this.days,
 			});
 			this.replaceChildren(heatmap);

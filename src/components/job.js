@@ -97,12 +97,12 @@ export default class JoblistJob extends HTMLElement {
 		return $element;
 	}
 
-	createCompanyUrl({ company_slug, company_title }) {
+	createCompanyUrl({ company_id, company_title }) {
 		const $companyUrl = document.createElement("a");
 		$companyUrl.target = "_blank";
-		$companyUrl.textContent = `@${company_slug}`;
+		$companyUrl.textContent = `@${company_id}`;
 		$companyUrl.title = company_title;
-		$companyUrl.setAttribute("href", `${this.origin}/${company_slug}`);
+		$companyUrl.setAttribute("href", `${this.origin}/${company_id}`);
 		const $wrapper = document.createElement("joblist-job-company-title");
 		$wrapper.append($companyUrl);
 		return $wrapper;

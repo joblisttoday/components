@@ -9,7 +9,7 @@ import { Provider, Job } from "../utils/models.js";
 
 const providerId = "ashby";
 
-const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
+const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
 		const { id, title, locationName, secondaryLocations, publishedDate } = job;
 		const jobUrl = `https://jobs.ashbyhq.com/${hostname}/${id}`;
@@ -20,7 +20,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
 			url: jobUrl,
 			publishedDate: publishedDate || Date.now(),
 			companyTitle: companyTitle || hostname,
-			companySlug: companySlug || hostname,
+			companyId: companyId || hostname,
 			providerHostname: hostname,
 			location: [
 				locationName,
@@ -30,7 +30,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
 	});
 };
 
-const getJobs = async ({ hostname, companyTitle = "", companySlug = "" }) => {
+const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
 	const url =
 		"https://jobs.ashbyhq.com/api/non-user-graphql?op=ApiBoardWithTeams";
 
@@ -74,7 +74,7 @@ const getJobs = async ({ hostname, companyTitle = "", companySlug = "" }) => {
 		console.log("error fetching jobs", error);
 	}
 
-	const s = serializeJobs(allJobs, hostname, companyTitle, companySlug);
+	const s = serializeJobs(allJobs, hostname, companyTitle, companyId);
 	return s;
 };
 

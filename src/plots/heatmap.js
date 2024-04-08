@@ -2,7 +2,7 @@ import * as Plot from "@observablehq/plot";
 
 export default function heatmap(
 	data = [],
-	{ width = 800, height = 200, slug, days, ...options } = {},
+	{ width = 800, height = 200, id, days, ...options } = {},
 ) {
 	data = data?.map((d) => {
 		return {
@@ -13,8 +13,8 @@ export default function heatmap(
 			total: Number(d.total),
 		};
 	});
-	let slugLabel = slug ? `for ${slug}` : "";
-	let label = `Jobs postings over the last ${days} day${days > 1 ? "s" : ""} ${slugLabel}`;
+	let idLabel = id ? `for ${id}` : "";
+	let label = `Jobs postings over the last ${days} day${days > 1 ? "s" : ""} ${idLabel}`;
 	return Plot.plot({
 		width,
 		height,

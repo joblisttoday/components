@@ -4,8 +4,7 @@ class Company {
 			// could delete the dates and get info from git-repo/github
 			"created_at",
 			"updated_at",
-			// id
-			"slug",
+			"id",
 			"title",
 			"description",
 			"tags",
@@ -76,7 +75,7 @@ class Job {
 
 			/* company data */
 			"companyTitle",
-			"companySlug",
+			"companyId",
 			"providerId",
 			"providerHostname",
 		];
@@ -106,7 +105,7 @@ class Job {
 		this.publishedDate = data.publishedDate;
 		this.location = data.location;
 		this.companyTitle = data.companyTitle;
-		this.companySlug = data.companySlug;
+		this.companyId = data.companyId;
 	}
 }
 

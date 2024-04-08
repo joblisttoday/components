@@ -28,14 +28,17 @@ export class JoblistGithubSDK {
 			);
 		}
 	}
-	buildCompanyUrl(slug) {
-		return `${this.url}/companies/${slug}/index.md`;
+	buildCompanyUrl(id) {
+		return `${this.url}/companies/{id}/index.json`;
 	}
-	async getCompany(slug) {
-		const data = await fetch(this.buildCompanyUrl(slug)).then((res) => {
-			return res.text();
+	async getCompany(id) {
+		const data = await fetch(this.buildCompanyUrl(id)).then((res) => {
+			return res.json();
 		});
-		return parseFrontmatter(data);
+		return {
+			...data,
+			id,
+		}
 	}
 }
 

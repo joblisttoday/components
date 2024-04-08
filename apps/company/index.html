@@ -7,10 +7,10 @@
 		<script type="module">
 			import "../../src/index.js";
 
-			(({ slug = "ableton" }) => {
+			(({ id = "ableton" }) => {
 				const $company = document.createElement("joblist-company");
-				if (slug) {
-					$company.setAttribute("slug", slug);
+				if (id) {
+					$company.setAttribute("company-id", id);
 				}
 				const $companyFull = $company.cloneNode();
 				$companyFull.setAttribute("full", true);

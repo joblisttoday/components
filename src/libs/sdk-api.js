@@ -29,8 +29,8 @@ export class JoblistApiSDK {
 			) || []
 		);
 	}
-	async getCompany(slug) {
-		const res = await this.fetch(`/sqlite/companies/${slug}`);
+	async getCompany(id) {
+		const res = await this.fetch(`/sqlite/companies/${id}`);
 		const data = res[0];
 		if (data) {
 			return new Company(data);
@@ -43,11 +43,11 @@ export class JoblistApiSDK {
 		return this.fetch(`/sqlite/job/${objectId}`);
 	}
 
-	async getCompanyHeatmap(slug, days = 365, signal) {
+	async getCompanyHeatmap(id, days = 365, signal) {
 		let data;
 		try {
 			data = await this.fetch(
-				`/sqlite/heatmap/${slug}`,
+				`/sqlite/heatmap/${id}`,
 				[["days", days]],
 				signal,
 			);

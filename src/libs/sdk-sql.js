@@ -41,7 +41,7 @@ export class JoblistSqlSDK {
 		try {
 			res = await this.executeQuery(
 				`SELECT companies.*, companies_fts.* FROM companies
-				 JOIN companies_fts ON companies.slug = companies_fts.slug
+				 JOIN companies_fts ON companies.id = companies_fts.id
 				 WHERE companies_fts MATCH ?`,
 				[query],
 			);
@@ -93,7 +93,7 @@ export class JoblistSqlSDK {
 		);
 	}
 
-	async getCompanyHeatmap(slug, days = 365) {
+	async getCompanyHeatmap(id, days = 365) {
 		const sql = `
 WITH RECURSIVE date_range AS (
 	SELECT MIN(published_date) AS min_date, MAX(published_date) AS max_date FROM jobs
@@ -102,7 +102,7 @@ WITH RECURSIVE date_range AS (
 	SELECT date(min_date, '+1 day'), max_date FROM date_range WHERE min_date < max_date
 )
 SELECT
-	COALESCE(company_slug, ?) AS company_slug,
+	COALESCE(company_id, ?) AS company_id,
 	date_range.min_date AS date,
 	COALESCE(COUNT(DISTINCT ObjectId), 0) AS total,
 	strftime('%Y', date_range.min_date) AS year,
@@ -112,12 +112,12 @@ FROM
 	date_range
 LEFT JOIN
 	jobs ON date_range.min_date = jobs.published_date
-AND company_slug = ?
-OR company_slug is null
+AND company_id = ?
+OR company_id is null
 GROUP BY 1,2
 ORDER BY published_date ASC;
 		`;
-		const params = [days, slug, slug];
+		const params = [days, id, id];
 		const result = await this.executeQuery(sql, params);
 		if (result) {
 			const { values, columns } = result[0];

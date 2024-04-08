@@ -16,8 +16,8 @@ export default class JoblistCompany extends HTMLElement {
 			"https://joblist.gitlab.io/profiles/tags/companies"
 		);
 	}
-	get slug() {
-		return this.getAttribute("slug");
+	get companyId() {
+		return this.getAttribute("company-id");
 	}
 	get company() {
 		return JSON.parse(this.getAttribute("company") || {});
@@ -25,8 +25,8 @@ export default class JoblistCompany extends HTMLElement {
 	set company(obj) {
 		this.setAttribute("company", JSON.stringify(obj));
 	}
-	buildProfileUrl(slug) {
-		return `${this.origin}/${slug}`;
+	buildProfileUrl(id) {
+		return `${this.origin}/${id}`;
 	}
 	buildTagUrl(tag) {
 		return `${this.tagsOrigin}/${tag}`;
@@ -36,8 +36,8 @@ export default class JoblistCompany extends HTMLElement {
 		this.sdk = apiSdk;
 	}
 	async connectedCallback() {
-		if (this.slug) {
-			this.company = await this.sdk.getCompany(this.slug);
+		if (this.companyId) {
+			this.company = await this.sdk.getCompany(this.companyId);
 		}
 		if (this.company?.company_url) {
 			this.faviconUrl = this.company.company_url;
@@ -47,7 +47,7 @@ export default class JoblistCompany extends HTMLElement {
 	render() {
 		const $doms = [];
 		if (!this.company) {
-			$doms.push(`No company ${slug}`);
+			$doms.push(`No company ${this.companyId}`);
 		} else {
 			if (this.full) {
 				$doms.push(
@@ -75,12 +75,12 @@ export default class JoblistCompany extends HTMLElement {
 		];
 		return doms;
 	}
-	createTitle({ slug, title, ...company }) {
+	createTitle({ id, title, ...company }) {
 		const $title = document.createElement("h1");
 		$title.textContent = title;
 
 		const $link = document.createElement("a");
-		$link.setAttribute("href", this.buildProfileUrl(slug));
+		$link.setAttribute("href", this.buildProfileUrl(id));
 
 		$link.append($title);
 		const $wrapper = document.createElement("joblist-company-title");
@@ -169,10 +169,10 @@ export default class JoblistCompany extends HTMLElement {
 		$widgets.append(this.createPositions(company), this.createHeatmap(company));
 		return $widgets;
 	}
-	createHeatmap({ slug, job_board_provider, job_board_hostname }) {
+	createHeatmap({ id, job_board_provider, job_board_hostname }) {
 		if (!job_board_provider || !job_board_hostname) return "";
 		const $heatmap = document.createElement("joblist-heatmap");
-		$heatmap.setAttribute("slug", slug);
+		$heatmap.setAttribute("company-id", id);
 		return $heatmap;
 	}
 	createPositions(company) {
@@ -188,26 +188,26 @@ export default class JoblistCompany extends HTMLElement {
 		$board.setAttribute("provider-hostname", job_board_hostname);
 		return $board;
 	}
-	createEdit({ slug }) {
+	createEdit({ id }) {
 		const editLinks = [
 			{
 				text: "edit",
-				href: `https://edit.joblist.today/#/collections/companies/entries/${slug}/index`,
+				href: `https://edit.joblist.today/#/collections/companies/entries/${id}/index`,
 				title: "Edit with a github account in netlify-cms",
 			},
 			{
 				text: "file",
-				href: `https://github.com/joblisttoday/data/edit/main/companies/${slug}/index.md`,
+				href: `https://github.com/joblisttoday/data/edit/main/companies/${id}/index.md`,
 				title: "Edit with github directly",
 			},
 			{
 				text: "delete",
-				href: `https://github.com/joblisttoday/data/issues/new?labels=delete-company&template=delete_company.yml&title=%5Bdelete%5D+${slug}`,
+				href: `https://github.com/joblisttoday/data/issues/new?labels=delete-company&template=delete_company.yml&title=%5Bdelete%5D+${id}`,
 				title: "Request company deletion",
 			},
 			{
 				text: "issue",
-				href: `https://github.com/joblisttoday/data/issues/new?labels=update-company&template=update_company.yml&title=%5Bupdate%5D+${slug}`,
+				href: `https://github.com/joblisttoday/data/issues/new?labels=update-company&template=update_company.yml&title=%5Bupdate%5D+${id}`,
 				title: "New issue to update or dissuss this company",
 			},
 		];

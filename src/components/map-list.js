@@ -177,8 +177,8 @@ export default class JoblistMapList extends HTMLElement {
 
 			if (data.longitude && data.latitude) {
 				let popupText = data.text;
-				if (data.slug) {
-					const popupDom = `<a href="${this.buildOrigin(data.slug)}">${data.text}</>`;
+				if (data.id) {
+					const popupDom = `<a href="${this.buildOrigin(data.id)}">${data.text}</>`;
 					popupText = popupDom;
 				}
 				return this.leaflet
@@ -208,12 +208,12 @@ export default class JoblistMapList extends HTMLElement {
 			this.map.fitWorld();
 		}
 	};
-	/* build a URL from the widget origin and marker slug */
-	buildOrigin(slug) {
+	/* build a URL from the widget origin and marker id */
+	buildOrigin(id) {
 		if (this.origin.indexOf("{}") < 0) {
-			return `${this.origin}/${slug}`;
+			return `${this.origin}/${id}`;
 		} else {
-			const address = this.origin.replace("{}", slug);
+			const address = this.origin.replace("{}", id);
 			return address;
 		}
 	}

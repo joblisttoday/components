@@ -17,6 +17,6 @@ model", that should support:
 - position on a map (like companies in the git data repo), to position
   a job on the map
 - position/address, so a job can be located in a country or remote
-- `company` from the `slug` of a company, to associate it to an
+- `company` from the `id` of a company, to associate it to an
   exsting "git static file data model"; if not available from a room
   widget describing the company (tbd)

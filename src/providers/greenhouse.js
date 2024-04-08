@@ -12,7 +12,7 @@ const getLocation = ({ location, offices }) => {
 	return locationName || "";
 };
 
-const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
+const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
 		return new Job({
 			id: `${providerId}-${hostname}-${job.id}`,
@@ -21,7 +21,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
 			publishedDate: job.updated_at,
 			location: getLocation(job),
 			companyTitle: companyTitle || hostname,
-			companySlug: companySlug || hostname,
+			companyId: companyId || hostname,
 			providerHostname: hostname,
 			providerId,
 		});
@@ -31,7 +31,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
 const getJobs = async ({
 	hostname,
 	companyTitle = "",
-	companySlug = "",
+	companyId = "",
 	city,
 	country,
 }) => {
@@ -73,7 +73,7 @@ const getJobs = async ({
 	}
 
 	if (allJobs) {
-		return serializeJobs(allJobs, hostname, companyTitle, companySlug);
+		return serializeJobs(allJobs, hostname, companyTitle, companyId);
 	} else {
 		return;
 	}

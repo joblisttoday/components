@@ -7,10 +7,10 @@
 		<script type="module">
 			import "../../src/index.js";
 			const searchParams = new URLSearchParams(window.location.search);
-			const slug = searchParams.get("slug")
+			const id = searchParams.get("id")
 			const days = searchParams.get("days") || 365;
 			const $heatmap = document.querySelector("joblist-heatmap");
-			slug && $heatmap.setAttribute("slug", slug);
+			id && $heatmap.setAttribute("company-id", id);
 			days && $heatmap.setAttribute("days", days);
 		</script>
 	</head>

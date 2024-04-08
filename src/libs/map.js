@@ -43,7 +43,7 @@ const companiesSqliteResultsToMapMarkers = (companyResults) => {
 			return acc;
 		}, {});
 
-		const { title, slug, positions } = companyData;
+		const { title, id, positions } = companyData;
 		if (!positions) return;
 		positions.forEach((position) => {
 			const mapData = parsePosition(position);
@@ -51,7 +51,7 @@ const companiesSqliteResultsToMapMarkers = (companyResults) => {
 				if (mapData) {
 					companyMarkers.push({
 						text: title,
-						slug: slug,
+						id: id,
 						...mapData,
 					});
 				}
@@ -70,7 +70,7 @@ const companiesAlgoliaResultsToMapMarkers = (searchResults = []) => {
 			if (mapData) {
 				companyMarkers.push({
 					text: result.title,
-					slug: result.slug,
+					id: result.id,
 					...mapData,
 				});
 			}
@@ -99,7 +99,7 @@ const companyFileToMapMarkers = (companyNode) => {
 		if (mapData) {
 			markers.push({
 				text: frontmatter.title,
-				slug: fields.slug,
+				id: fields.id,
 				...mapData,
 			});
 		}
@@ -112,7 +112,7 @@ const companiesResultsToMapMarkers = (companies) => {
 };
 
 const companyToMapMarkers = (company) => {
-	const { positions, title, slug } = company;
+	const { positions, title, id } = company;
 	if (!positions) {
 		/* no markers for this company */
 		return [];
@@ -123,7 +123,7 @@ const companyToMapMarkers = (company) => {
 		if (mapData) {
 			markers.push({
 				text: title,
-				slug: slug,
+				id: id,
 				...mapData,
 			});
 		}

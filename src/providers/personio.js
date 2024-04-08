@@ -8,7 +8,7 @@ import { Provider, Job } from "../utils/models.js";
 
 const providerId = "personio";
 
-const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
+const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	const baseUrl = `https://${hostname}.jobs.personio.de`;
 	return jobs.map((job) => {
 		const { name, id, office, createdAt } = job;
@@ -21,7 +21,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
 			providerId,
 			providerHostname: hostname,
 			companyTitle: companyTitle || hostname,
-			companySlug: companySlug || hostname,
+			companyId: companyId || hostname,
 		});
 		/* some jobs can have no location (office), algolia bugs if the key is missing  */
 		if (!newJob.location) {
@@ -66,7 +66,7 @@ const parseResXml = (textRes) => {
 
 const getJobs = async ({
 	hostname,
-	companySlug = "",
+	companyId = "",
 	companyTitle = "",
 	language = "en",
 }) => {
@@ -90,7 +90,7 @@ const getJobs = async ({
 
 	let jobs = [];
 	if (jobs) {
-		return serializeJobs(response, hostname, companyTitle, companySlug);
+		return serializeJobs(response, hostname, companyTitle, companyId);
 	}
 	return jobs;
 };

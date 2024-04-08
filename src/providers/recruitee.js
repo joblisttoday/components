@@ -8,7 +8,7 @@ import { Provider, Job } from "../utils/models.js";
 
 const providerId = "recruitee";
 
-const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
+const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
 		return new Job({
 			id: `${providerId}-${hostname}-${job.id}`,
@@ -19,12 +19,12 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
 			providerId,
 			providerHostname: hostname,
 			companyTitle: companyTitle || hostname,
-			companySlug: companySlug || hostname,
+			companyId: companyId || hostname,
 		});
 	});
 };
 
-const getJobs = async ({ hostname, companyTitle = "", companySlug = "" }) => {
+const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
 	let data;
 	const url = `https://${hostname}.recruitee.com/api/offers`;
 	const options = {
@@ -58,7 +58,7 @@ const getJobs = async ({ hostname, companyTitle = "", companySlug = "" }) => {
 	}
 
 	if (data) {
-		return serializeJobs(data, hostname, companyTitle, companySlug);
+		return serializeJobs(data, hostname, companyTitle, companyId);
 	} else {
 		return data;
 	}

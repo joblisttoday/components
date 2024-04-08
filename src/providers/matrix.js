@@ -10,7 +10,7 @@ import { MATRIX_ROOM_FILTER_JOB } from "../libs/sdk.js";
 const providerId = "matrix";
 const EVENTS_LIMIT = 200;
 
-const serializeJobs = ({ jobs = [], hostname, companyTitle, companySlug }) => {
+const serializeJobs = ({ jobs = [], hostname, companyTitle, companyId }) => {
 	return jobs.map((event) => {
 		const { event_id: id, content, origin_server_ts } = event;
 		const { title, url, description, location } = content;
@@ -21,14 +21,14 @@ const serializeJobs = ({ jobs = [], hostname, companyTitle, companySlug }) => {
 			url,
 			publishedDate: new Date(origin_server_ts),
 			companyTitle: companyTitle || hostname,
-			companySlug: companySlug || hostname,
+			companyId: companyId || hostname,
 			providerHostname: hostname,
 			location,
 		});
 	});
 };
 
-const getJobs = async ({ hostname, companySlug = "", companyTitle = "" }) => {
+const getJobs = async ({ hostname, companyId = "", companyTitle = "" }) => {
 	try {
 		const res = await mwc.api.getRoomMessages({
 			roomId: hostname,
@@ -44,7 +44,7 @@ const getJobs = async ({ hostname, companySlug = "", companyTitle = "" }) => {
 				jobs: res.chunk,
 				hostname,
 				companyTitle,
-				companySlug,
+				companyId,
 			});
 		}
 	} catch (e) {

@@ -11,7 +11,7 @@ const providerId = "smartrecruiters";
 const baseUrl = "https://api.smartrecruiters.com/v1/companies";
 const jobPostingBaseUrl = `https://jobs.smartrecruiters.com`;
 
-const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
+const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
 		return new Job({
 			id: `${providerId}-${hostname}-${job.uuid}`,
@@ -22,7 +22,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
 			providerId,
 			providerHostname: hostname,
 			companyTitle: companyTitle || hostname,
-			companySlug: companySlug || hostname,
+			companyId: companyId || hostname,
 		});
 	});
 };
@@ -30,7 +30,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
 const getJobs = async ({
 	hostname,
 	companyTitle = "",
-	companySlug = "",
+	companyId = "",
 	city,
 }) => {
 	let url = `${baseUrl}/${hostname}/postings`;
@@ -55,7 +55,7 @@ const getJobs = async ({
 	}
 
 	if (jobs) {
-		return serializeJobs(jobs, hostname, companyTitle, companySlug);
+		return serializeJobs(jobs, hostname, companyTitle, companyId);
 	} else {
 		return [];
 	}

@@ -8,7 +8,7 @@ import { Provider, Job } from "../utils/models.js";
 
 const providerId = "workable";
 
-const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
+const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
 		const { id, city, country, url, title, published_on } = job;
 		return new Job({
@@ -18,14 +18,14 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companySlug) => {
 			publishedDate: published_on,
 			location: `${city}, ${country}`,
 			companyTitle: companyTitle || hostname,
-			companySlug: companySlug || hostname,
+			companyId: companyId || hostname,
 			providerHostname: hostname,
 			providerId,
 		});
 	});
 };
 
-const getJobs = async ({ hostname, companyTitle = "", companySlug = "" }) => {
+const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
 	const url = `https://apply.workable.com/api/v1/widget/accounts/${hostname}`;
 	const options = {
 		method: "GET",
@@ -46,7 +46,7 @@ const getJobs = async ({ hostname, companyTitle = "", companySlug = "" }) => {
 		console.log(`error fetching company jobs: ${hostname}`, error);
 	}
 
-	const s = serializeJobs(allJobs, hostname, companyTitle, companySlug);
+	const s = serializeJobs(allJobs, hostname, companyTitle, companyId);
 	return s;
 };
 
