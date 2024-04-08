@@ -9,10 +9,10 @@ const MENUS = [
 			textContent: "map",
 		},
 		{
-			href: "https://joblist.gitlab.io/profiles/companies",
+			href: "https://index.joblist.today/companies",
 			textContent: "companies",
 		},
-		{ href: "https://joblist.gitlab.io/profiles/tags", textContent: "tags" },
+		{ href: "https://index.joblist.today/tags", textContent: "tags" },
 	],
 	[
 		{ href: "https://edit.joblist.today", textContent: "edit" },
