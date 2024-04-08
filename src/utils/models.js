@@ -98,8 +98,8 @@ class Job {
 	}
 
 	createJob(data) {
-		const objectID = `${data.providerId}-${data.providerHostname}-${data.id}`;
-		this.objectID = objectID;
+		const id = `${data.providerId}-${data.providerHostname}-${data.id}`;
+		this.id = id;
 		this.name = data.name;
 		this.url = data.url;
 		this.publishedDate = data.publishedDate;

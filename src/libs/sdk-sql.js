@@ -54,7 +54,7 @@ export class JoblistSqlSDK {
 	async searchJobs(query = "") {
 		return await this.executeQuery(
 			`SELECT jobs.*, jobs_fts.* FROM jobs
-				 JOIN jobs_fts ON jobs.objectID = jobs_fts.objectID
+				 JOIN jobs_fts ON jobs.id = jobs_fts.id
 				 WHERE jobs_fts MATCH ?`,
 			[query],
 		);
