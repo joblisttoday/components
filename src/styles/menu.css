@@ -1,3 +1,12 @@
+/*
+	Joblist (legacy) CSS menu toggle with HTML markup
+	<joblist-menu>
+		<input type="checkbox" id="joblist-menu">
+		<label for="joblist-menu"></label>
+		<menu></menu>
+		<menu></menu>
+	</joblist-menu>
+*/
 joblist-menu {
 	&:has(input[type="checkbox"][id="joblist-menu"]:checked) {
 		/* transform: translateX(-100%); */
@@ -71,7 +80,7 @@ joblist-menu {
 		}
 		list-style-type: none;
 		display: flex;
-		flex-direction: column-reverse;
+		flex-direction: column;
 	}
 	:is(menu + menu) {
 		padding-top: calc(var(--s) / 2);
@@ -84,4 +93,22 @@ joblist-menu {
 		padding: calc(var(--s) / 3);
 	}
 	transition: transform 100ms ease-in-out;
+}
+
+/* javascript menu */
+joblist-menu button:not(:hover, :active) {
+	border-color: transparent;
+	background-color: transparent;
+	transition: all 200ms ease-in-out;
+}
+
+joblist-menu li {
+	display: flex;
+}
+
+joblist-menu li a {
+	flex-grow: 1;
+}
+joblist-menu li a:hover {
+	background-color: var(--c-bg-alt);
 }

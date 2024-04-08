@@ -23,6 +23,7 @@ joblist-layout {
 @media (prefers-color-scheme: dark) {
 	joblist-layout {
 		--c-bg: #151517f7;
+		--c-bg-alt: #191913f3
 		--c-fg: lightgray;
 		--c-fg--info: gray;
 		--c-link: skyblue;
@@ -37,6 +38,7 @@ joblist-layout {
 @media (prefers-color-scheme: light) {
 	joblist-layout {
 		--c-bg: snow;
+		--c-bg-alt: linen;
 		--c-fg: var(--c-black);
 		--c-fg--info: gray;
 		--c-link: var(--c-blue);

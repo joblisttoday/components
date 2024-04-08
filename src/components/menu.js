@@ -52,6 +52,9 @@ const MENUS = [
 ];
 
 export default class JoblistMenu extends HTMLElement {
+	static get observedAttributes() {
+		return ["open"]
+	}
 	/* props */
 	get showDefault() {
 		return this.getAttribute("show-default") === "true";
@@ -62,6 +65,12 @@ export default class JoblistMenu extends HTMLElement {
 	get href() {
 		return this.getAttribute("href");
 	}
+	get open() {
+		return this.getAttribute("open") !== "false"
+	}
+	set open(bool) {
+		return this.setAttribute("open", bool)
+	}
 	/* helpers */
 	get id() {
 		return "joblist-menu";
@@ -69,38 +78,58 @@ export default class JoblistMenu extends HTMLElement {
 	get menus() {
 		return MENUS;
 	}
+	/* events */
+	onToggle(event) {
+		this.open = !this.open
+	}
+
+	/* lifecycle */
+	attributeChangedCallback() {
+		this.render();
+	}
 	connectedCallback() {
+		if (this.innerHTML) {
+			const initialMenuTemplate = document.createElement("template")
+			initialMenuTemplate.innerHTML = this.innerHTML
+			this.initialMenuTemplate = initialMenuTemplate
+		}
 		this.render();
 	}
 	render() {
-		/* needs to be first in DOM for CSS input-checkbox toggle */
-		this.prepend(this.createToggle(), this.createLabel());
-		if (!this.hasChildNodes() || this.showDefault) {
-			this.append(...this.createDefaultMenus(this.menus));
+		const doms = []
+
+		doms.push(this.createToggle());
+
+		if (this.open) {
+			if (!this.hasChildNodes() || this.showDefault) {
+				doms.push(...this.createMenus(this.menus));
+			}
+			if (this.initialMenuTemplate) {
+				doms.push(this.initialMenuTemplate.content.cloneNode(true))
+			}
+			if (this.showFavicon) {
+				doms.push(this.createFavicon(this.href));
+			}
 		}
-		if (this.showFavicon) {
-			this.append(this.createFavicon(this.href));
-		}
+
+		this.replaceChildren(...doms)
 	}
 	createToggle() {
-		const input = document.createElement("input");
-		input.setAttribute("type", "checkbox");
-		input.setAttribute("id", this.id);
-		return input;
-	}
-	createLabel() {
-		const label = document.createElement("label");
-		label.setAttribute("for", this.id);
-		return label;
+		const button = document.createElement("button");
+		button.textContent = "≡"
+		button.setAttribute("title", "Menu")
+		button.addEventListener("click", this.onToggle.bind(this))
+		return button;
 	}
 	createFavicon(href) {
 		const favicon = document.createElement("joblist-favicon");
 		if (href) {
 			favicon.setAttribute("href", href);
 		}
+		favicon.setAttribute("color", "var(--c-link)");
 		return favicon;
 	}
-	createDefaultMenus(menus = []) {
+	createMenus(menus = []) {
 		return menus.map(this.createMenuItems.bind(this));
 	}
 	createMenuItems(menu = []) {

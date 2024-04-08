@@ -54,7 +54,6 @@ joblist-layout {
 		}
 		:is(joblist-favicon) {
 			position: sticky;
-			align-self: flex-end;
 		}
 		:is(li) {
 			:is(a) {
@@ -68,9 +67,7 @@ joblist-layout {
 			-ms-overflow-style: none;
 		}
 		z-index: 1;
-		flex-direction: column-reverse;
-		flex-shrink: 0;
-		order: 1;
+		flex-direction: column;
 	}
 	flex-grow: 1;
 	display: flex;

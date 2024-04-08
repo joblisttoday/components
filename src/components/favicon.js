@@ -46,7 +46,10 @@ template.innerHTML = JOBLIST_FAVICON_SVG;
 
 export default class JoblistFavicon extends HTMLElement {
 	get color() {
-		return `#${(0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6)}`;
+		return this.getAttribute("color") || this.randomColor;
+	}
+	get randomColor() {
+		return `#${(0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6)}`
 	}
 	get href() {
 		return this.getAttribute("href");
