@@ -1,0 +1,13 @@
+joblist-aindex {
+	display: flex;
+}
+joblist-aindex ul {
+	list-style: none;
+}
+joblist-aindex-toc {
+	position: sticky;
+	top: 0;
+	max-height: 100vh;
+	overflow-x: scroll;
+	flex-shrink: 0;
+}

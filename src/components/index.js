@@ -2,6 +2,10 @@ import JoblistUmamiScript from "./umami-script.js";
 import JoblistFavicon from "./favicon.js";
 import JoblistMenu from "./menu.js";
 import JoblistCompany from "./company.js";
+import JoblistCompanies from "./companies.js";
+import JoblistTag from "./tag.js";
+import JoblistTags from "./tags.js";
+import JoblistAindex, {JoblistAindexToc, JoblistAindexList} from "./aindex.js";
 import JoblistJob from "./job.js";
 import JoblistMapList from "./map-list.js";
 import JoblistMatrixAuth from "./matrix-auth.js";
@@ -29,6 +33,12 @@ const componentDefinitions = {
 	"joblist-map-list": JoblistMapList,
 	"joblist-job": JoblistJob,
 	"joblist-company": JoblistCompany,
+	"joblist-companies": JoblistCompanies,
+	"joblist-tag": JoblistTag,
+	"joblist-tags": JoblistTags,
+	"joblist-aindex": JoblistAindex,
+	"joblist-aindex-toc": JoblistAindexToc,
+	"joblist-aindex-list": JoblistAindexList,
 
 	/* d3 & plots & stats */
 	"joblist-heatmap": JoblistHeatmap,

@@ -30,7 +30,7 @@
 						return $board;
 					},
 				);
-				document.querySelector("joblist-layout").append(
+				document.querySelector("joblist-page").append(
 					...$boards.map(($board) => {
 						const $details = document.createElement("details");
 						const $summary = document.createElement("summary");
@@ -43,6 +43,9 @@
 		</script>
 	</head>
 	<body>
-		<joblist-layout></joblist-layout>
+		<joblist-layout>
+			<joblist-menu show-default="true" show-favicon="true"></joblist-menu>
+			<joblist-page></joblist-page>
+		</joblist-layout>
 	</body>
 </html>

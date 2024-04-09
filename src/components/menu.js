@@ -9,10 +9,17 @@ const MENUS = [
 			textContent: "map",
 		},
 		{
-			href: "https://index.joblist.today/companies",
+			href: "https://joblist.gitlab.io/components/apps/companies",
 			textContent: "companies",
 		},
-		{ href: "https://index.joblist.today/tags", textContent: "tags" },
+		{
+			href: "https://joblist.gitlab.io/components/apps/tags",
+			textContent: "tags"
+		},
+		{
+			href: "https://joblist.gitlab.io/components/apps/boards",
+			textContent: "providers",
+		},
 	],
 	[
 		{ href: "https://edit.joblist.today", textContent: "edit" },
@@ -27,10 +34,6 @@ const MENUS = [
 	],
 	[
 		{ href: "https://api.joblist.today", textContent: "api" },
-		{
-			href: "https://joblist.gitlab.io/components/apps/boards",
-			textContent: "providers",
-		},
 		{ href: "https://joblist.gitlab.io/dashboards", textContent: "dashboards" },
 		{
 			href: "https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db",
