@@ -10,12 +10,6 @@ export default class JoblistCompany extends HTMLElement {
 	get origin() {
 		return this.getAttribute("origin") || "https://joblist.today";
 	}
-	get tagsOrigin() {
-		return (
-			this.getAttribute("tagsOrigin") ||
-			"https://joblist.gitlab.io/profiles/tags/companies"
-		);
-	}
 	get companyId() {
 		return this.getAttribute("company-id");
 	}
@@ -27,9 +21,6 @@ export default class JoblistCompany extends HTMLElement {
 	}
 	buildProfileUrl(id) {
 		return `${this.origin}/${id}`;
-	}
-	buildTagUrl(tag) {
-		return `${this.tagsOrigin}/${tag}`;
 	}
 	constructor() {
 		super();
@@ -113,12 +104,9 @@ export default class JoblistCompany extends HTMLElement {
 		return $wrapper;
 	}
 	createTag(tag) {
-		const $wrapper = document.createElement("joblist-company-tag");
-		const $element = document.createElement("a");
-		$element.textContent = tag;
-		$element.setAttribute("href", this.buildTagUrl(tag));
-		$wrapper.append($element);
-		return $wrapper;
+		const $tag = document.createElement("joblist-tag");
+		$tag.setAttribute("tag", JSON.stringify(tag));
+		return $tag;
 	}
 	createLinks(company) {
 		const companyLinks = ["company_url", "job_board_url", "wikipedia_url"];
