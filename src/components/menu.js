@@ -1,6 +1,10 @@
 const MENUS = [
 	[
 		{
+			href: "https://joblist.today",
+			textContent: "home",
+		},
+		{
 			href: "https://joblist.gitlab.io/components/apps/search",
 			textContent: "search",
 		},

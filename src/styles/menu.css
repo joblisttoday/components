@@ -96,6 +96,14 @@ joblist-menu {
 }
 
 /* javascript menu */
+joblist-menu {
+	max-height: 100vh;
+	overflow-x: scroll;
+}
+joblist-menu button {
+	position: sticky;
+	top: 0;
+}
 joblist-menu button:not(:hover, :active) {
 	border-color: transparent;
 	background-color: transparent;
