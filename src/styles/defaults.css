@@ -1,6 +1,6 @@
 /* defaults */
 joblist-layout {
-	font-size: var(--s-font);
+	font-size: var(--s-h0);
 	font-family: var(--font-family);
 	background-color: transparent;
 	color: var(--c-fg);
@@ -106,5 +106,17 @@ joblist-layout {
 		border-bottom: none;
 		border-left: 0;
 		border-right: 0;
+	}
+	:is(h1) {
+		font-size: var(--s-h1);
+	}
+	:is(h2) {
+		font-size: var(--s-h2);
+	}
+	:is(h3) {
+		font-size: var(--s-h3);
+	}
+	:is(h4) {
+		font-size: var(--s-h4);
 	}
 }

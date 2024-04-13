@@ -29,36 +29,79 @@
 		<joblist-layout>
 			<joblist-menu show-favicon="true" show-default="true"></joblist-menu>
 			<joblist-page>
+				<joblist-page-header>
+					<header>
+						<h1><a href="./"> Search </a></h1>
+						<p>
+							Explore companies and jobs indices.
+						</p>
+					</header>
+				</joblist-page-header>
 				<joblist-page-main> </joblist-page-main>
 				<joblist-page-footer>
 					<footer>
 						<hr/>
 						<details>
-							<summary>Help?</summary>
+							<summary>Info</summary>
+
+							<p>Each column name of the database tables (companies, jobs) can be used to match rows for values, using the syntax <code>column_name:row_value</code> with the following examples. </p>
+
+							<p>
+								Use sqlite3
+								<a
+									href="https://www.sqlite.org/fts3.html#full_text_index_queries"
+								>full text (3) search syntax</a
+																						>, or open the
+								<a
+									href="https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db"
+								>database explorer</a>.
+							</p>
+
+							<h2>Examples</h2>
+							Search query syntax examples, as typed in the search input.
+							<pre>
+tags:music
+tags:music AND city:berlin
+tags:music AND city:berlin AND instru*
+city:london
+id:ableton
+							</pre>
+
+							<h3>Companies</h3>
 							<dl>
 								<dt>
-									<a href="./"> Search </a>
+									id:project_id
 								</dt>
 								<dd>
-									Explore companies and jobs indices with
-									<a
-										href="https://www.sqlite.org/fts3.html#full_text_index_queries"
-									>full text (3) search syntax</a
-																							>, or on the
-									<a
-										href="https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db"
-									>sqlite3 database</a
-																	 >.
+									The ID (unique identifier) of a company as referenced in joblist, for example <code>joblist.today/:company_id</code> or the name of the "data folder".
+								</dd>
+								<dt>
+									tags:company_tag
+								</dt>
+								<dd>
+									One or multiple "tags" used to describe a company, separated by "," (commas).
+								</dd>
+								<dt>
+									city:world_city
+								</dt>
+								<dd>
+									One or multiple "city" referenced in the company geographical "positions"
 								</dd>
 							</dl>
 
-							<h2>Companies</h2>
+							<h3>Jobs</h3>
 							<dl>
 								<dt>
-									id:company-id
+									id:job_id
 								</dt>
 								<dd>
-
+									The ID (unique identifier) of a job as referenced in joblist (see the sqlite database explorer)
+								</dd>
+								<dt>
+									locations:location_string
+								</dt>
+								<dd>
+									One or multiple locations, city names, country, as referenced by the job provider.
 								</dd>
 							</dl>
 						</details>

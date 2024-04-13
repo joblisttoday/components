@@ -123,6 +123,7 @@ joblist-menu li {
 
 joblist-menu li a {
 	flex-grow: 1;
+	text-transform: capitalize;
 }
 joblist-menu li a:hover {
 	background-color: var(--c-bg-alt);

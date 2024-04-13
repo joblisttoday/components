@@ -14,6 +14,11 @@ joblist-layout {
 	--line-height: 1.5;
 	--s-font: 17px;
 	--s: 1.5rem;
+	--s-h0: 1rem;
+	--s-h1: 1.7rem;
+	--s-h2: 1.5rem;
+	--s-h3: 1.3rem;
+	--s-h4: 1.1rem;
 	--s-favicon: calc(var(--s) * 1.5);
 	--s-container: calc(var(--s) * 42);
 	--s-border: 0.15rem;
