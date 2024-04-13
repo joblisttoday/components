@@ -44,6 +44,7 @@ joblist-layout,
 		top: 0;
 		max-height: 100vh;
 		background-color: var(--c-bg);
+		outline: var(--c-hr) solid 1px;
 		display: flex;
 		flex-direction: column;
 	}
@@ -67,7 +68,7 @@ joblist-layout,
 			scrollbar-width: none;
 			-ms-overflow-style: none;
 		}
-		z-index: 1;
+		z-index: 2;
 		flex-direction: column;
 	}
 	flex-grow: 1;
@@ -101,4 +102,8 @@ joblist-layout {
 			}
 		}
 	}
+}
+
+joblist-page {
+	z-index: 1;
 }

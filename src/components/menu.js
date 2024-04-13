@@ -26,15 +26,15 @@ const MENUS = [
 		},
 	],
 	[
-		{ href: "https://edit.joblist.today", textContent: "edit" },
+		{ href: "https://edit.joblist.today", textContent: "edit data" },
 		{
 			href: "https://edit.joblist.today/#/collections/companies/new",
 			textContent: "new company",
 		},
-		{
-			href: "https://edit.joblist.today/#/collections/tags/new",
-			textContent: "new tag",
-		},
+		/* {
+			 href: "https://edit.joblist.today/#/collections/tags/new",
+			 textContent: "new tag",
+			 }, */
 	],
 	[
 		{ href: "https://api.joblist.today", textContent: "api" },

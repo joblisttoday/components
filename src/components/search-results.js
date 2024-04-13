@@ -24,7 +24,7 @@ export default class JoblistSearchResults extends HTMLElement {
 		if ((!companies || !companies.length) && (!jobs || !jobs.length)) {
 			const noResults = document.createElement("joblist-results-404");
 			if (!query) {
-				noResults.textContent = "Input a search query.";
+				noResults.textContent = "Input a query to see the matching search results.";
 			} else {
 				noResults.textContent = "No results found ø.";
 			}

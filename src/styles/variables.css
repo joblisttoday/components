@@ -33,9 +33,7 @@ joblist-layout {
 		--c-fg--info: gray;
 		--c-link: skyblue;
 		--c-link--active: var(--c-purple);
-		--c-company: violet;
-		--c-tag--fg: var(--c-fg);
-		--c-tag--bg: midnightblue;
+		--c-hr: slategray;
 		--c-position: gray;
 		--c-svg: white;
 	}
@@ -48,9 +46,7 @@ joblist-layout {
 		--c-fg--info: gray;
 		--c-link: var(--c-blue);
 		--c-link--active: var(--c-green);
-		--c-company: var(--c-green);
-		--c-tag--fg: var(--c-fg);
-		--c-tag--bg: darkturquoise;
+		--c-hr: lightgray;
 		--c-position: gray;
 		--c-svg: black;
 	}

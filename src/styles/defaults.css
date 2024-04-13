@@ -106,6 +106,7 @@ joblist-layout {
 		border-bottom: none;
 		border-left: 0;
 		border-right: 0;
+		border-color: var(--c-hr);
 	}
 	:is(h1) {
 		font-size: var(--s-h1);
