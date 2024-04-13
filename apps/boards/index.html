@@ -10,7 +10,47 @@
 		<joblist-layout>
 			<joblist-menu show-default="true" show-favicon="true"></joblist-menu>
 			<joblist-page>
-				<joblist-boards></joblist-boards>
+				<header>
+					<h1>
+						Joblist boards (ATS)
+					</h1>
+					<p>
+						These providers are used to source all jobs of companies registered on joblist.today.
+					</p>
+					<p>
+						Use this page to prepare a code snippet to embedd a list of job in any web page.
+					</p>
+					<ol>
+						<li>
+							Select a <code>provider-name</code>
+						</li>
+						<li>
+							Input the <code>provider-hostname</code> for project/company, which can be found in the URL or the provider's job board
+						</li>
+						<li>
+							Copy and insert the code snippet into any HTML webpage, customize with CSS.
+						</li>
+					</ol>
+				</header>
+				<section>
+					<h2>Code snippet & example</h2>
+					<joblist-boards></joblist-boards>
+				</section>
+				<section>
+					<h2>
+						Info
+					</h2>
+					<p>
+						<dl>
+							<dt>provider-name</dt>
+							<dd>The name and unique identifier of a job board provider (as in ATS and/or data source)</dd>
+						</dl>
+						<dl>
+							<dt>provider-hostname</dt>
+							<dd>The name and unique identifier of a company or project, as given by the job board provider. For example "spacex" is the hostname assigned by the provider "greenhouse". In the case of the provider "matrix", the hostname is the full "matrix room id".</dd>
+						</dl>
+					</p>
+				</section>
 			</joblist-page>
 		</joblist-layout>
 	</body>

@@ -70,13 +70,19 @@ export default class JoblistMenu extends HTMLElement {
 		return this.getAttribute("show-favicon") === "true";
 	}
 	get href() {
-		return this.getAttribute("href");
+		return this.getAttribute("href") || this.menus[0][0].href;
 	}
 	get open() {
-		return this.getAttribute("open") !== "false"
+		return this.getAttribute("open") === "true"
 	}
 	set open(bool) {
-		return this.setAttribute("open", bool)
+		this.setAttribute("open", bool)
+	}
+	get pin() {
+		return this.getAttribute("pin") === "true"
+	}
+	set pin(bool) {
+		this.setAttribute("pin", bool)
 	}
 	/* helpers */
 	get id() {
@@ -85,41 +91,68 @@ export default class JoblistMenu extends HTMLElement {
 	get menus() {
 		return MENUS;
 	}
-	/* events */
-	onToggle(event) {
-		this.open = !this.open
+	get minWidth() {
+		return 1000
 	}
-
+	get minWidthPredicate() {
+		return window.innerWidth > this.minWidth
+	}
+	/* events */
+	onToggle() {
+		this.open = !this.open
+		this.pin = true
+	}
+	onResize() {
+		if (!this.pin) {
+			if (this.minWidthPredicate) {
+				this.open = true;
+			} else {
+				this.open = false;
+			}
+		}
+	}
 	/* lifecycle */
 	attributeChangedCallback() {
 		this.render();
 	}
+	disconnectedCallback() {
+		window.removeEventListener('resize', this.onResize);
+	}
 	connectedCallback() {
+		/* first, save the initial markup */
 		if (this.innerHTML) {
 			const initialMenuTemplate = document.createElement("template")
 			initialMenuTemplate.innerHTML = this.innerHTML
 			this.initialMenuTemplate = initialMenuTemplate
 		}
-		this.render();
+
+		window.addEventListener('resize', this.onResize.bind(this));
+
+		if (this.minWidthPredicate) {
+			this.open = true;
+		}
+		/* this.render(); */
 	}
+
 	render() {
+		this.replaceChildren('')
 		const doms = []
 
 		doms.push(this.createToggle());
 
 		if (this.open) {
-			if (!this.hasChildNodes() || this.showDefault) {
-				doms.push(...this.createMenus(this.menus));
-			}
 			if (this.initialMenuTemplate) {
 				doms.push(this.initialMenuTemplate.content.cloneNode(true))
+			}
+			if (!this.hasChildNodes() || this.showDefault) {
+				doms.push(...this.createMenus(this.menus));
 			}
 			if (this.showFavicon) {
 				doms.push(this.createFavicon(this.href));
 			}
 		}
 
-		this.replaceChildren(...doms)
+		this.append(...doms)
 	}
 	createToggle() {
 		const button = document.createElement("button");

@@ -98,11 +98,18 @@ joblist-menu {
 /* javascript menu */
 joblist-menu {
 	max-height: 100vh;
-	overflow-x: scroll;
+	flex-shrink: 0;
+	overflow-y: scroll;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+joblist-menu::-webkit-scrollbar {
+	display: none;
 }
 joblist-menu button {
 	position: sticky;
 	top: 0;
+	margin: 0.1rem;
 }
 joblist-menu button:not(:hover, :active) {
 	border-color: transparent;

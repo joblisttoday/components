@@ -1,0 +1,7 @@
+joblist-tags joblist-aindex-list ul {
+	display: flex;
+	flex-wrap: wrap;
+}
+joblist-tag a {
+	padding: calc(var(--s) / 5);
+}
