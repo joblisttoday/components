@@ -1,5 +1,3 @@
-import { parseFrontmatter } from "../utils/markdown.js";
-
 const KNOWN_HOSTS = ["cdn.jsdelivr.net", "github.com"];
 const HOSTS = KNOWN_HOSTS.reduce((acc, host) => {
 	acc[host] = host;
