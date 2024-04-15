@@ -2,6 +2,7 @@
 import { sqliteToJson } from "../utils/sqlite.js";
 import { Company } from "../utils/models.js";
 import initSqlJs from "sql.js";
+import workletURL from "sql.js/dist/sql-wasm.wasm?url";
 
 export class JoblistSqlSDK {
 	constructor(url = `https://joblist.gitlab.io/workers/joblist.db`) {
@@ -9,8 +10,9 @@ export class JoblistSqlSDK {
 	}
 
 	async initialize() {
-		const sqlPromise = initSqlJs({
-			locateFile: (file) => `https://sql.js.org/dist/${file}`,
+		/* https://github.com/sql-js/sql.js/issues/467#issuecomment-2015608979 */
+		const sqlPromise = await initSqlJs({
+			locateFile: (file) => workletURL
 		});
 		const dataPromise = fetch(this.url).then((res) => res.arrayBuffer());
 		const [SQL, buf] = await Promise.all([sqlPromise, dataPromise]);
