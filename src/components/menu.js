@@ -5,23 +5,23 @@ const MENUS = [
 			textContent: "home",
 		},
 		{
-			href: "https://joblist.gitlab.io/components/apps/search",
+			href: "https://components.joblist.today/apps/search",
 			textContent: "search",
 		},
 		{
-			href: "https://joblist.gitlab.io/components/apps/map",
+			href: "https://components.joblist.today/apps/map",
 			textContent: "map",
 		},
 		{
-			href: "https://joblist.gitlab.io/components/apps/companies",
+			href: "https://components.joblist.today/apps/companies",
 			textContent: "companies",
 		},
 		{
-			href: "https://joblist.gitlab.io/components/apps/tags",
+			href: "https://components.joblist.today/apps/tags",
 			textContent: "tags"
 		},
 		{
-			href: "https://joblist.gitlab.io/components/apps/boards",
+			href: "https://components.joblist.today/apps/boards",
 			textContent: "providers",
 		},
 	],

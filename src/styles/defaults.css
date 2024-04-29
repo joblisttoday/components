@@ -26,7 +26,7 @@ joblist-layout {
 			[href^="https://joblist.today"],
 			[href^="https://joblist.gitlab.io"],
 			[href^="https://edit.joblist.today"],
-			[href^="https://index.joblist.today"],
+			[href^="https://components.joblist.today"],
 			[href^="https://api.joblist.today"]
 		) {
 			&::after {
