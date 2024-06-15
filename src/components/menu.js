@@ -49,7 +49,7 @@ const MENUS = [
 		{ href: "https://gitlab.com/joblist", textContent: "gitlab" },
 		{
 			href: "https://matrix.to/#/#joblist.today:matrix.org",
-			textContent: "matrix",
+			textContent: "chat",
 		},
 		{
 			href: "https://libli.org/#news.joblist.today:matrix.org",
