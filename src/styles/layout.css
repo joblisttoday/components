@@ -13,8 +13,7 @@ joblist-layout {
 	line-height: var(--line-height);
 }
 
-joblist-layout,
-[is="joblist-layout"] {
+joblist-layout {
 	:is(joblist-search) {
 		width: 100%;
 		align-self: center;
@@ -25,6 +24,8 @@ joblist-layout,
 		flex-grow: 1;
 	}
 	:is(joblist-page) {
+		display: flex;
+		flex-direction: column;
 		&:is([full]) {
 			display: flex;
 			flex-direction: column;
@@ -35,8 +36,19 @@ joblist-layout,
 		:is(h1:first-of-type) {
 			margin-top: 0;
 		}
-		display: flex;
-		flex-direction: column;
+		:is(dl, pre) {
+			padding: calc(var(--s) / 2);
+			border: 1px solid var(--c-hr);
+		}
+		:is(dt) {
+			font-weight: bold;
+		}
+		:is(dd) {
+			margin-left: var(--s);
+		}
+		:is(pre) {
+			white-space: pre-wrap;
+		}
 	}
 	:is(joblist-menu) {
 		position: sticky;
