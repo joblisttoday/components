@@ -2,7 +2,7 @@
 joblist-layout {
 	font-size: var(--s-h0);
 	font-family: var(--font-family);
-	background-color: transparent;
+	background-color: var(--c-bg);
 	color: var(--c-fg);
 }
 
