@@ -1,4 +1,5 @@
 /* defaults */
+:root[joblist-layout],
 joblist-layout {
 	font-size: var(--s-h0);
 	font-family: var(--font-family);

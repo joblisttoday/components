@@ -1,5 +1,5 @@
 /* variables */
-joblist-layout {
+:root {
 	--c-white: white;
 	--c-black: black;
 	--c-green: darkgreen;
@@ -25,7 +25,7 @@ joblist-layout {
 	--s-border-radius: 0.2rem;
 }
 @media (prefers-color-scheme: dark) {
-	joblist-layout {
+	:root {
 		color-scheme: dark;
 		--c-bg: #151517f7;
 		--c-bg-alt:#191913f3;
@@ -42,7 +42,7 @@ joblist-layout {
 	}
 }
 @media (prefers-color-scheme: light) {
-	joblist-layout {
+	:root {
 		color-scheme: light;
 		--c-bg: snow;
 		--c-bg-alt: linen;
@@ -60,13 +60,13 @@ joblist-layout {
 }
 
 @media (min-width: 60rem) {
-	joblist-layout {
+	:root {
 		--s-font: 19px;
 	}
 }
 
 @media (min-width: 100rem) {
-	joblist-layout {
+	:root {
 		--s-font: 20px;
 	}
 }
