@@ -44,7 +44,7 @@
 @media (prefers-color-scheme: light) {
 	:root {
 		color-scheme: light;
-		--c-bg: snow;
+		--c-bg: ghostwhite;
 		--c-bg-alt: linen;
 		--c-fg: var(--c-black);
 		--c-fg--info: gray;

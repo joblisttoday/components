@@ -17,7 +17,7 @@ joblist-heatmap {
 		display: flex;
 		flex-direction: column;
 		display: flex;
-		overflow-x: scroll;
+		overflow-x: auto;
 		margin: 0;
 	}
 	&:is([show-legend="false"]) {

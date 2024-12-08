@@ -5,6 +5,11 @@ joblist-layout {
 	font-family: var(--font-family);
 	background-color: var(--c-bg);
 	color: var(--c-fg);
+
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
+	font-size: 1rem;
 }
 
 /* resets */
