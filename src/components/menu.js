@@ -131,7 +131,7 @@ export default class JoblistMenu extends HTMLElement {
 		if (this.minWidthPredicate) {
 			this.open = true;
 		}
-		/* this.render(); */
+		this.render();
 	}
 
 	render() {
