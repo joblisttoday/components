@@ -1,5 +1,5 @@
 /* variables */
-:root {
+:root[joblist-layout] {
 	--c-white: white;
 	--c-black: black;
 	--c-green: darkgreen;
@@ -25,7 +25,7 @@
 	--s-border-radius: 0.2rem;
 }
 @media (prefers-color-scheme: dark) {
-	:root {
+	:root[joblist-layout] {
 		color-scheme: dark;
 		--c-bg: #151517f7;
 		--c-bg-alt:#191913f3;
@@ -42,7 +42,7 @@
 	}
 }
 @media (prefers-color-scheme: light) {
-	:root {
+	:root[joblist-layout] {
 		color-scheme: light;
 		--c-bg: ghostwhite;
 		--c-bg-alt: linen;
@@ -60,13 +60,13 @@
 }
 
 @media (min-width: 60rem) {
-	:root {
+	:root[joblist-layout] {
 		--s-font: 19px;
 	}
 }
 
 @media (min-width: 100rem) {
-	:root {
+	:root[joblist-layout] {
 		--s-font: 20px;
 	}
 }
