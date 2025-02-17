@@ -1,8 +1,9 @@
+import * as d3 from "d3";
 import * as Plot from "@observablehq/plot";
 
 export default function heatmap(
 	data = [],
-	{ width = 800, height = 200, id, days, ...options } = {},
+	{ width = 800, height = 200, id, days, ...options } = {}
 ) {
 	data = data?.map((d) => {
 		return {
@@ -13,8 +14,11 @@ export default function heatmap(
 			total: Number(d.total),
 		};
 	});
+
 	let idLabel = id ? `for ${id}` : "";
-	let label = `Jobs postings over the last ${days} day${days > 1 ? "s" : ""} ${idLabel}`;
+	let label = `Jobs postings over the last ${days} day${days > 1 ? "s" : ""
+		} ${idLabel}`;
+
 	return Plot.plot({
 		width,
 		height,
@@ -25,13 +29,17 @@ export default function heatmap(
 			label,
 			className: "joblist-legend",
 		},
+
+		// Keep any extra Plot config passed in:
 		...options,
+
+		// Use Plot.cell with band scales
 		marks: [
 			Plot.cell(data, {
-				x: (d) => {
-					return Number([d.year, d.woy].join("."));
-				},
-				y: (d) => d.dow,
+				// floor the date to the start of its week => each column is one week
+				x: (d) => d3.timeWeek.floor(d.date),
+				// day of week => each row is a day
+				y: (d) => d.date.getDay(),
 				fill: "total",
 				fillOpacity: 0.9,
 				stroke: "var(--c-bg)",
@@ -42,30 +50,34 @@ export default function heatmap(
 						month: "short",
 						day: "numeric",
 					});
-					return `${d.total || "No"} job${d.total > 1 ? "s" : ""} published on ${date}`;
+					return `${d.total || "No"} job${d.total > 1 ? "s" : ""
+						} published on ${date}`;
 				},
 			}),
 		],
+
+		// Make x a band scale, so each distinct week is a discrete column
 		x: {
-			tickFormat: (x) => {
-				const [year, woy] = x.toString().split(".");
-				if (woy % 7 === 0) {
-					return new Date(1000 * 60 * 60 * 24 * 7 * woy).toLocaleString(
-						"en-us",
-						{
-							month: "short",
-						},
-					);
+			type: "band",
+			// Optionally, label only the first day of each month
+			// so you see short month names on the axis
+			tickFormat: (date) => {
+				// If you want to show “Jan”, “Feb” on the first day of each month:
+				if (date.getUTCDate() === 1) {
+					return d3.utcFormat("%b")(date);
 				}
+				return "";
 			},
 		},
+
+		// Make y a band scale for the day of week
 		y: {
-			tickFormat: (dow) => {
-				if (dow % 2 === 0) {
-					return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][dow];
-				}
-			},
+			type: "band",
+			domain: [0, 1, 2, 3, 4, 5, 6],
+			tickFormat: (dow) =>
+				["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][dow],
 		},
+
 		style: {
 			color: "var(--c-fg)",
 			backgroundColor: "var(--c-bg)",
