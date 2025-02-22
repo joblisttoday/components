@@ -18,6 +18,9 @@ export class JoblistApiSDK {
 		}
 		return fetch(`${url}`, config).then((res) => res.json());
 	}
+	getStats() {
+		return this.fetch(`/sqlite/stats`);
+	}
 	async getCompanies() {
 		const companies = await this.fetch("/sqlite/companies");
 		return (

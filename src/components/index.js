@@ -3,6 +3,7 @@ import JoblistFavicon from "./favicon.js";
 import JoblistMenu from "./menu.js";
 import JoblistCompany from "./company.js";
 import JoblistCompanies from "./companies.js";
+import JoblistStats from "./stats.js";
 import JoblistTag from "./tag.js";
 import JoblistTags from "./tags.js";
 import JoblistAindex, {JoblistAindexToc, JoblistAindexList} from "./aindex.js";
@@ -34,6 +35,7 @@ const componentDefinitions = {
 	"joblist-job": JoblistJob,
 	"joblist-company": JoblistCompany,
 	"joblist-companies": JoblistCompanies,
+	"joblist-stats": JoblistStats,
 	"joblist-tag": JoblistTag,
 	"joblist-tags": JoblistTags,
 	"joblist-aindex": JoblistAindex,
