@@ -3,6 +3,7 @@ import recruiteeApi from "../providers/recruitee.js";
 import greenhouseApi from "../providers/greenhouse.js";
 import smartrecruitersApi from "../providers/smartrecruiters.js";
 import ashbyApi from "../providers/ashby.js";
+import ripplingApi from "../providers/rippling.js";
 import leverApi from "../providers/lever.js";
 import workableApi from "../providers/workable.js";
 import matrixApi from "../providers/matrix.js";
@@ -43,13 +44,13 @@ export default class JoblistBoardProvider extends HTMLElement {
 			$doms.push(this.createError(this.error));
 		} else if (this.model && this.model.length) {
 			const $jobs = this.model.map(this.createJob);
-			const $items = $jobs.map($job => {
-				const $li = document.createElement('li')
-				$li.append($job)
-				return $li
-			})
-			const $list = document.createElement('ul')
-			$list.append(...$items)
+			const $items = $jobs.map(($job) => {
+				const $li = document.createElement("li");
+				$li.append($job);
+				return $li;
+			});
+			const $list = document.createElement("ul");
+			$list.append(...$items);
 			$doms.push($list);
 		} else {
 			const $noJob = document.createElement("joblist-board-job");
@@ -114,6 +115,11 @@ class JoblistBoardMatrix extends JoblistBoardProvider {
 	getJobs = matrixApi.getJobs;
 }
 
+class JoblistBoardRippling extends JoblistBoardProvider {
+	id = ripplingApi.id;
+	getJobs = ripplingApi.getJobs;
+}
+
 export const providerDefinitions = {
 	"joblist-board-greenhouse": JoblistBoardGreenhouse,
 	"joblist-board-personio": JoblistBoardPersonio,
@@ -123,4 +129,5 @@ export const providerDefinitions = {
 	"joblist-board-lever": JoblistBoardLever,
 	"joblist-board-workable": JoblistBoardWorkable,
 	"joblist-board-matrix": JoblistBoardMatrix,
+	"joblist-board-rippling": JoblistBoardRippling,
 };
