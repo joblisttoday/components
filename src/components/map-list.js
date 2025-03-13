@@ -140,9 +140,11 @@ export default class JoblistMapList extends HTMLElement {
 			.setView([this.latitude, this.longitude], this.zoom);
 		map.zoomControl.setPosition("topright");
 
-		const tileUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+		const tileUrl =
+			"https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
 		const mapAttribution =
-			'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+			"Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012";
+
 		this.leaflet
 			.tileLayer(tileUrl, {
 				attribution: mapAttribution,
@@ -159,16 +161,24 @@ export default class JoblistMapList extends HTMLElement {
 		if (this.layerGroupMarkers && this.map.hasLayer(this.layerGroupMarkers)) {
 			this.layerGroupMarkers.clearLayers();
 		}
-
-		const iconUrl =
-			"data:image/svg+xml;base64," +
-			btoa(`
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-    <circle cx="12" cy="12" r="10" fill="blue"/>
-  </svg>
-		`);
+		const bgColor = getComputedStyle(document.documentElement)
+			.getPropertyValue("--c-bg")
+			.trim();
+		const fgColor = getComputedStyle(document.documentElement)
+			.getPropertyValue("--c-link")
+			.trim();
 
 		const $markers = markers.map((data) => {
+			// Create an SVG that includes the total_jobs inside the blue circle.
+			const svgString = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+    <rect x="0" y="0" width="80" height="80" rx="10" fill="${bgColor}"/>
+    <text x="40" y="50" text-anchor="middle" fill="${fgColor}" font-size="40" font-weight="bold" font-family="sans-serif">
+      ${typeof data.total_jobs === "number" ? data.total_jobs : ""}
+    </text>
+  </svg>`;
+
+			const iconUrl = "data:image/svg+xml;base64," + btoa(svgString);
 			var icon = this.leaflet.icon({
 				iconUrl,
 				iconSize: [20, 20],
@@ -178,7 +188,7 @@ export default class JoblistMapList extends HTMLElement {
 			if (data.longitude && data.latitude) {
 				let popupText = data.text;
 				if (data.id) {
-					const popupDom = `<a href="${this.buildOrigin(data.id)}">${data.text}</>`;
+					const popupDom = `<a href="${this.buildOrigin(data.id)}">${data.text}</a>`;
 					popupText = popupDom;
 				}
 				return this.leaflet
@@ -188,19 +198,18 @@ export default class JoblistMapList extends HTMLElement {
 		});
 
 		/*
-			 add all markers to a markers group
-			 https://leafletjs.com/reference.html#layergroup
-			 https://leafletjs.com/reference.html#featuregroup
-		 */
-
+		 add all markers to a markers group
+		 https://leafletjs.com/reference.html#layergroup
+		 https://leafletjs.com/reference.html#featuregroup
+	*/
 		this.layerGroupMarkers = this.leaflet
 			.featureGroup($markers)
 			.addTo(this.map);
 
 		/*
-			 fit the map the the markers
-			 https://stackoverflow.com/questions/16845614/zoom-to-fit-all-markers-in-mapbox-or-leaflet
-		 */
+		 fit the map the the markers
+		 https://stackoverflow.com/questions/16845614/zoom-to-fit-all-markers-in-mapbox-or-leaflet
+	*/
 		const groupBounds = this.layerGroupMarkers.getBounds();
 		if (Object.keys(groupBounds).length) {
 			this.map.fitBounds(this.layerGroupMarkers.getBounds());
@@ -208,6 +217,7 @@ export default class JoblistMapList extends HTMLElement {
 			this.map.fitWorld();
 		}
 	};
+
 	/* build a URL from the widget origin and marker id */
 	buildOrigin(id) {
 		if (this.origin.indexOf("{}") < 0) {
