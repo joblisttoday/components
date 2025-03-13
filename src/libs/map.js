@@ -112,23 +112,26 @@ const companiesResultsToMapMarkers = (companies) => {
 };
 
 const companyToMapMarkers = (company) => {
-	const { positions, title, id } = company;
-	if (!positions) {
+	const { positions, title, id, total_jobs } = company;
+
+	if (!positions || positions.length === 0) {
 		/* no markers for this company */
 		return [];
 	}
-	const markers = [];
-	positions.forEach((position) => {
+	// For each map position, include the precomputed total_jobs count.
+	const markers = positions.map((position) => {
 		const mapData = parsePosition(position);
 		if (mapData) {
-			markers.push({
+			console.log("total_jobs", total_jobs);
+			return {
 				text: title,
 				id: id,
+				total_jobs,
 				...mapData,
-			});
+			};
 		}
 	});
-	return markers;
+	return markers.filter(Boolean);
 };
 
 const companiesToMapMarkers = (companies = []) => {

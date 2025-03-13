@@ -24,6 +24,8 @@ class Company {
 			"wikipedia_url",
 			// from stripe.db merge
 			"is_highlighted",
+			// joined from jobs table
+			"total_jobs",
 		];
 	}
 	constructor(data, { serializePositions = true, serializeTags = true } = {}) {

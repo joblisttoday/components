@@ -12,7 +12,7 @@ export class JoblistSqlSDK {
 	async initialize() {
 		/* https://github.com/sql-js/sql.js/issues/467#issuecomment-2015608979 */
 		const sqlPromise = await initSqlJs({
-			locateFile: (file) => workletURL
+			locateFile: (file) => workletURL,
 		});
 		const dataPromise = fetch(this.url).then((res) => res.arrayBuffer());
 		const [SQL, buf] = await Promise.all([sqlPromise, dataPromise]);
@@ -28,6 +28,22 @@ export class JoblistSqlSDK {
 		let res;
 		try {
 			res = await this.executeQuery(`SELECT * FROM companies`);
+		} catch (e) {
+			throw e;
+		}
+		return res.map((c) => new Company(c));
+	}
+
+	async getAllCompaniesWithJobs() {
+		let res;
+		try {
+			res = await this.executeQuery(`SELECT companies.*,
+COUNT(jobs.id) AS total_jobs
+FROM companies
+LEFT JOIN jobs ON companies.id = jobs.company_id
+GROUP BY companies.id
+HAVING (companies.job_board_provider IS NOT NULL AND companies.job_board_hostname IS NOT NULL) OR COUNT(jobs.id) > 0;
+`);
 		} catch (e) {
 			throw e;
 		}
