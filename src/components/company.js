@@ -185,7 +185,7 @@ export default class JoblistCompany extends HTMLElement {
 			},
 			{
 				text: "file",
-				href: `https://github.com/joblisttoday/data/edit/main/companies/${id}/index.md`,
+				href: `https://github.com/joblisttoday/data/edit/main/companies/${id}/index.json`,
 				title: "Edit with github directly",
 			},
 			{
