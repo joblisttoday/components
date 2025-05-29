@@ -1,5 +1,4 @@
 import { sqliteToJson } from "../utils/sqlite.js";
-import { Company } from "../utils/models.js";
 import { createDbWorker } from "sql.js-httpvfs";
 
 const workerUrl = new URL(
@@ -45,6 +44,27 @@ export class JoblistSqlHttpvfsSDK {
 			(SELECT total_companies FROM companies_analyze) AS total_companies,
 			(SELECT total_jobs FROM jobs_analyze) AS total_jobs
 			`);
+		} catch (e) {
+			throw e;
+		}
+		return res[0];
+	}
+
+	async getCompanies() {
+		let res;
+		try {
+			res = await this.executeQuery(`SELECT * from companies`);
+		} catch (e) {
+			throw e;
+		}
+		return res;
+	}
+	async getCompany(id) {
+		let res;
+		try {
+			res = await this.executeQuery(`SELECT * from companies WHERE id = ?`, [
+				id,
+			]);
 		} catch (e) {
 			throw e;
 		}

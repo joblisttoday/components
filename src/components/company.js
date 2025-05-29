@@ -1,4 +1,4 @@
-import apiSdk from "../libs/sdk-api.js";
+import { JoblistSqlHttpvfsSDK } from "../libs/sdk-sql-httpvfs.js";
 import { companyToMapMarkers } from "../libs/map.js";
 import text from "../utils/text.js";
 import "giscus";
@@ -22,11 +22,10 @@ export default class JoblistCompany extends HTMLElement {
 	buildProfileUrl(id) {
 		return `${this.origin}/${id}`;
 	}
-	constructor() {
-		super();
-		this.sdk = apiSdk;
-	}
 	async connectedCallback() {
+		this.sdk = new JoblistSqlHttpvfsSDK(this.databaseUrl);
+		await this.sdk.initialize();
+
 		if (this.companyId) {
 			this.company = await this.sdk.getCompany(this.companyId);
 		}

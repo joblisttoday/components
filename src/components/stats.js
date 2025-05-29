@@ -1,4 +1,3 @@
-import apiSdk from "../libs/sdk-api.js";
 import { JoblistSqlHttpvfsSDK } from "../libs/sdk-sql-httpvfs.js";
 
 export default class JoblistStats extends HTMLElement {
