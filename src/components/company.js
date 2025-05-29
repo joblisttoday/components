@@ -23,10 +23,9 @@ export default class JoblistCompany extends HTMLElement {
 		return `${this.origin}/${id}`;
 	}
 	async connectedCallback() {
-		this.sdk = joblistSqlHttpvfsSDK;
-		await this.sdk.initialize();
-
 		if (this.companyId) {
+			this.sdk = joblistSqlHttpvfsSDK;
+			await this.sdk.initialize();
 			this.company = await this.sdk.getCompany(this.companyId);
 		}
 		this.render();

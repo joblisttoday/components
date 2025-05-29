@@ -26,7 +26,8 @@ export default class JoblistCompanies extends HTMLElement {
 	}
 	createTemplate() {
 		const template = document.createElement("template");
-		template.content.append(document.createElement("joblist-company"));
+		const el = document.createElement("joblist-company");
+		template.content.appendChild(el);
 		template.setAttribute("key", "company");
 		return template;
 	}
