@@ -1,7 +1,7 @@
 {
   "name": "@joblist/components",
   "private": false,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "homepage": "https://gitlab.com/joblist/components",
   "keywords": [
     "web-components",
@@ -18,7 +18,8 @@
     "./providers": "./src/providers/index.js",
     "./sdk": "./src/libs/sdk.js",
     "./sanitizer": "./src/libs/sanitizer.js",
-    "./mwc": "./src/libs/mwc.js"
+    "./mwc": "./src/libs/mwc.js",
+    "./style": "./dist-lib/style.css"
   },
   "main": "./dist-lib/index.js",
   "files": [
