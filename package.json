@@ -1,7 +1,7 @@
 {
   "name": "@joblist/components",
   "private": false,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://gitlab.com/joblist/components",
   "keywords": [
     "web-components",
