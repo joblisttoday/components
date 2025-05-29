@@ -7,7 +7,7 @@ export default class JoblistSearch extends HTMLElement {
 	get databaseUrl() {
 		return (
 			this.getAttribute("database-url") ||
-			`https://joblisttoday.github.io/workers/joblist.db`
+			"https://workers.joblist.today.github.io/joblist.db"
 		);
 	}
 	get query() {

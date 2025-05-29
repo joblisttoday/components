@@ -40,7 +40,7 @@ const MENUS = [
 		{ href: "https://api.joblist.today", textContent: "api" },
 		{ href: "https://joblist.gitlab.io/dashboards", textContent: "dashboards" },
 		{
-			href: "https://sqlime.org/#https://joblisttoday.github.io/workers/joblist.db",
+			href: "https://sqlime.org/#https://workers.joblist.today.github.io/joblist.db",
 			textContent: "db.sqlite",
 		},
 	],

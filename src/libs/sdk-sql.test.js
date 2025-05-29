@@ -3,5 +3,5 @@ import sdk, { JoblistSqlSDK } from "./sdk-sql.js";
 
 test("correct database url", () => {
 	const mySdk = new JoblistSqlSDK();
-	expect(mySdk.url).toBe("https://joblisttoday.github.io/workers/joblist.db");
+	expect(mySdk.url).toBe("https://workers.joblist.today.github.io/joblist.db");
 });
