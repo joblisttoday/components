@@ -41,7 +41,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     env:
-      VITE_BASE: "/components/"
+      VITE_BASE: "/"
     steps:
       - uses: actions/checkout@v4
 
