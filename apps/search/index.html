@@ -32,75 +32,76 @@
 				<joblist-page-header>
 					<header>
 						<h1><a href="./"> Search </a></h1>
-						<p>
-							Explore companies and jobs indices.
-						</p>
+						<p>Explore companies and jobs indices.</p>
 					</header>
 				</joblist-page-header>
 				<joblist-page-main> </joblist-page-main>
 				<joblist-page-footer>
 					<footer>
-						<hr/>
+						<hr />
 						<details>
 							<summary>Info</summary>
 
-							<p>Each column name of the database tables (companies, jobs) can be used to match rows for values, using the syntax <code>column_name:row_value</code> with the following examples. </p>
+							<p>
+								Each column name of the database tables (companies, jobs) can be
+								used to match rows for values, using the syntax
+								<code>column_name:row_value</code> with the following examples.
+							</p>
 
 							<p>
 								Use sqlite3
 								<a
 									href="https://www.sqlite.org/fts3.html#full_text_index_queries"
-								>full text (3) search syntax</a
-																						>, or open the
+									>full text (3) search syntax</a
+								>, or open the
 								<a
-									href="https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db"
-								>database explorer</a>.
+									href="https://sqlime.org/#https://joblisttoday.github.io/workers/joblist.db"
+									>database explorer</a
+								>.
 							</p>
 
 							<h2>Examples</h2>
 							Search query syntax examples, as typed in the search input.
-							<pre>tags:music
+							<pre>
+tags:music
 tags:music AND city:berlin
 tags:music AND city:berlin AND instru*
 city:london
 id:ableton
-software* AND location:berlin</pre>
+software* AND location:berlin</pre
+							>
 
 							<h3>Companies</h3>
 							<dl>
-								<dt>
-									id:project_id
-								</dt>
+								<dt>id:project_id</dt>
 								<dd>
-									The ID (unique identifier) of a company as referenced in joblist, for example <code>joblist.today/:company_id</code> or the name of the "data folder".
+									The ID (unique identifier) of a company as referenced in
+									joblist, for example <code>joblist.today/:company_id</code> or
+									the name of the "data folder".
 								</dd>
-								<dt>
-									tags:company_tag
-								</dt>
+								<dt>tags:company_tag</dt>
 								<dd>
-									One or multiple "tags" used to describe a company, separated by "," (commas).
+									One or multiple "tags" used to describe a company, separated
+									by "," (commas).
 								</dd>
-								<dt>
-									city:world_city
-								</dt>
+								<dt>city:world_city</dt>
 								<dd>
-									One or multiple "city" referenced in the company geographical "positions"
+									One or multiple "city" referenced in the company geographical
+									"positions"
 								</dd>
 							</dl>
 
 							<h3>Jobs</h3>
 							<dl>
-								<dt>
-									id:job_id
-								</dt>
+								<dt>id:job_id</dt>
 								<dd>
-									The ID (unique identifier) of a job as referenced in joblist (see the sqlite database explorer)
+									The ID (unique identifier) of a job as referenced in joblist
+									(see the sqlite database explorer)
 								</dd>
-								<dt>
-									location:location_string
-								</dt>
+								<dt>location:location_string</dt>
 								<dd>
-									One or multiple locations, city names, country, as referenced by the job provider.
+									One or multiple locations, city names, country, as referenced
+									by the job provider.
 								</dd>
 							</dl>
 						</details>

@@ -18,7 +18,7 @@ const MENUS = [
 		},
 		{
 			href: "https://components.joblist.today/apps/tags",
-			textContent: "tags"
+			textContent: "tags",
 		},
 		{
 			href: "https://components.joblist.today/apps/boards",
@@ -40,7 +40,7 @@ const MENUS = [
 		{ href: "https://api.joblist.today", textContent: "api" },
 		{ href: "https://joblist.gitlab.io/dashboards", textContent: "dashboards" },
 		{
-			href: "https://sqlime.org/#https://joblist.gitlab.io/workers/joblist.db",
+			href: "https://sqlime.org/#https://joblisttoday.github.io/workers/joblist.db",
 			textContent: "db.sqlite",
 		},
 	],
@@ -60,7 +60,7 @@ const MENUS = [
 
 export default class JoblistMenu extends HTMLElement {
 	static get observedAttributes() {
-		return ["open"]
+		return ["open"];
 	}
 	/* props */
 	get showDefault() {
@@ -73,16 +73,16 @@ export default class JoblistMenu extends HTMLElement {
 		return this.getAttribute("href") || this.menus[0][0].href;
 	}
 	get open() {
-		return this.getAttribute("open") === "true"
+		return this.getAttribute("open") === "true";
 	}
 	set open(bool) {
-		this.setAttribute("open", bool)
+		this.setAttribute("open", bool);
 	}
 	get pin() {
-		return this.getAttribute("pin") === "true"
+		return this.getAttribute("pin") === "true";
 	}
 	set pin(bool) {
-		this.setAttribute("pin", bool)
+		this.setAttribute("pin", bool);
 	}
 	/* helpers */
 	get id() {
@@ -92,15 +92,15 @@ export default class JoblistMenu extends HTMLElement {
 		return MENUS;
 	}
 	get minWidth() {
-		return 1000
+		return 1000;
 	}
 	get minWidthPredicate() {
-		return window.innerWidth > this.minWidth
+		return window.innerWidth > this.minWidth;
 	}
 	/* events */
 	onToggle() {
-		this.open = !this.open
-		this.pin = true
+		this.open = !this.open;
+		this.pin = true;
 	}
 	onResize() {
 		if (!this.pin) {
@@ -116,17 +116,17 @@ export default class JoblistMenu extends HTMLElement {
 		this.render();
 	}
 	disconnectedCallback() {
-		window.removeEventListener('resize', this.onResize);
+		window.removeEventListener("resize", this.onResize);
 	}
 	connectedCallback() {
 		/* first, save the initial markup */
 		if (this.innerHTML) {
-			const initialMenuTemplate = document.createElement("template")
-			initialMenuTemplate.innerHTML = this.innerHTML
-			this.initialMenuTemplate = initialMenuTemplate
+			const initialMenuTemplate = document.createElement("template");
+			initialMenuTemplate.innerHTML = this.innerHTML;
+			this.initialMenuTemplate = initialMenuTemplate;
 		}
 
-		window.addEventListener('resize', this.onResize.bind(this));
+		window.addEventListener("resize", this.onResize.bind(this));
 
 		if (this.minWidthPredicate) {
 			this.open = true;
@@ -135,14 +135,14 @@ export default class JoblistMenu extends HTMLElement {
 	}
 
 	render() {
-		this.replaceChildren('')
-		const doms = []
+		this.replaceChildren("");
+		const doms = [];
 
 		doms.push(this.createToggle());
 
 		if (this.open) {
 			if (this.initialMenuTemplate) {
-				doms.push(this.initialMenuTemplate.content.cloneNode(true))
+				doms.push(this.initialMenuTemplate.content.cloneNode(true));
 			}
 			if (!this.hasChildNodes() || this.showDefault) {
 				doms.push(...this.createMenus(this.menus));
@@ -152,13 +152,13 @@ export default class JoblistMenu extends HTMLElement {
 			}
 		}
 
-		this.append(...doms)
+		this.append(...doms);
 	}
 	createToggle() {
 		const button = document.createElement("button");
-		button.textContent = "≡"
-		button.setAttribute("title", "Menu")
-		button.addEventListener("click", this.onToggle.bind(this))
+		button.textContent = "≡";
+		button.setAttribute("title", "Menu");
+		button.addEventListener("click", this.onToggle.bind(this));
 		return button;
 	}
 	createFavicon(href) {

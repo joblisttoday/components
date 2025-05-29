@@ -5,7 +5,7 @@ import initSqlJs from "sql.js";
 import workletURL from "sql.js/dist/sql-wasm.wasm?url";
 
 export class JoblistSqlSDK {
-	constructor(url = `https://joblist.gitlab.io/workers/joblist.db`) {
+	constructor(url = `https://joblisttoday.github.io/workers/joblist.db`) {
 		this.url = url;
 	}
 

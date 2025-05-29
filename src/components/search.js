@@ -7,7 +7,7 @@ export default class JoblistSearch extends HTMLElement {
 	get databaseUrl() {
 		return (
 			this.getAttribute("database-url") ||
-			`https://joblist.gitlab.io/workers/joblist.db`
+			`https://joblisttoday.github.io/workers/joblist.db`
 		);
 	}
 	get query() {
@@ -48,8 +48,7 @@ export default class JoblistSearch extends HTMLElement {
 	_render(query = "") {
 		const $input = document.createElement("input");
 		$input.type = "search";
-		$input.placeholder =
-			this.placeholder || "Search query";
+		$input.placeholder = this.placeholder || "Search query";
 		$input.addEventListener("input", this._debounceOnInput.bind(this));
 		if (query) {
 			$input.value = query;
