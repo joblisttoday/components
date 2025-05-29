@@ -1,9 +1,9 @@
-import { JoblistSqlHttpvfsSDK } from "../libs/sdk-sql-httpvfs.js";
+import joblistSqlHttpvfsSDK from "../libs/sdk-sql-httpvfs.js";
 import { getAllCompaniesTags } from "../utils/tags.js";
 
 export default class JoblistTags extends HTMLElement {
 	async connectedCallback() {
-		this.sdk = new JoblistSqlHttpvfsSDK(this.databaseUrl);
+		this.sdk = joblistSqlHttpvfsSDK;
 		await this.sdk.initialize();
 		try {
 			const companies = await this.sdk.getCompanies();

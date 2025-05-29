@@ -1,4 +1,4 @@
-import { JoblistSqlHttpvfsSDK } from "../libs/sdk-sql-httpvfs.js";
+import joblistSqlHttpvfsSDK from "../libs/sdk-sql-httpvfs.js";
 import { companyToMapMarkers } from "../libs/map.js";
 import text from "../utils/text.js";
 import "giscus";
@@ -23,14 +23,11 @@ export default class JoblistCompany extends HTMLElement {
 		return `${this.origin}/${id}`;
 	}
 	async connectedCallback() {
-		this.sdk = new JoblistSqlHttpvfsSDK(this.databaseUrl);
+		this.sdk = joblistSqlHttpvfsSDK;
 		await this.sdk.initialize();
 
 		if (this.companyId) {
 			this.company = await this.sdk.getCompany(this.companyId);
-		}
-		if (this.company?.company_url) {
-			this.faviconUrl = this.company.company_url;
 		}
 		this.render();
 	}

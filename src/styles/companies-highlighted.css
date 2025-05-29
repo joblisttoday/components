@@ -1,0 +1,7 @@
+joblist-companies-highlighted {
+	:is(ul) {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+}

@@ -2,11 +2,13 @@ import { JoblistSqlHttpvfsSDK } from "../libs/sdk-sql-httpvfs.js";
 
 export default class JoblistCompanies extends HTMLElement {
 	async connectedCallback() {
-		this.sdk = new JoblistSqlHttpvfsSDK(this.databaseUrl);
-		await this.sdk.initialize();
+		this.sdk = new JoblistSqlHttpvfsSDK();
+		const db = await this.sdk.initialize();
+		console.log(db);
+
+		const companies = await this.sdk.getCompanies();
+		this.render(companies);
 		try {
-			const companies = await this.sdk.getCompanies();
-			this.render(companies);
 		} catch (error) {
 			this.textContent = "Error loading companies";
 		}

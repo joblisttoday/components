@@ -3,10 +3,14 @@ import JoblistFavicon from "./favicon.js";
 import JoblistMenu from "./menu.js";
 import JoblistCompany from "./company.js";
 import JoblistCompanies from "./companies.js";
+import JoblistCompaniesHighlighted from "./companies-highlighted.js";
 import JoblistStats from "./stats.js";
 import JoblistTag from "./tag.js";
 import JoblistTags from "./tags.js";
-import JoblistAindex, {JoblistAindexToc, JoblistAindexList} from "./aindex.js";
+import JoblistAindex, {
+	JoblistAindexToc,
+	JoblistAindexList,
+} from "./aindex.js";
 import JoblistJob from "./job.js";
 import JoblistMapList from "./map-list.js";
 import JoblistMatrixAuth from "./matrix-auth.js";
@@ -35,6 +39,7 @@ const componentDefinitions = {
 	"joblist-job": JoblistJob,
 	"joblist-company": JoblistCompany,
 	"joblist-companies": JoblistCompanies,
+	"joblist-companies-highlighted": JoblistCompaniesHighlighted,
 	"joblist-stats": JoblistStats,
 	"joblist-tag": JoblistTag,
 	"joblist-tags": JoblistTags,

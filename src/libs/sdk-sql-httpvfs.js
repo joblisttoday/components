@@ -13,22 +13,19 @@ const config = {
 		serverMode: "full",
 		requestChunkSize: 4096,
 		url: "https://workers.joblist.today/joblist.db",
+		cacheBust: Date.now(),
 	},
 };
 
 export class JoblistSqlHttpvfsSDK {
-	constructor(url = "https://workers.joblist.today/joblist.db") {
-		this.url = url;
-	}
-
 	async initialize() {
-		const worker = await createDbWorker(
+		const { db } = await createDbWorker(
 			[config],
 			workerUrl.toString(),
 			wasmUrl.toString(),
 			10 * 1024 * 1024,
 		);
-		this.db = worker.db;
+		this.db = db;
 	}
 
 	async executeQuery(exec = "", params = []) {
@@ -59,6 +56,17 @@ export class JoblistSqlHttpvfsSDK {
 		}
 		return res;
 	}
+	async getCompaniesHighlighted() {
+		let res;
+		try {
+			res = await this.executeQuery(
+				`SELECT * from companies where is_highlighted = true`,
+			);
+		} catch (e) {
+			throw e;
+		}
+		return res;
+	}
 	async getCompany(id) {
 		let res;
 		try {
@@ -72,4 +80,6 @@ export class JoblistSqlHttpvfsSDK {
 	}
 }
 
-export default new JoblistSqlHttpvfsSDK();
+const joblistSqlHttpvfsSDK = new JoblistSqlHttpvfsSDK();
+
+export default joblistSqlHttpvfsSDK;
