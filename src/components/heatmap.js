@@ -18,7 +18,7 @@ export default class JoblistHeatmap extends HTMLElement {
 	get databaseUrl() {
 		return (
 			this.getAttribute("database-url") ||
-			"https://workers.joblist.today.github.io/joblist.db"
+			"https://workers.joblist.today/joblist.db"
 		);
 	}
 
