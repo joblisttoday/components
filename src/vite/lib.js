@@ -19,6 +19,6 @@ export default defineConfig({
 		},
 	},
 	optimizeDeps: {
-		exclude: ["@sqlite.org/sqlite-wasm"],
+		exclude: ["@sqlite.org/sqlite-wasm", "@duckdb/duckdb-wasm"],
 	},
 });

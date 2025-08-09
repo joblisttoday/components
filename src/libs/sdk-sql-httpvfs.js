@@ -65,7 +65,7 @@ export class JoblistSqlHttpvfsSDK {
 		} catch (e) {
 			throw e;
 		}
-		return res;
+		return res || [];
 	}
 	async getCompany(id) {
 		let res;

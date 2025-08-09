@@ -1,9 +1,11 @@
-import joblistSqlHttpvfsSDK from "../libs/sdk-sql-httpvfs.js";
+import joblistDuckDBSDK, { JoblistDuckDBSDK } from "../libs/sdk-duckdb.js";
 import { getAllCompaniesTags } from "../utils/tags.js";
 
 export default class JoblistTags extends HTMLElement {
 	async connectedCallback() {
-		this.sdk = joblistSqlHttpvfsSDK;
+        const base = this.getAttribute("parquet-base") || undefined;
+        const mode = this.getAttribute("parquet-mode") || "buffer";
+        this.sdk = base || mode ? new JoblistDuckDBSDK(base, { mode }) : joblistDuckDBSDK;
 		await this.sdk.initialize();
 		try {
 			const companies = await this.sdk.getCompanies();

@@ -11,7 +11,29 @@
 	<body>
 		<joblist-layout>
 			<joblist-page>
-				<joblist-stats></joblist-stats>
+				<header>
+					<h1>DuckDB WASM: Stats From Parquet</h1>
+					<p>
+						This example renders global stats using DuckDB WASM and remote Parquet files.
+						The component reads from <code>companies_analyze.parquet</code> and <code>jobs_analyze.parquet</code>
+						at the configured base URL.
+					</p>
+				</header>
+
+				<section>
+					<h2>Default Base</h2>
+					<p>Uses the default base: <code>https://workers.joblist.today</code></p>
+					<joblist-stats></joblist-stats>
+				</section>
+
+				<section>
+					<h2>Custom Base (override)</h2>
+					<p>
+						Override the base domain via the <code>parquet-base</code> attribute. The files must exist at
+						<code>{base}/companies_analyze.parquet</code> and <code>{base}/jobs_analyze.parquet</code>.
+					</p>
+					<joblist-stats parquet-base="https://workers.joblist.today"></joblist-stats>
+				</section>
 			</joblist-page>
 		</joblist-layout>
 	</body>

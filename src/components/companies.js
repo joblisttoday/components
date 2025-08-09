@@ -1,8 +1,10 @@
-import { JoblistSqlHttpvfsSDK } from "../libs/sdk-sql-httpvfs.js";
+import { JoblistDuckDBSDK } from "../libs/sdk-duckdb.js";
 
 export default class JoblistCompanies extends HTMLElement {
 	async connectedCallback() {
-		this.sdk = new JoblistSqlHttpvfsSDK();
+        const base = this.getAttribute("parquet-base") || undefined;
+        const mode = this.getAttribute("parquet-mode") || "buffer";
+        this.sdk = new JoblistDuckDBSDK(base, { mode });
 		const db = await this.sdk.initialize();
 		console.log(db);
 

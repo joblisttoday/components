@@ -1,4 +1,4 @@
-import joblistSqlHttpvfsSDK from "../libs/sdk-sql-httpvfs.js";
+import joblistDuckDBSDK, { JoblistDuckDBSDK } from "../libs/sdk-duckdb.js";
 import { companyToMapMarkers } from "../libs/map.js";
 import text from "../utils/text.js";
 import "giscus";
@@ -24,7 +24,9 @@ export default class JoblistCompany extends HTMLElement {
 	}
 	async connectedCallback() {
 		if (this.companyId) {
-			this.sdk = joblistSqlHttpvfsSDK;
+            const base = this.getAttribute("parquet-base") || undefined;
+            const mode = this.getAttribute("parquet-mode") || "buffer";
+            this.sdk = base || mode ? new JoblistDuckDBSDK(base, { mode }) : joblistDuckDBSDK;
 			await this.sdk.initialize();
 			this.company = await this.sdk.getCompany(this.companyId);
 		}
