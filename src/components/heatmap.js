@@ -1,4 +1,4 @@
-import { JoblistSqlSDK } from "../libs/sdk-sql.js";
+import { JoblistDuckDBSDK } from "../libs/sdk-duckdb.js";
 import { JoblistApiSDK } from "../libs/sdk-api.js";
 import heatmapCompany from "../plots/heatmap.js";
 
@@ -18,12 +18,12 @@ export default class JoblistHeatmap extends HTMLElement {
 	get databaseUrl() {
 		return (
 			this.getAttribute("database-url") ||
-			"https://workers.joblist.today/joblist.db"
+			"https://workers.joblist.today" // DuckDB parquet base URL (default)
 		);
 	}
 
 	get apiUrl() {
-		return this.getAttribute("api-url") || `https://api.joblist.today`;
+		return this.getAttribute("api-url"); // No default - only use API if explicitly set
 	}
 
 	constructor() {
@@ -59,7 +59,7 @@ export default class JoblistHeatmap extends HTMLElement {
 				if (this.apiUrl) {
 					this.sdk = new JoblistApiSDK(this.apiUrl);
 				} else if (this.databaseUrl) {
-					this.sdk = new JoblistSqlSDK(this.databaseUrl);
+					this.sdk = new JoblistDuckDBSDK(this.databaseUrl);
 					await this.sdk.initialize();
 				}
 

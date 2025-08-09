@@ -67,6 +67,19 @@ export default class JoblistMapList extends HTMLElement {
 		return markers;
 	}
 
+	get jobs() {
+		let jobs = [];
+		try {
+			const jobsAttr = this.getAttribute("jobs");
+			if (jobsAttr) {
+				jobs = JSON.parse(jobsAttr);
+			}
+		} catch (error) {
+			console.log("Error parsing jobs data", error);
+		}
+		return jobs;
+	}
+
 	/* should have been inserted with `createLeafletScripts` */
 	get checkDependencies() {
 		return typeof this.leaflet !== "undefined";
@@ -77,7 +90,7 @@ export default class JoblistMapList extends HTMLElement {
 	}
 
 	static get observedAttributes() {
-		return ["markers", "longitude", "latitude", "zoom"];
+		return ["markers", "jobs", "longitude", "latitude", "zoom"];
 	}
 	attributeChangedCallback() {
 		/* restart leaflet js if any observed attr change */
@@ -188,7 +201,21 @@ export default class JoblistMapList extends HTMLElement {
 			if (data.longitude && data.latitude) {
 				let popupText = data.text;
 				if (data.id) {
-					const popupDom = `<a href="${this.buildOrigin(data.id)}">${data.text}</a>`;
+					// Create popup with company link and job filter button
+					const jobCount = typeof data.total_jobs === "number" ? data.total_jobs : 0;
+					const jobText = jobCount === 1 ? "job" : "jobs";
+					const popupDom = `
+						<div>
+							<a href="${this.buildOrigin(data.id)}" target="_blank">${data.text}</a>
+							${jobCount > 0 ? `
+								<br><small>${jobCount} ${jobText}</small>
+								<br><button onclick="this.getRootNode().host.filterJobsByCompany('${data.id}')" 
+								          style="margin-top: 5px; padding: 3px 8px; font-size: 12px;">
+									Show ${jobCount} ${jobText}
+								</button>
+							` : ''}
+						</div>
+					`;
 					popupText = popupDom;
 				}
 				return this.leaflet
@@ -226,5 +253,25 @@ export default class JoblistMapList extends HTMLElement {
 			const address = this.origin.replace("{}", id);
 			return address;
 		}
+	}
+
+	/* filter jobs by company and emit event */
+	filterJobsByCompany(companyId) {
+		const jobs = this.jobs;
+		const filteredJobs = jobs.filter(job => job.company_id === companyId);
+		
+		console.log(`🎯 Filtering jobs for company ${companyId}:`, filteredJobs.length, "jobs found");
+		
+		// Emit a custom event with the filtered jobs
+		const filterEvent = new CustomEvent("job-filter", {
+			bubbles: true,
+			detail: {
+				companyId,
+				jobs: filteredJobs,
+				type: "company-filter"
+			}
+		});
+		
+		this.dispatchEvent(filterEvent);
 	}
 }

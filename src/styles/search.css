@@ -1,9 +1,10 @@
 joblist-search {
 	display: flex;
-	justify-content: center;
 	align-items: center;
-	padding: calc(var(--s) / 2);
 	background-color: var(--c-bg);
+	:is(.search-container) {
+		flex-grow: 1;
+	}
 }
 joblist-search input {
 	flex-grow: 1;

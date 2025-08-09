@@ -6,28 +6,80 @@
 		<title>@joblist/components/map</title>
 		<script type="module">
 			import joblist from "../../src/index.js";
-			const { sqlSdk, mapSdk } = joblist;
+			const { duckDBSdk, mapSdk } = joblist;
 			const { companiesToMapMarkers } = mapSdk;
 
 			(async ({ query = "", latitude = "", longitude = "", zoom = 3 }) => {
 				const handleSearch = ({ detail }) => {
-					const { companies, query } = detail;
+					const { companies, jobs, query } = detail;
 					if (!query) {
 						$map.setAttribute("markers", JSON.stringify(allMarkers));
 					} else if (query && companies) {
-						/* @TODO there are no position on jobs yet */
-						delete detail.jobs;
-						const itemMarkers = companiesToMapMarkers(companies);
+						// Aggregate job counts by company if jobs are available
+						let companiesWithJobCounts = companies;
+						if (jobs && jobs.length > 0) {
+							console.log("📍 Aggregating job counts by company for map");
+							
+							// Create a map of company_id -> job count
+							const jobCountsByCompany = {};
+							jobs.forEach(job => {
+								const companyId = job.company_id;
+								if (companyId) {
+									jobCountsByCompany[companyId] = (jobCountsByCompany[companyId] || 0) + 1;
+								}
+							});
+							
+							console.log("📊 Job counts by company:", jobCountsByCompany);
+							
+							// Add job counts to companies for map display
+							companiesWithJobCounts = companies.map(company => ({
+								...company,
+								total_jobs: jobCountsByCompany[company.id] || 0
+							}));
+							
+							console.log("🏢 Companies with job counts:", companiesWithJobCounts.map(c => ({ id: c.id, total_jobs: c.total_jobs })));
+						}
+						
+						// Convert companies to map markers (now with job counts)
+						const itemMarkers = companiesToMapMarkers(companiesWithJobCounts);
+						console.log("🗺️ Map markers with job counts:", itemMarkers);
 						$map.setAttribute("markers", JSON.stringify(itemMarkers));
+						
+						// Store jobs data for potential filtering
+						if (jobs && jobs.length > 0) {
+							$map.setAttribute("jobs", JSON.stringify(jobs));
+						}
 					} else if (!companies) {
-						$map.removeAttribute("results");
+						$map.removeAttribute("markers");
+						$map.removeAttribute("jobs");
 					}
 				};
-				// getCompaniesWithPositions ?
-				await sqlSdk.initialize();
-				const allCompanies = await sqlSdk.getAllCompaniesWithJobs();
+				// Load initial data with job counts
+				await duckDBSdk.initialize();
+				const allCompanies = await duckDBSdk.getAllCompaniesWithJobs();
 				console.log("allCompanies", allCompanies);
-				const allMarkers = companiesToMapMarkers(allCompanies);
+				
+				// Load all jobs to get job counts for initial display
+				const allJobs = await duckDBSdk.getAllJobsData();
+				console.log("allJobs count:", allJobs.length);
+				
+				// Aggregate job counts by company for initial display
+				const initialJobCountsByCompany = {};
+				allJobs.forEach(job => {
+					const companyId = job.company_id;
+					if (companyId) {
+						initialJobCountsByCompany[companyId] = (initialJobCountsByCompany[companyId] || 0) + 1;
+					}
+				});
+				
+				// Add job counts to all companies for initial map display
+				const allCompaniesWithJobCounts = allCompanies.map(company => ({
+					...company,
+					total_jobs: initialJobCountsByCompany[company.id] || 0
+				}));
+				
+				console.log("📊 Initial job counts by company:", Object.keys(initialJobCountsByCompany).length, "companies with jobs");
+				const allMarkers = companiesToMapMarkers(allCompaniesWithJobCounts);
 
 				/* apply attributes to elements */
 				const $search = document.createElement("joblist-search");
@@ -42,8 +94,36 @@
 				$map.setAttribute("zoom", zoom);
 				$map.setAttribute("origin", "https://joblist.today/{}");
 				$map.setAttribute("markers", JSON.stringify(allMarkers));
+				
+				// Create results container for job filtering
+				const $results = document.createElement("joblist-results");
+				$results.style.display = "none"; // Initially hidden
+				
+				// Handle job filtering events from map markers
+				$map.addEventListener("job-filter", ({ detail }) => {
+					console.log("🎯 Job filter event received:", detail);
+					const { companyId, jobs, type } = detail;
+					
+					if (jobs.length > 0) {
+						// Show filtered results
+						$results.setAttribute("results", JSON.stringify({
+							companies: [],
+							jobs: jobs,
+							query: `Company: ${companyId}`,
+							searchType: "jobs",
+							stats: {
+								totalCompanies: 0,
+								totalJobs: jobs.length,
+								total: jobs.length
+							}
+						}));
+						$results.style.display = "block";
+					} else {
+						$results.style.display = "none";
+					}
+				});
 
-				document.querySelector("joblist-page").append($search, $map);
+				document.querySelector("joblist-page").append($search, $map, $results);
 			})(Object.fromEntries(new URLSearchParams(window.location.search)));
 		</script>
 	</head>

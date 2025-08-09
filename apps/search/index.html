@@ -10,11 +10,9 @@
 				const $search = document.createElement("joblist-search");
 				const $results = document.createElement("joblist-results");
 				$search.addEventListener("search", ({ detail }) => {
-					if (detail.companies || detail.jobs) {
-						$results.setAttribute("results", JSON.stringify(detail));
-					} else {
-						$results.removeAttribute("results");
-					}
+					console.log("🎯 Search event received:", detail);
+					// Always set results, even if arrays are empty - let the component handle the display
+					$results.setAttribute("results", JSON.stringify(detail));
 				});
 				if (query) {
 					$search.setAttribute("query", query);
@@ -49,11 +47,9 @@
 							</p>
 
 							<p>
-								Use sqlite3
-								<a
-									href="https://www.sqlite.org/fts3.html#full_text_index_queries"
-									>full text (3) search syntax</a
-								>, or open the
+								Search uses DuckDB's powerful text search capabilities across 
+								multiple fields. Try partial matches and combine search terms.
+								You can also explore the data using
 								<a
 									href="https://sqlime.org/#https://workers.joblist.today/joblist.db"
 									>database explorer</a
@@ -63,12 +59,12 @@
 							<h2>Examples</h2>
 							Search query syntax examples, as typed in the search input.
 							<pre>
-tags:music
-tags:music AND city:berlin
-tags:music AND city:berlin AND instru*
-city:london
-id:ableton
-software* AND location:berlin</pre
+music
+berlin software
+remote developer
+frontend
+javascript react
+london fintech</pre
 							>
 
 							<h3>Companies</h3>
