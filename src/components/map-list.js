@@ -202,18 +202,12 @@ export default class JoblistMapList extends HTMLElement {
 				let popupText = data.text;
 				if (data.id) {
 					// Create popup with company link and job filter button
-					const jobCount = typeof data.total_jobs === "number" ? data.total_jobs : 0;
+					const jobCount =
+						typeof data.total_jobs === "number" ? data.total_jobs : 0;
 					const jobText = jobCount === 1 ? "job" : "jobs";
 					const popupDom = `
 						<div>
-							<a href="${this.buildOrigin(data.id)}" target="_blank">${data.text}</a>
-							${jobCount > 0 ? `
-								<br><small>${jobCount} ${jobText}</small>
-								<br><button onclick="this.getRootNode().host.filterJobsByCompany('${data.id}')" 
-								          style="margin-top: 5px; padding: 3px 8px; font-size: 12px;">
-									Show ${jobCount} ${jobText}
-								</button>
-							` : ''}
+							<a href="${this.buildOrigin(data.id)}" target="_blank"> ${data.text} ${jobCount > 0 ? `${jobCount}` : ""}</a>
 						</div>
 					`;
 					popupText = popupDom;
@@ -258,20 +252,24 @@ export default class JoblistMapList extends HTMLElement {
 	/* filter jobs by company and emit event */
 	filterJobsByCompany(companyId) {
 		const jobs = this.jobs;
-		const filteredJobs = jobs.filter(job => job.company_id === companyId);
-		
-		console.log(`🎯 Filtering jobs for company ${companyId}:`, filteredJobs.length, "jobs found");
-		
+		const filteredJobs = jobs.filter((job) => job.company_id === companyId);
+
+		console.log(
+			`🎯 Filtering jobs for company ${companyId}:`,
+			filteredJobs.length,
+			"jobs found",
+		);
+
 		// Emit a custom event with the filtered jobs
 		const filterEvent = new CustomEvent("job-filter", {
 			bubbles: true,
 			detail: {
 				companyId,
 				jobs: filteredJobs,
-				type: "company-filter"
-			}
+				type: "company-filter",
+			},
 		});
-		
+
 		this.dispatchEvent(filterEvent);
 	}
 }

@@ -24,6 +24,7 @@ const examples = await generateExampleInputFiles();
 export default defineConfig({
 	base: BASE_URL,
 	build: {
+		target: "esnext", // Needed so that build can occur with the top-level 'await' statements
 		rollupOptions: {
 			input: {
 				main: resolve("index.html"),
@@ -34,7 +35,7 @@ export default defineConfig({
 			},
 		},
 	},
-    optimizeDeps: {
-        exclude: ["@duckdb/duckdb-wasm"],
-    },
+	optimizeDeps: {
+		exclude: ["@duckdb/duckdb-wasm"],
+	},
 });
