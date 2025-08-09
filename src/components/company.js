@@ -161,9 +161,11 @@ export default class JoblistCompany extends HTMLElement {
 		return $heatmap;
 	}
 	createPositions(company) {
-		if (!company.positions) return "";
+		// Build markers first; render map only if there are markers
+		const markers = companyToMapMarkers(company) || [];
+		if (!markers.length) return "";
 		const $map = document.createElement("joblist-map-list");
-		$map.setAttribute("markers", JSON.stringify(companyToMapMarkers(company)));
+		$map.setAttribute("markers", JSON.stringify(markers));
 		return $map;
 	}
 	createBoard({ job_board_provider, job_board_hostname }) {

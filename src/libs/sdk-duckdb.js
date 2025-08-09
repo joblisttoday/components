@@ -191,26 +191,39 @@ export class JoblistDuckDBSDK {
 		const convert = (val) => {
 		  if (typeof val === "bigint") return Number(val);
 		  if (Array.isArray(val)) return val.map(convert);
-		  if (val && typeof val === "object") {
-			const out = {};
-			for (const k of Object.keys(val)) out[k] = convert(val[k]);
-			// Coerce known schema fields
-			if (Array.isArray(out.tags)) {
-				// ok
-			} else if (typeof out.tags === "string") {
-				try {
-					const p = JSON.parse(out.tags);
-					out.tags = Array.isArray(p) ? p : (typeof p === "string" ? p.split(",").map(s=>s.trim()).filter(Boolean) : []);
-				} catch {
-					out.tags = out.tags.split(",").map((s) => s.trim()).filter(Boolean);
-				}
-			} else if (out.tags == null) {
-				out.tags = [];
-			}
-			return out;
-		  }
-		  return val;
-		};
+      if (val && typeof val === "object") {
+        const out = {};
+        for (const k of Object.keys(val)) out[k] = convert(val[k]);
+        // Coerce known schema fields
+        if (Array.isArray(out.tags)) {
+          // ok
+        } else if (typeof out.tags === "string") {
+          try {
+            const p = JSON.parse(out.tags);
+            out.tags = Array.isArray(p) ? p : (typeof p === "string" ? p.split(",").map(s=>s.trim()).filter(Boolean) : []);
+          } catch {
+            out.tags = out.tags.split(",").map((s) => s.trim()).filter(Boolean);
+          }
+        } else if (out.tags == null) {
+          out.tags = [];
+        }
+        // Normalize positions to an array of objects
+        if (Array.isArray(out.positions)) {
+          // ok
+        } else if (typeof out.positions === "string") {
+          try {
+            const p = JSON.parse(out.positions);
+            out.positions = Array.isArray(p) ? p : [];
+          } catch {
+            out.positions = [];
+          }
+        } else if (out.positions == null) {
+          out.positions = [];
+        }
+        return out;
+      }
+      return val;
+    };
 		return rows.map(convert);
 	  }
 }
