@@ -200,11 +200,10 @@ export default class JoblistSearch extends HTMLElement {
 		const newSearchType = event.target.value;
 		this.setAttribute("search-type", newSearchType);
 		
-		// Re-run search with current query if there is one
+		// Always re-run search on filter change so defaults (eg. highlighted jobs) load
 		const input = this.querySelector('input[type="search"]');
-		if (input && input.value.trim()) {
-			this.search(input.value, newSearchType);
-		}
+		const currentQuery = input ? input.value : "";
+		this.search(currentQuery, newSearchType);
 	}
 
 	async _onCoordinatesInput(event = { target: { value: {} } }) {
