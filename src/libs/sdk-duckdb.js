@@ -310,11 +310,26 @@ export class JoblistDuckDBSDK {
 		return this._rowsToPlain(table.toArray());
 	}
 
+	// Parse field-specific search syntax like "tags:searchterm"
+	_parseFieldSearch(query) {
+		const fieldMatch = query.match(/^(\w+):(.*?)$/);
+		if (fieldMatch) {
+			return {
+				field: fieldMatch[1],
+				term: fieldMatch[2].trim()
+			};
+		}
+		return { field: null, term: query };
+	}
+
 	// Search functionality - uses DuckDB FTS if available, falls back to LIKE search
 	async searchCompanies(query = "") {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const vname = "companies.parquet";
+		const ftsVname = "companies_fts.parquet";
 		const url = this.parquetUrl("companies");
+		const ftsUrl = this.parquetUrl("companies_fts");
+		
 		await this.ensureParquetRegistered(vname, url);
 
 		if (!query || query.trim() === "") {
@@ -334,24 +349,39 @@ export class JoblistDuckDBSDK {
 		}
 
 		console.log("Searching companies for:", query);
+		const { field, term } = this._parseFieldSearch(query);
+		console.log("Parsed search:", { field, term });
 
-		// Try FTS first if available
+		// Try FTS first if available and we have pre-built FTS data
 		if (this.ftsEnabled) {
 			try {
-				// Create FTS index for companies if not exists
-				await this.createFTSIndex(`'${vname}'`, "companies_fts_idx", [
-					"id",
-					"tags",
-				]);
-
-				const ftsQuery = query.trim().replace(/'/g, "''");
-				const ftsSql = `
-          SELECT * FROM '${vname}'
-          WHERE fts_main_companies.match_bm25(id, '${ftsQuery}')
-             OR fts_main_companies.match_bm25(tags, '${ftsQuery}')
-          ORDER BY fts_main_companies.score
-          LIMIT 100
-        `;
+				// Try to load the pre-built FTS parquet file
+				await this.ensureParquetRegistered(ftsVname, ftsUrl);
+				
+				const ftsQuery = term.trim().replace(/'/g, "''");
+				let ftsSql;
+				
+				if (field) {
+					// Field-specific search using the fields parameter
+					ftsSql = `
+						SELECT c.*, f.score 
+						FROM '${ftsVname}' f
+						JOIN '${vname}' c ON f.id = c.id
+						WHERE fts_main_companies.match_bm25(f.id, '${ftsQuery}', fields := '${field}')
+						ORDER BY f.score DESC
+						LIMIT 100
+					`;
+				} else {
+					// Search all indexed fields
+					ftsSql = `
+						SELECT c.*, f.score 
+						FROM '${ftsVname}' f
+						JOIN '${vname}' c ON f.id = c.id
+						WHERE fts_main_companies.match_bm25(f.id, '${ftsQuery}')
+						ORDER BY f.score DESC
+						LIMIT 100
+					`;
+				}
 
 				console.log("Trying FTS search:", ftsSql);
 				const ftsTable = await this.conn.query(ftsSql);
@@ -363,20 +393,48 @@ export class JoblistDuckDBSDK {
 				}
 			} catch (e) {
 				console.log(
-					"FTS search failed, falling back to LIKE search:",
+					"FTS search failed (FTS parquet may not exist), falling back to LIKE search:",
 					e.message,
 				);
 			}
 		}
 
 		// Fallback to LIKE search
-		const searchQuery = query.toLowerCase().trim();
-		const likeSql = `
-      SELECT * FROM '${vname}'
-      WHERE lower(id) LIKE '%${searchQuery.replace(/'/g, "''")}%'
-         OR lower(cast(tags as varchar)) LIKE '%${searchQuery.replace(/'/g, "''")}%'
-      LIMIT 100
-    `;
+		const searchQuery = term.toLowerCase().trim();
+		let likeSql;
+		
+		if (field) {
+			// Field-specific LIKE search
+			if (field === 'tags') {
+				likeSql = `
+					SELECT * FROM '${vname}'
+					WHERE lower(cast(tags as varchar)) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+					LIMIT 100
+				`;
+			} else if (field === 'title') {
+				likeSql = `
+					SELECT * FROM '${vname}'
+					WHERE lower(title) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+					LIMIT 100
+				`;
+			} else {
+				// Generic field search
+				likeSql = `
+					SELECT * FROM '${vname}'
+					WHERE lower(cast(${field} as varchar)) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+					LIMIT 100
+				`;
+			}
+		} else {
+			// Search across all fields
+			likeSql = `
+				SELECT * FROM '${vname}'
+				WHERE lower(id) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+				   OR lower(title) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+				   OR lower(cast(tags as varchar)) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+				LIMIT 100
+			`;
+		}
 
 		console.log("Using LIKE search:", likeSql);
 
@@ -397,7 +455,9 @@ export class JoblistDuckDBSDK {
 	async searchJobs(query = "") {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const vname = "jobs.parquet";
+		const ftsVname = "jobs_fts.parquet";
 		const url = this.parquetUrl("jobs");
+		const ftsUrl = this.parquetUrl("jobs_fts");
 
 		console.log("Searching jobs for:", query, "at URL:", url);
 
@@ -426,28 +486,39 @@ export class JoblistDuckDBSDK {
 		}
 
 		console.log("Attempting search in jobs parquet");
+		const { field, term } = this._parseFieldSearch(query);
+		console.log("Parsed search:", { field, term });
 
-		// Try FTS first if available
+		// Try FTS first if available and we have pre-built FTS data
 		if (this.ftsEnabled) {
 			try {
-				// Create FTS index for jobs if not exists
-				await this.createFTSIndex(`'${vname}'`, "jobs_fts_idx", [
-					"name",
-					"company_id",
-					"company_title",
-					"location",
-				]);
-
-				const ftsQuery = query.trim().replace(/'/g, "''");
-				const ftsSql = `
-          SELECT * FROM '${vname}'
-          WHERE fts_main_jobs.match_bm25(name, '${ftsQuery}')
-             OR fts_main_jobs.match_bm25(company_id, '${ftsQuery}')
-             OR fts_main_jobs.match_bm25(company_title, '${ftsQuery}')
-             OR fts_main_jobs.match_bm25(location, '${ftsQuery}')
-          ORDER BY fts_main_jobs.score
-          LIMIT 100
-        `;
+				// Try to load the pre-built FTS parquet file
+				await this.ensureParquetRegistered(ftsVname, ftsUrl);
+				
+				const ftsQuery = term.trim().replace(/'/g, "''");
+				let ftsSql;
+				
+				if (field) {
+					// Field-specific search using the fields parameter
+					ftsSql = `
+						SELECT j.*, f.score 
+						FROM '${ftsVname}' f
+						JOIN '${vname}' j ON f.id = j.id
+						WHERE fts_main_jobs.match_bm25(f.id, '${ftsQuery}', fields := '${field}')
+						ORDER BY f.score DESC
+						LIMIT 100
+					`;
+				} else {
+					// Search all indexed fields
+					ftsSql = `
+						SELECT j.*, f.score 
+						FROM '${ftsVname}' f
+						JOIN '${vname}' j ON f.id = j.id
+						WHERE fts_main_jobs.match_bm25(f.id, '${ftsQuery}')
+						ORDER BY f.score DESC
+						LIMIT 100
+					`;
+				}
 
 				console.log("Trying FTS search for jobs:", ftsSql);
 				const ftsTable = await this.conn.query(ftsSql);
@@ -459,27 +530,60 @@ export class JoblistDuckDBSDK {
 				}
 			} catch (e) {
 				console.log(
-					"FTS search for jobs failed, falling back to LIKE search:",
+					"FTS search for jobs failed (FTS parquet may not exist), falling back to LIKE search:",
 					e.message,
 				);
 			}
 		}
 
 		// Fallback to LIKE search
-		const searchQuery = query.toLowerCase().trim();
+		const searchQuery = term.toLowerCase().trim();
+		let likeSql;
+		
+		if (field) {
+			// Field-specific LIKE search
+			if (field === 'name') {
+				likeSql = `
+					SELECT * FROM '${vname}'
+					WHERE lower(name) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+					LIMIT 100
+				`;
+			} else if (field === 'location') {
+				likeSql = `
+					SELECT * FROM '${vname}'
+					WHERE lower(location) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+					LIMIT 100
+				`;
+			} else if (field === 'company') {
+				likeSql = `
+					SELECT * FROM '${vname}'
+					WHERE lower(company_id) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+					   OR lower(company_title) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+					LIMIT 100
+				`;
+			} else {
+				// Generic field search
+				likeSql = `
+					SELECT * FROM '${vname}'
+					WHERE lower(cast(${field} as varchar)) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+					LIMIT 100
+				`;
+			}
+		} else {
+			// Search across all fields
+			likeSql = `
+				SELECT * FROM '${vname}'
+				WHERE lower(name) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+				   OR lower(company_id) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+				   OR lower(company_title) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+				   OR lower(location) LIKE '%${searchQuery.replace(/'/g, "''")}%'
+				LIMIT 100
+			`;
+		}
+
+		console.log("Jobs LIKE search SQL:", likeSql);
 
 		try {
-			const likeSql = `
-        SELECT * FROM '${vname}'
-        WHERE lower(name) LIKE '%${searchQuery.replace(/'/g, "''")}%'
-           OR lower(company_id) LIKE '%${searchQuery.replace(/'/g, "''")}%'
-           OR lower(company_title) LIKE '%${searchQuery.replace(/'/g, "''")}%'
-           OR lower(location) LIKE '%${searchQuery.replace(/'/g, "''")}%'
-        LIMIT 100
-      `;
-
-			console.log("Jobs LIKE search SQL:", likeSql);
-
 			const table = await this.conn.query(likeSql);
 			const results = this._rowsToPlain(table.toArray());
 			console.log("Jobs LIKE search found", results.length, "results");
