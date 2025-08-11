@@ -23,7 +23,8 @@ export default class JoblistHeatmap extends HTMLElement {
 	}
 
 	get apiUrl() {
-		return this.getAttribute("api-url"); // No default - only use API if explicitly set
+		// Default to API for now; allows working heatmap without explicit attribute
+		return this.getAttribute("api-url") || "https://api.joblist.today";
 	}
 
 	constructor() {

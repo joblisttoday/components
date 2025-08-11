@@ -10,6 +10,7 @@ export class JoblistDuckDBSDK {
 		this.db = null;
 		this.conn = null;
 		this._registered = new Set();
+		this.ftsEnabled = false;
 	}
 
 	async initialize() {
@@ -36,6 +37,16 @@ export class JoblistDuckDBSDK {
 			console.log("✅ httpfs loaded successfully");
 		} catch (e) {
 			console.log("⚠️ httpfs configuration:", e.message);
+		}
+
+		// Try to enable FTS; ignore if unavailable in this WASM build
+		try {
+			await conn.query("INSTALL fts; LOAD fts;");
+			this.ftsEnabled = true;
+			console.log("✅ FTS extension loaded");
+		} catch (e) {
+			this.ftsEnabled = false;
+			console.log("ℹ️ FTS extension not available:", e.message);
 		}
 
 		this.db = db;
@@ -67,6 +78,32 @@ export class JoblistDuckDBSDK {
 		return vname;
 	}
 
+	async ensureViewForParquet(viewName, vname) {
+		// Create a stable view name for FTS to target; safe if it already exists
+		try {
+			await this.conn.query(`CREATE VIEW IF NOT EXISTS ${viewName} AS SELECT * FROM '${vname}'`);
+			return true;
+		} catch (e) {
+			console.log(`Failed to create view ${viewName}:`, e.message);
+			return false;
+		}
+	}
+
+	async createFTSIndex(viewName, idColumn, fields = []) {
+		if (!this.ftsEnabled) return false;
+		try {
+			const cols = (fields && fields.length)
+				? ", " + fields.map((c) => `'${c}'`).join(", ")
+				: ", '*'"; // index all VARCHAR columns if fields omitted
+			await this.conn.query(`PRAGMA create_fts_index('${viewName}', '${idColumn}'${cols})`);
+			return true;
+		} catch (e) {
+			// Index may already exist or schema unsupported; treat as non-fatal
+			console.log(`FTS index for ${viewName} not created:`, e.message);
+			return false;
+		}
+	}
+
 	async query(sql, params = []) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		
@@ -80,6 +117,51 @@ export class JoblistDuckDBSDK {
 
 		const table = await this.conn.query(processedSql);
 		return table.toArray().map(row => Object.fromEntries(table.schema.fields.map((field, i) => [field.name, row[i]])));
+	}
+
+	// Parse field-specific syntax like "tags:hardware" or "id:ableton"
+	_parseFieldSearch(raw = "") {
+		const q = String(raw || "").trim();
+		const m = q.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
+		if (!m) return { field: null, term: q };
+		const field = m[1].toLowerCase();
+		const term = String(m[2] || "").trim();
+		if (!term) return { field: null, term: q };
+		return { field, term };
+	}
+
+	_escapeLikeTerm(s = "") {
+		return String(s).toLowerCase().trim().replace(/'/g, "''");
+	}
+
+	// Parse simple boolean search: supports a single operator (AND/OR) across terms.
+	// Examples:
+	//  - "tags:transports AND spacex" -> op AND; groups [{field:'tags', term:'transports'}, {field:null, term:'spacex'}]
+	//  - "company:acme OR location:berlin" -> op OR; two field groups
+	_parseBooleanSearch(raw = "") {
+		const q = String(raw || "").trim();
+		if (!q) return { op: "AND", groups: [] };
+		const parts = q.split(/\s+(AND|OR)\s+/i);
+		let op = "AND";
+		let terms = [];
+		if (parts.length > 1) {
+			// parts like [term1, op, term2, op, term3 ...]; use first op if consistent
+			const ops = parts.filter((_, i) => i % 2 === 1).map((s) => s.toUpperCase());
+			op = ops.every((o) => o === ops[0]) ? ops[0] : "AND";
+			terms = parts.filter((_, i) => i % 2 === 0);
+		} else {
+			terms = [q];
+		}
+		const groups = terms
+			.map((t) => t.trim())
+			.filter(Boolean)
+			.map((t) => {
+				const m = t.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
+				if (m) return { field: m[1].toLowerCase(), term: (m[2] || "").trim() };
+				return { field: null, term: t };
+			})
+			.filter((g) => g.term);
+		return { op, groups };
 	}
 
 	_rowsToPlain(rows) {
@@ -143,15 +225,66 @@ export class JoblistDuckDBSDK {
 			return await this.getCompaniesHighlighted();
 		}
 
-		const searchQuery = query.toLowerCase().trim().replace(/'/g, "''");
-		const sql = `
-			SELECT * FROM '${vname}'
-			WHERE lower(id) LIKE '%${searchQuery}%'
-			   OR lower(title) LIKE '%${searchQuery}%'
-			   OR lower(cast(tags as varchar)) LIKE '%${searchQuery}%'
-			LIMIT 100
-		`;
+		const { op, groups } = this._parseBooleanSearch(query);
+		const makeLikeCond = (g) => {
+			const term = this._escapeLikeTerm(g.term);
+			if (g.field === "tags") return `lower(cast(tags as varchar)) LIKE '%${term}%'`;
+			if (g.field === "id" || g.field === "title") return `lower(cast(${g.field} as varchar)) LIKE '%${term}%'`;
+			// generic
+			return `(
+				lower(id) LIKE '%${term}%'
+				OR lower(title) LIKE '%${term}%'
+				OR lower(cast(tags as varchar)) LIKE '%${term}%'
+			)`;
+		};
+		const joiner = op === "OR" ? " OR " : " AND ";
+		const whereLike = groups.length ? groups.map(makeLikeCond).join(joiner) : "TRUE";
+		const sql = `SELECT * FROM '${vname}' WHERE ${whereLike} LIMIT 100`;
 		
+		// Try FTS (bm25) if available
+		if (this.ftsEnabled) {
+			try {
+				const viewName = "companies_v";
+				await this.ensureViewForParquet(viewName, vname);
+				// Use id as the document identifier
+				await this.createFTSIndex(viewName, "id", ["id", "title", "tags"]);
+				const ftsSchema = `fts_main_${viewName}`;
+				// Group by field for FTS
+				const byField = groups.reduce((acc, g) => {
+					const key = g.field && ["id", "title", "tags"].includes(g.field) ? g.field : "__generic";
+					(acc[key] ||= []).push(this._escapeLikeTerm(g.term));
+					return acc;
+				}, {});
+				const scoreCols = [];
+				const selectScores = Object.entries(byField)
+					.map(([key, terms], i) => {
+						const fieldsArg = key !== "__generic" ? `, fields := '${key}'` : "";
+						const conjArg = `, conjunctive := ${op === 'OR' ? 0 : 1}`;
+						const qstr = terms.join(" ");
+						const col = `score_${i+1}`;
+						scoreCols.push(col);
+						return `${ftsSchema}.match_bm25(id, '${qstr}'${fieldsArg}${conjArg}) AS ${col}`;
+					})
+					.join(",\n\t\t\t\t\t\t");
+				const whereScores = scoreCols.map((c) => `${c} IS NOT NULL`).join(op === 'OR' ? ' OR ' : ' AND ');
+				const orderExpr = scoreCols.map((c) => `COALESCE(${c}, 0)`).join(" + ");
+				const ftsSql = `
+					SELECT * FROM (
+						SELECT c.*,\n\t\t\t\t\t\t${selectScores}
+						FROM ${viewName} c
+					) sq
+					WHERE ${whereScores}
+					ORDER BY ${orderExpr} DESC
+					LIMIT 100
+				`;
+				const ftsTable = await this.conn.query(ftsSql);
+				const ftsRows = ftsTable.toArray();
+				if (ftsRows.length) return this._rowsToPlain(ftsRows);
+			} catch (e) {
+				console.log("Companies FTS search failed, falling back to LIKE:", e.message);
+			}
+		}
+
 		const table = await this.conn.query(sql);
 		return this._rowsToPlain(table.toArray());
 	}
@@ -183,16 +316,79 @@ export class JoblistDuckDBSDK {
 			return await this.getJobsFromHighlightedCompanies();
 		}
 
-		const searchQuery = query.toLowerCase().trim().replace(/'/g, "''");
-		const sql = `
-			SELECT * FROM '${vname}' 
-			WHERE lower(name) LIKE '%${searchQuery}%'
-			   OR lower(company_id) LIKE '%${searchQuery}%'
-			   OR lower(company_title) LIKE '%${searchQuery}%'
-			   OR lower(location) LIKE '%${searchQuery}%'
-			LIMIT 100
-		`;
+		const { op, groups } = this._parseBooleanSearch(query);
+		const fieldMap = {
+			name: "name",
+			location: "location",
+			company: "company_title",
+			company_title: "company_title",
+			company_id: "company_id",
+			id: "company_id",
+		};
+		const makeLikeCond = (g) => {
+			const term = this._escapeLikeTerm(g.term);
+			if (g.field && fieldMap[g.field]) return `lower(cast(${fieldMap[g.field]} as varchar)) LIKE '%${term}%'`;
+			// generic
+			return `(
+				lower(name) LIKE '%${term}%'
+				OR lower(company_id) LIKE '%${term}%'
+				OR lower(company_title) LIKE '%${term}%'
+				OR lower(location) LIKE '%${term}%'
+			)`;
+		};
+		const joiner = op === "OR" ? " OR " : " AND ";
+		const whereLike = groups.length ? groups.map(makeLikeCond).join(joiner) : "TRUE";
+		let sql = `SELECT * FROM '${vname}' WHERE ${whereLike} LIMIT 100`;
 		
+		// Try FTS (bm25) if available
+		if (this.ftsEnabled) {
+			try {
+				const viewName = "jobs_v";
+				await this.ensureViewForParquet(viewName, vname);
+				// Use url as the document identifier if present
+				await this.createFTSIndex(viewName, "url", [
+					"name",
+					"company_id",
+					"company_title",
+					"location",
+				]);
+				const ftsSchema = `fts_main_${viewName}`;
+				// Group by field for FTS
+				const byField = groups.reduce((acc, g) => {
+					const key = g.field && fieldMap[g.field] ? fieldMap[g.field] : "__generic";
+					(acc[key] ||= []).push(this._escapeLikeTerm(g.term));
+					return acc;
+				}, {});
+				const scoreCols = [];
+				const selectScores = Object.entries(byField)
+					.map(([key, terms], i) => {
+						const fieldsArg = key !== "__generic" ? `, fields := '${key}'` : "";
+						const conjArg = `, conjunctive := ${op === 'OR' ? 0 : 1}`;
+						const qstr = terms.join(" ");
+						const col = `score_${i+1}`;
+						scoreCols.push(col);
+						return `${ftsSchema}.match_bm25(url, '${qstr}'${fieldsArg}${conjArg}) AS ${col}`;
+					})
+					.join(",\n\t\t\t\t\t\t");
+				const whereScores = scoreCols.map((c) => `${c} IS NOT NULL`).join(op === 'OR' ? ' OR ' : ' AND ');
+				const orderExpr = scoreCols.map((c) => `COALESCE(${c}, 0)`).join(" + ");
+				const ftsSql = `
+					SELECT * FROM (
+						SELECT j.*,\n\t\t\t\t\t\t${selectScores}
+						FROM ${viewName} j
+					) sq
+					WHERE ${whereScores}
+					ORDER BY ${orderExpr} DESC
+					LIMIT 100
+				`;
+				const ftsTable = await this.conn.query(ftsSql);
+				const ftsRows = ftsTable.toArray();
+				if (ftsRows.length) return this._rowsToPlain(ftsRows);
+			} catch (e) {
+				console.log("Jobs FTS search failed, falling back to LIKE:", e.message);
+			}
+		}
+
 		try {
 			const table = await this.conn.query(sql);
 			return this._rowsToPlain(table.toArray());
@@ -257,11 +453,14 @@ export class JoblistDuckDBSDK {
 			await this.ensureParquetRegistered(jobsVname, jobsUrl);
 			
 			const sql = `
-				SELECT COUNT(*) AS total, company_id, published_date AS date 
+				SELECT 
+					COUNT(*) AS total,
+					CAST(CAST(published_date AS DATE) AS VARCHAR) AS date
 				FROM '${jobsVname}' 
-				WHERE published_date >= (CURRENT_DATE - ${days})::VARCHAR AND company_id = ?
-				GROUP BY published_date, company_id
-				ORDER BY published_date DESC
+				WHERE CAST(published_date AS DATE) >= CURRENT_DATE - INTERVAL ${days} DAY
+				  AND company_id = ?
+				GROUP BY date
+				ORDER BY date DESC
 			`;
 			data = await this.query(sql, [id]);
 		} catch (e) {
@@ -282,11 +481,13 @@ export class JoblistDuckDBSDK {
 			await this.ensureParquetRegistered(jobsVname, jobsUrl);
 			
 			const sql = `
-				SELECT COUNT(*) AS total, company_id, published_date AS date 
+				SELECT 
+					COUNT(*) AS total,
+					CAST(CAST(published_date AS DATE) AS VARCHAR) AS date
 				FROM '${jobsVname}' 
-				WHERE published_date >= (CURRENT_DATE - ${days})::VARCHAR
-				GROUP BY published_date, company_id
-				ORDER BY published_date DESC
+				WHERE CAST(published_date AS DATE) >= CURRENT_DATE - INTERVAL ${days} DAY
+				GROUP BY date
+				ORDER BY date DESC
 			`;
 			data = await this.query(sql, []);
 		} catch (e) {
