@@ -43,6 +43,10 @@ const MENUS = [
 			href: "https://sqlime.org/#https://workers.joblist.today/joblist.db",
 			textContent: "db.sqlite",
 		},
+		{
+			href: "https://shell.duckdb.org/#queries=v0,INSTALL-httpfs~,LOAD-httpfs~,CREATE-VIEW-companies-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fcompanies.parquet'~,CREATE-VIEW-jobs-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fjobs.parquet'~,CREATE-VIEW-companies_analyze-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fcompanies_analyze.parquet'~,CREATE-VIEW-jobs_analyze-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fjobs_analyze.parquet'~,SHOW-TABLES",
+			textContent: "db.duckdb",
+		},
 	],
 	[
 		{ href: "https://github.com/joblisttoday", textContent: "github" },
