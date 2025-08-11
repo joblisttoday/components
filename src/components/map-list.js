@@ -207,7 +207,7 @@ export default class JoblistMapList extends HTMLElement {
 					const jobText = jobCount === 1 ? "job" : "jobs";
 					const popupDom = `
 						<div>
-							<a href="${this.buildOrigin(data.id)}" target="_blank"> ${data.text} ${jobCount > 0 ? `${jobCount}` : ""}</a>
+							<a href="${this.buildOrigin(data.id)}" target="_blank"> ${data.text} ${jobCount > 0 ? `(${jobCount})` : ""}</a>
 						</div>
 					`;
 					popupText = popupDom;
