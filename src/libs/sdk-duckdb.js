@@ -54,6 +54,9 @@ export class JoblistDuckDBSDK {
 
 		this.db = db;
 		this.conn = conn;
+
+		// Bulk register all known parquet files
+		await this.registerAllParquetFiles();
 	}
 
 	async dispose() {
@@ -62,6 +65,66 @@ export class JoblistDuckDBSDK {
 		} finally {
 			this.conn = null;
 			this.db = null;
+		}
+	}
+
+	async registerAllParquetFiles() {
+		// List of all known parquet files in the system
+		const parquetFiles = [
+			"companies",
+			"companies_fts", 
+			"jobs",
+			"jobs_fts"
+		];
+
+		console.log("🗃️ Bulk registering parquet files via URL (HTTP range requests)...");
+		const registrationPromises = parquetFiles.map(async (tableName) => {
+			const vname = `${tableName}.parquet`;
+			const url = this.parquetUrl(tableName);
+			
+			try {
+				// Use URL registration for HTTP range requests instead of downloading entire files
+				await this.registerUrlAsFile(vname, url);
+				this._registered.add(vname);
+				console.log(`✅ Registered ${vname} (HTTP range requests enabled)`);
+				return { tableName, success: true, method: 'url' };
+			} catch (error) {
+				console.log(`⚠️ Failed to register ${vname}: ${error.message}`);
+				return { tableName, success: false, error: error.message };
+			}
+		});
+
+		const results = await Promise.allSettled(registrationPromises);
+		const successful = results.filter(r => r.status === "fulfilled" && r.value.success).length;
+		const failed = results.filter(r => r.status === "rejected" || (r.status === "fulfilled" && !r.value.success)).length;
+		
+		console.log(`🗃️ Parquet registration complete: ${successful} successful, ${failed} failed`);
+		console.log("📡 All successful registrations use HTTP range requests - only queried data is transferred");
+		
+		return {
+			successful,
+			failed,
+			results: results.map(r => r.status === "fulfilled" ? r.value : { error: r.reason })
+		};
+	}
+
+	// Helper method to execute queries with simplified error handling since files are pre-registered
+	async executeQuery(sql, fallbackRegistrationCallback = null) {
+		try {
+			return await this.conn.query(sql);
+		} catch (error) {
+			// If query fails and we have a fallback registration callback, try it once
+			if (fallbackRegistrationCallback) {
+				console.log("Query failed, attempting fallback registration:", error.message);
+				try {
+					await fallbackRegistrationCallback();
+					return await this.conn.query(sql);
+				} catch (fallbackError) {
+					console.log("Fallback registration also failed:", fallbackError.message);
+					throw error; // throw original error
+				}
+			}
+			throw error;
 		}
 	}
 
@@ -212,16 +275,20 @@ export class JoblistDuckDBSDK {
 	async getCompaniesHighlighted() {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const vname = "companies.parquet";
-		const url = this.parquetUrl("companies");
-		await this.ensureParquetRegistered(vname, url);
-		let table;
 		const sql = `SELECT * FROM '${vname}' WHERE is_highlighted = true OR is_highlighted = 1 OR lower(cast(is_highlighted as varchar)) = 'true'`;
-		try {
-			table = await this.conn.query(sql);
-		} catch (e) {
-			await this.fetchAndRegister(vname, url);
-			table = await this.conn.query(sql);
-		}
+		
+		const table = await this.executeQuery(sql, async () => {
+			// Fallback registration if needed - prefer URL registration for HTTP range requests
+			const url = this.parquetUrl("companies");
+			try {
+				await this.registerUrlAsFile(vname, url);
+				this._registered.add(vname);
+			} catch (e) {
+				// Only fall back to full download if URL registration fails
+				await this.fetchAndRegister(vname, url);
+			}
+		});
+		
 		return this._rowsToPlain(table.toArray());
 	}
 
@@ -229,33 +296,40 @@ export class JoblistDuckDBSDK {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const companiesVname = "companies.parquet";
 		const jobsVname = "jobs.parquet";
-		const companiesUrl = this.parquetUrl("companies");
-		const jobsUrl = this.parquetUrl("jobs");
 		
-		await this.ensureParquetRegistered(companiesVname, companiesUrl);
-		
-		try {
-			await this.ensureParquetRegistered(jobsVname, jobsUrl);
-		} catch (e) {
-			console.log("Jobs parquet file not found or failed to load:", e.message);
-			return []; // Return empty array if jobs file doesn't exist
-		}
-
-		let table;
 		const sql = `
 			SELECT j.* FROM '${jobsVname}' j
 			INNER JOIN '${companiesVname}' c ON j.company_id = c.id
 			WHERE c.is_highlighted = true OR c.is_highlighted = 1 OR lower(cast(c.is_highlighted as varchar)) = 'true'
 			LIMIT 100
 		`;
+		
 		try {
-			table = await this.conn.query(sql);
-		} catch (e) {
-			await this.fetchAndRegister(companiesVname, companiesUrl);
-			await this.fetchAndRegister(jobsVname, jobsUrl);
-			table = await this.conn.query(sql);
+			const table = await this.executeQuery(sql, async () => {
+				// Fallback registration if needed - prefer URL registration for HTTP range requests
+				const companiesUrl = this.parquetUrl("companies");
+				const jobsUrl = this.parquetUrl("jobs");
+				
+				try {
+					await this.registerUrlAsFile(companiesVname, companiesUrl);
+					this._registered.add(companiesVname);
+				} catch (e) {
+					await this.fetchAndRegister(companiesVname, companiesUrl);
+				}
+				
+				try {
+					await this.registerUrlAsFile(jobsVname, jobsUrl);
+					this._registered.add(jobsVname);
+				} catch (e) {
+					await this.fetchAndRegister(jobsVname, jobsUrl);
+				}
+			});
+			
+			return this._rowsToPlain(table.toArray());
+		} catch (error) {
+			console.log("Jobs parquet file not found or failed to load:", error.message);
+			return []; // Return empty array if jobs file doesn't exist
 		}
-		return this._rowsToPlain(table.toArray());
 	}
 
 	async getCompany(id) {

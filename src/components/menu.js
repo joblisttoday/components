@@ -44,7 +44,7 @@ const MENUS = [
 			textContent: "db.sqlite",
 		},
 		{
-			href: "https://shell.duckdb.org/#queries=v0,INSTALL-httpfs~,LOAD-httpfs~,CREATE-VIEW-companies-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fcompanies.parquet'~,CREATE-VIEW-jobs-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fjobs.parquet'~,CREATE-VIEW-companies_analyze-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fcompanies_analyze.parquet'~,CREATE-VIEW-jobs_analyze-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fjobs_analyze.parquet'~,SHOW-TABLES",
+			href: "https://shell.duckdb.org/#queries=v0,INSTALL-httpfs~,LOAD-httpfs~,INSTALL-fts~,LOAD-fts~,CREATE-VIEW-companies-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fcompanies.parquet'~,CREATE-VIEW-jobs-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fjobs.parquet'~,CREATE-VIEW-companies_analyze-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fcompanies_analyze.parquet'~,CREATE-VIEW-jobs_analyze-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fjobs_analyze.parquet'~,CREATE-VIEW-companies_fts-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fcompanies_fts.parquet'~,CREATE-VIEW-jobs_fts-AS-SELECT-*-FROM-'https%3A%2F%2Fworkers.joblist.today%2Fjobs_fts.parquet'~,SHOW-TABLES~,SELECT-job_board_url-FROM-companies-WHERE-is_highlighted-=-TRUE",
 			textContent: "db.duckdb",
 		},
 	],

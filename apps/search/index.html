@@ -6,21 +6,48 @@
 		<title>@joblist/components/search</title>
 		<script type="module" src="../../src/index.js"></script>
 		<script type="module">
+			// Parse parameters from hash (for privacy) instead of URL search params
+			const getHashParams = () => {
+				const hash = window.location.hash.slice(1); // Remove the '#'
+				return Object.fromEntries(new URLSearchParams(hash));
+			};
+
+			// Update hash when search changes (for URL sharing without server logs)
+			const updateHashParams = (params) => {
+				const hashParams = new URLSearchParams();
+				Object.entries(params).forEach(([key, value]) => {
+					if (value) hashParams.set(key, value);
+				});
+				const newHash = hashParams.toString();
+				window.location.hash = newHash;
+			};
+
 			(({ query = "" }) => {
 				const $search = document.createElement("joblist-search");
 				const $results = document.createElement("joblist-results");
+				
 				$search.addEventListener("search", ({ detail }) => {
 					console.log("🎯 Search event received:", detail);
 					// Always set results, even if arrays are empty - let the component handle the display
 					$results.setAttribute("results", JSON.stringify(detail));
+					
+					// Update hash with search query for privacy-preserving URL sharing
+					if (detail.query && detail.query.trim()) {
+						updateHashParams({ query: detail.query, type: detail.searchType });
+					} else {
+						// Clear hash when no query
+						window.location.hash = '';
+					}
 				});
+				
 				if (query) {
 					$search.setAttribute("query", query);
 				}
+				
 				document
 					.querySelector("joblist-page-main")
 					.append($search, document.createElement("hr"), $results);
-			})(Object.fromEntries(new URLSearchParams(window.location.search)));
+			})(getHashParams());
 		</script>
 	</head>
 	<body>

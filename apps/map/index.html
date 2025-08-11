@@ -10,8 +10,26 @@
 			const { companiesToMapMarkers } = mapSdk;
 
 			(async ({ query = "", latitude = "", longitude = "", zoom = 3 }) => {
+				// Update hash when search changes (for URL sharing without server logs)
+				const updateHashParams = (params) => {
+					const hashParams = new URLSearchParams();
+					Object.entries(params).forEach(([key, value]) => {
+						if (value) hashParams.set(key, value);
+					});
+					const newHash = hashParams.toString();
+					window.location.hash = newHash;
+				};
+
 				const handleSearch = ({ detail }) => {
 					const { companies, jobs, query } = detail;
+					
+					// Update hash with search query for privacy-preserving URL sharing
+					if (query && query.trim()) {
+						updateHashParams({ query: query, type: detail.searchType });
+					} else {
+						// Clear hash when no query
+						window.location.hash = '';
+					}
 					if (!query) {
 						$map.setAttribute("markers", JSON.stringify(allMarkers));
 					} else if (query && companies) {
@@ -124,7 +142,11 @@
 				});
 
 				document.querySelector("joblist-page").append($search, $map, $results);
-			})(Object.fromEntries(new URLSearchParams(window.location.search)));
+			})(() => {
+				// Parse parameters from hash (for privacy) instead of URL search params
+				const hash = window.location.hash.slice(1); // Remove the '#'
+				return Object.fromEntries(new URLSearchParams(hash));
+			})();
 		</script>
 	</head>
 	<body>
