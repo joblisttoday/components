@@ -10,8 +10,8 @@ export class JoblistDuckDBSDK {
 		this.db = null;
 		this.conn = null;
 		this._registered = new Set();
-		// FTS is disabled by default in WASM to avoid match_bm25 errors
-		this.enableFTS = Boolean(options.enableFTS);
+		// Enable FTS by default for better search
+		this.enableFTS = options.enableFTS !== false; // Default to true unless explicitly disabled
 		this.ftsEnabled = false;
 		this._columnsCache = new Map();
 	}
@@ -151,51 +151,43 @@ export class JoblistDuckDBSDK {
 			);
 	}
 
-	// Parse field-specific syntax like "tags:hardware" or "id:ableton"
-	_parseFieldSearch(raw = "") {
-		const q = String(raw || "").trim();
-		const m = q.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
-		if (!m) return { field: null, term: q };
-		const field = m[1].toLowerCase();
-		const term = String(m[2] || "").trim();
-		if (!term) return { field: null, term: q };
-		return { field, term };
-	}
-
-	_escapeLikeTerm(s = "") {
-		return String(s).toLowerCase().trim().replace(/'/g, "''");
-	}
-
-	// Parse simple boolean search: supports a single operator (AND/OR) across terms.
-	// Examples:
-	//  - "tags:transports AND spacex" -> op AND; groups [{field:'tags', term:'transports'}, {field:null, term:'spacex'}]
-	//  - "company:acme OR location:berlin" -> op OR; two field groups
-	_parseBooleanSearch(raw = "") {
-		const q = String(raw || "").trim();
-		if (!q) return { op: "AND", groups: [] };
-		const parts = q.split(/\s+(AND|OR)\s+/i);
-		let op = "AND";
-		let terms = [];
-		if (parts.length > 1) {
-			// parts like [term1, op, term2, op, term3 ...]; use first op if consistent
-			const ops = parts
-				.filter((_, i) => i % 2 === 1)
-				.map((s) => s.toUpperCase());
-			op = ops.every((o) => o === ops[0]) ? ops[0] : "AND";
-			terms = parts.filter((_, i) => i % 2 === 0);
-		} else {
-			terms = [q];
+	// Enhanced search parsing - handle field:value, boolean operators, and plain text
+	_parseSimpleSearch(query = "") {
+		const q = String(query || "").trim();
+		if (!q) return { terms: [] };
+		
+		// Check for multiple field:value pairs (2 or more)
+		const fieldMatches = q.match(/\b[a-zA-Z_][a-zA-Z0-9_]*:\s*[^\s]+/g);
+		if (fieldMatches && fieldMatches.length > 1) {
+			return {
+				isMultiField: true,
+				rawQuery: q,
+				conjunctive: /\b(and|AND)\b/i.test(q) ? 1 : 0
+			};
 		}
-		const groups = terms
-			.map((t) => t.trim())
-			.filter(Boolean)
-			.map((t) => {
-				const m = t.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.*)$/);
-				if (m) return { field: m[1].toLowerCase(), term: (m[2] || "").trim() };
-				return { field: null, term: t };
-			})
-			.filter((g) => g.term);
-		return { op, groups };
+		
+		// Check for single field-specific search like "tags:python"
+		const fieldMatch = q.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.+)$/);
+		if (fieldMatch) {
+			return {
+				field: fieldMatch[1].toLowerCase(),
+				term: fieldMatch[2].trim(),
+				conjunctive: fieldMatch[2].includes(' AND ') || fieldMatch[2].includes(' and ') ? 1 : 0
+			};
+		}
+		
+		// Detect boolean AND operations for general search
+		const hasAnd = /\band\b/i.test(q);
+		
+		// Return search term with boolean info
+		return {
+			term: q,
+			conjunctive: hasAnd ? 1 : 0
+		};
+	}
+
+	_escapeSql(s = "") {
+		return String(s).replace(/'/g, "''");
 	}
 
 	_rowsToPlain(rows) {
@@ -259,87 +251,8 @@ export class JoblistDuckDBSDK {
 			return await this.getCompaniesHighlighted();
 		}
 
-        const { op, groups } = this._parseBooleanSearch(query);
-        const limitClause = Number(limit) > 0 ? ` LIMIT ${Number(limit)}` : "";
-		const columns = await this._getColumnsForVName(vname);
-		const makeLikeCond = (g) => {
-			const term = this._escapeLikeTerm(g.term);
-			if (g.field && columns.includes(g.field)) {
-				// Field-qualified: exact token match. If LIST -> membership; else -> equality
-				return `list_contains(
-					CASE WHEN typeof(${g.field}) = 'LIST'
-						THEN CAST(${g.field} AS VARCHAR[])
-						ELSE list_value(lower(cast(${g.field} AS varchar)))
-					END,
-					'${term}'
-				)`;
-			}
-			// Generic: substring across common fields; tags via csv boundary for precision
-			return `(
-				lower(id) LIKE '%${term}%'
-				OR lower(title) LIKE '%${term}%'
-				OR (',' || regexp_replace(lower(cast(tags AS varchar)), '\\s*,\\s*', ',') || ',') LIKE '%,${term},%'
-			)`;
-		};
-		const joiner = op === "OR" ? " OR " : " AND ";
-        const whereLike = groups.length
-            ? groups.map(makeLikeCond).join(joiner)
-            : "TRUE";
-        const sql = `SELECT * FROM '${vname}' WHERE ${whereLike}${limitClause}`;
-
-		// Try FTS (bm25) if available
-		if (this.ftsEnabled) {
-			try {
-				const viewName = "companies_v";
-				await this.ensureViewForParquet(viewName, vname);
-				// Use id as the document identifier
-				await this.createFTSIndex(viewName, "id", ["id", "title", "tags"]);
-				const ftsSchema = `fts_main_${viewName}`;
-				// Group by field for FTS
-				const byField = groups.reduce((acc, g) => {
-					const key =
-						g.field && ["id", "title", "tags"].includes(g.field)
-							? g.field
-							: "__generic";
-					(acc[key] ||= []).push(this._escapeLikeTerm(g.term));
-					return acc;
-				}, {});
-				const scoreCols = [];
-				const selectScores = Object.entries(byField)
-					.map(([key, terms], i) => {
-						const fieldsArg = key !== "__generic" ? `, fields := '${key}'` : "";
-						const conjArg = `, conjunctive := ${op === "OR" ? 0 : 1}`;
-						const qstr = terms.join(" ");
-						const col = `score_${i + 1}`;
-						scoreCols.push(col);
-						return `${ftsSchema}.match_bm25(id, '${qstr}'${fieldsArg}${conjArg}) AS ${col}`;
-					})
-					.join(",\n\t\t\t\t\t\t");
-				const whereScores = scoreCols
-					.map((c) => `${c} IS NOT NULL`)
-					.join(op === "OR" ? " OR " : " AND ");
-				const orderExpr = scoreCols.map((c) => `COALESCE(${c}, 0)`).join(" + ");
-                const ftsSql = `
-                    SELECT * FROM (
-                        SELECT c.*,\n\t\t\t\t\t\t${selectScores}
-                        FROM ${viewName} c
-                    ) sq
-                    WHERE ${whereScores}
-                    ORDER BY ${orderExpr} DESC${limitClause}
-                `;
-				const ftsTable = await this.conn.query(ftsSql);
-				const ftsRows = ftsTable.toArray();
-				if (ftsRows.length) return this._rowsToPlain(ftsRows);
-			} catch (e) {
-				console.log(
-					"Companies FTS search failed, falling back to LIKE:",
-					e.message,
-				);
-			}
-		}
-
-		const table = await this.conn.query(sql);
-		return this._rowsToPlain(table.toArray());
+		// Try FTS search first, fallback to LIKE search
+		return await this._searchWithFallback(vname, 'companies', query, limit, ['id', 'title', 'description', 'tags']);
 	}
 
 	async getCompaniesHighlighted() {
@@ -361,110 +274,19 @@ export class JoblistDuckDBSDK {
 		try {
 			await this.ensureParquetRegistered(vname, url);
 		} catch (e) {
-			console.log("Jobs parquet file not found or failed to load:", e.message);
-			return []; // Return empty array if jobs file doesn't exist
+			console.log("Jobs parquet file not found:", e.message);
+			return [];
 		}
 
 		if (!query.trim()) {
 			return await this.getJobsFromHighlightedCompanies();
 		}
 
-        const { op, groups } = this._parseBooleanSearch(query);
-        const limitClause = Number(limit) > 0 ? ` LIMIT ${Number(limit)}` : "";
-		const fieldMap = {
-			name: "name",
-			location: "location",
-			company: "company_title",
-			company_title: "company_title",
-			company_id: "company_id",
-			id: "company_id",
-		};
-		const columns = await this._getColumnsForVName(vname);
-		const makeLikeCond = (g) => {
-			const term = this._escapeLikeTerm(g.term);
-			if (g.field && (fieldMap[g.field] || columns.includes(g.field))) {
-				const col = fieldMap[g.field] || g.field;
-				// Field-qualified: exact token match via list_contains on a normalized list
-				return `list_contains(
-					CASE WHEN typeof(${col}) = 'LIST'
-						THEN CAST(${col} AS VARCHAR[])
-						ELSE list_value(lower(cast(${col} AS varchar)))
-					END,
-					'${term}'
-				)`;
-			}
-			// generic
-			return `(
-				lower(name) LIKE '%${term}%'
-				OR lower(company_id) LIKE '%${term}%'
-				OR lower(company_title) LIKE '%${term}%'
-				OR lower(location) LIKE '%${term}%'
-			)`;
-		};
-		const joiner = op === "OR" ? " OR " : " AND ";
-		const whereLike = groups.length
-			? groups.map(makeLikeCond).join(joiner)
-			: "TRUE";
-        let sql = `SELECT * FROM '${vname}' WHERE ${whereLike}${limitClause}`;
+		// Handle field aliases for jobs
+		const processedQuery = this._processJobsQuery(query);
 
-		// Try FTS (bm25) if available
-		if (this.ftsEnabled) {
-			try {
-				const viewName = "jobs_v";
-				await this.ensureViewForParquet(viewName, vname);
-				// Use url as the document identifier if present
-				await this.createFTSIndex(viewName, "url", [
-					"name",
-					"company_id",
-					"company_title",
-					"location",
-				]);
-				const ftsSchema = `fts_main_${viewName}`;
-				// Group by field for FTS
-				const byField = groups.reduce((acc, g) => {
-					const key =
-						g.field && fieldMap[g.field] ? fieldMap[g.field] : "__generic";
-					(acc[key] ||= []).push(this._escapeLikeTerm(g.term));
-					return acc;
-				}, {});
-				const scoreCols = [];
-				const selectScores = Object.entries(byField)
-					.map(([key, terms], i) => {
-						const fieldsArg = key !== "__generic" ? `, fields := '${key}'` : "";
-						const conjArg = `, conjunctive := ${op === "OR" ? 0 : 1}`;
-						const qstr = terms.join(" ");
-						const col = `score_${i + 1}`;
-						scoreCols.push(col);
-						return `${ftsSchema}.match_bm25(url, '${qstr}'${fieldsArg}${conjArg}) AS ${col}`;
-					})
-					.join(",\n\t\t\t\t\t\t");
-				const whereScores = scoreCols
-					.map((c) => `${c} IS NOT NULL`)
-					.join(op === "OR" ? " OR " : " AND ");
-				const orderExpr = scoreCols.map((c) => `COALESCE(${c}, 0)`).join(" + ");
-                const ftsSql = `
-                    SELECT * FROM (
-                        SELECT j.*,\n\t\t\t\t\t\t${selectScores}
-                        FROM ${viewName} j
-                    ) sq
-                    WHERE ${whereScores}
-                    ORDER BY ${orderExpr} DESC${limitClause}
-                `;
-				const ftsTable = await this.conn.query(ftsSql);
-				const ftsRows = ftsTable.toArray();
-				if (ftsRows.length) return this._rowsToPlain(ftsRows);
-			} catch (e) {
-				console.log("Jobs FTS search failed, falling back to LIKE:", e.message);
-			}
-		}
-
-		try {
-			const table = await this.conn.query(sql);
-			return this._rowsToPlain(table.toArray());
-		} catch (e) {
-			console.log("Failed to query jobs:", e.message);
-			return [];
-		}
+		// Try FTS search first, fallback to LIKE search
+		return await this._searchWithFallback(vname, 'jobs', processedQuery, limit, ['name', 'company_title', 'location', 'company_id']);
 	}
 
     async getJobsFromHighlightedCompanies(limit = 100) {
@@ -678,6 +500,174 @@ export class JoblistDuckDBSDK {
 			console.log("Failed to load jobs data:", e.message);
 			return [];
 		}
+	}
+
+	// FTS search with fallback to LIKE
+	async _searchWithFallback(vname, tableName, query, limit, searchColumns) {
+		const parsed = this._parseSimpleSearch(query);
+		const { field, term, isMultiField, rawQuery } = parsed;
+		const limitClause = Number(limit) > 0 ? ` LIMIT ${Number(limit)}` : "";
+		
+		// Handle multi-field queries (e.g., "tags:radio and tags:music")
+		if (isMultiField) {
+			return await this._multiFieldSearch(vname, rawQuery, limitClause, searchColumns);
+		}
+		
+		// Validate single field exists in this table's columns
+		if (field && !searchColumns.includes(field)) {
+			console.log(`Field '${field}' not available in ${tableName}, available: ${searchColumns.join(', ')}`);
+			return []; // Return empty results for invalid field
+		}
+		
+		// Try FTS search first if available and no field-specific search
+		if (this.ftsEnabled && !field && term) {
+			try {
+				return await this._ftsSearch(vname, tableName, term, limit);
+			} catch (e) {
+				// Fall back to LIKE search if FTS fails
+				console.log(`FTS search failed for ${tableName}, falling back to LIKE:`, e.message);
+			}
+		}
+		
+		// Fallback to LIKE search
+		return await this._likeSearch(vname, field, term, limitClause, searchColumns);
+	}
+
+	async _ftsSearch(vname, tableName, query, limit) {
+		const viewName = `fts_${tableName}`;
+		const limitClause = Number(limit) > 0 ? ` LIMIT ${Number(limit)}` : "";
+		
+		// Create view with rowid for FTS
+		try {
+			await this.conn.query(`DROP VIEW IF EXISTS ${viewName}`);
+			await this.conn.query(`CREATE VIEW ${viewName} AS SELECT ROW_NUMBER() OVER() as rowid, * FROM '${vname}'`);
+		} catch (e) {
+			console.log(`Failed to create FTS view: ${e.message}`);
+			throw e;
+		}
+		
+		// Try to create FTS index (will fail silently if already exists)
+		await this.createFTSIndex(viewName, 'id');
+		
+		// Parse query for boolean operations
+		const { term, conjunctive, field } = this._parseSimpleSearch(query);
+		const escapedQuery = this._escapeSql(term);
+		
+		// Build FTS query with boolean support
+		const fieldsParam = field ? `fields := '${field}', ` : '';
+		const conjunctiveParam = conjunctive ? 'conjunctive := 1, ' : '';
+		
+		const sql = `
+			SELECT v.*, score 
+			FROM (
+				SELECT *, fts_main_${viewName}.match_bm25(
+					id, 
+					'${escapedQuery}', 
+					${fieldsParam}${conjunctiveParam}k := 1.2, b := 0.75
+				) AS score
+				FROM ${viewName}
+			) v
+			WHERE v.score IS NOT NULL
+			ORDER BY v.score DESC${limitClause}
+		`;
+		
+		const table = await this.conn.query(sql);
+		return this._rowsToPlain(table.toArray());
+	}
+
+	async _likeSearch(vname, field, term, limitClause, searchColumns) {
+		const escapedTerm = this._escapeSql(term.toLowerCase());
+		
+		let sql;
+		if (field && term) {
+			// Field-specific search: field:value (field already validated)
+			sql = `SELECT * FROM '${vname}' WHERE lower(cast(${field} AS varchar)) LIKE '%${escapedTerm}%'${limitClause}`;
+		} else {
+			// General search across specified columns
+			const conditions = searchColumns.map(col => 
+				`lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`
+			);
+			sql = `SELECT * FROM '${vname}' WHERE (${conditions.join(' OR ')})${limitClause}`;
+		}
+
+		try {
+			const table = await this.conn.query(sql);
+			return this._rowsToPlain(table.toArray());
+		} catch (e) {
+			console.log(`LIKE search failed: ${e.message}`);
+			return [];
+		}
+	}
+
+	// Handle multi-field searches like "tags:radio and tags:music"
+	async _multiFieldSearch(vname, query, limitClause, searchColumns) {
+		console.log(`🔍 Multi-field search: "${query}" in table with columns:`, searchColumns);
+		
+		// Extract all field:value pairs
+		const fieldValuePairs = [];
+		const regex = /([a-zA-Z_][a-zA-Z0-9_]*):\s*([^\s]+)/g;
+		let match;
+		
+		while ((match = regex.exec(query)) !== null) {
+			const field = match[1].toLowerCase();
+			const value = match[2];
+			
+			console.log(`🎯 Found field:value pair - ${field}:${value}`);
+			
+			// Validate field exists
+			if (searchColumns.includes(field)) {
+				fieldValuePairs.push({ field, value });
+				console.log(`✅ Field '${field}' is valid`);
+			} else {
+				console.log(`❌ Field '${field}' not found in available columns: ${searchColumns.join(', ')}`);
+			}
+		}
+		
+		if (fieldValuePairs.length === 0) {
+			console.log('❌ No valid field:value pairs found');
+			return [];
+		}
+		
+		// Build SQL conditions
+		const conditions = fieldValuePairs.map(({field, value}) => {
+			const escapedValue = this._escapeSql(value.toLowerCase());
+			return `lower(cast(${field} AS varchar)) LIKE '%${escapedValue}%'`;
+		});
+		
+		// Use AND for multiple conditions
+		const operator = /\b(and|AND)\b/i.test(query) ? ' AND ' : ' OR ';
+		const sql = `SELECT * FROM '${vname}' WHERE ${conditions.join(operator)}${limitClause}`;
+		
+		console.log(`🔧 Generated SQL: ${sql}`);
+		
+		try {
+			const table = await this.conn.query(sql);
+			const results = this._rowsToPlain(table.toArray());
+			console.log(`✅ Multi-field search returned ${results.length} results`);
+			return results;
+		} catch (e) {
+			console.log(`❌ Multi-field search failed: ${e.message}`);
+			return [];
+		}
+	}
+
+	// Process jobs query to handle field aliases
+	_processJobsQuery(query) {
+		// Field aliases for jobs
+		const fieldMap = {
+			company: "company_title",
+			id: "company_id",
+			title: "name" // job title maps to name column
+		};
+		
+		// Replace field aliases in query
+		let processedQuery = query;
+		for (const [alias, actual] of Object.entries(fieldMap)) {
+			const regex = new RegExp(`\\b${alias}:`, 'gi');
+			processedQuery = processedQuery.replace(regex, `${actual}:`);
+		}
+		
+		return processedQuery;
 	}
 
 	async dispose() {

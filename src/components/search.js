@@ -28,43 +28,27 @@ export default class JoblistSearch extends HTMLElement {
 		let companies = [], jobs = [];
 		let isHighlightedQuery = false;
 		
-		console.log(`🔎 SEARCH DEBUG: query="${query}", requestedType="${searchType}", activeType="${activeSearchType}"`);
-		console.log(`🔎 SEARCH DEBUG: this.searchType="${this.searchType}", attribute="${this.getAttribute('search-type')}"`);
-		
 		try {
 			if (activeSearchType === "companies" || activeSearchType === "both") {
-				console.log("🏢 WILL search companies");
 				if (!query || query.trim() === "") {
-					// Show highlighted companies when no search query
 					companies = await this.joblistSDK.getCompaniesHighlighted();
 					isHighlightedQuery = true;
-					console.log("🏢 FOUND highlighted companies:", companies.length);
 				} else {
 					companies = await this.joblistSDK.searchCompanies(query, this.limit);
-					console.log("🏢 FOUND companies:", companies.length);
 				}
-			} else {
-				console.log("🏢 SKIPPING companies search");
 			}
 			
 			if (activeSearchType === "jobs" || activeSearchType === "both") {
-				console.log("💼 WILL search jobs");
 				if (!query || query.trim() === "") {
-					// Show jobs from highlighted companies when no search query
 					if (isHighlightedQuery || activeSearchType === "jobs") {
 						jobs = await this.joblistSDK.getJobsFromHighlightedCompanies(this.limit);
-						console.log("💼 FOUND jobs from highlighted companies:", jobs.length);
 					}
 				} else {
 					jobs = await this.joblistSDK.searchJobs(query, this.limit);
-					console.log("💼 FOUND jobs:", jobs.length);
 				}
-				console.log("💼 Jobs sample:", jobs.slice(0, 1));
-			} else {
-				console.log("💼 SKIPPING jobs search");
 			}
 		} catch (e) {
-			console.error("❌ Search error:", e);
+			console.error("Search error:", e.message);
 		}
 
 		const result = { 
@@ -80,12 +64,6 @@ export default class JoblistSearch extends HTMLElement {
 			}
 		};
 		
-		console.log("📊 FINAL RESULT:", {
-			companiesCount: result.companies.length,
-			jobsCount: result.jobs.length,
-			searchType: result.searchType,
-			query: result.query
-		});
 		
 		const resultEvent = new CustomEvent("search", {
 			bubbles: false,
