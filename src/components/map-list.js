@@ -182,10 +182,12 @@ export default class JoblistMapList extends HTMLElement {
 			.trim();
 
 		const $markers = markers.map((data) => {
-			// Create an SVG that includes the total_jobs inside the blue circle.
+			// Create an SVG that includes the total_jobs inside the rectangle, with blue border for highlighted companies.
+			const borderColor = data.is_highlighted ? fgColor : bgColor;
+			const borderWidth = data.is_highlighted ? "8" : "0";
 			const svgString = `
   <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
-    <rect x="0" y="0" width="80" height="80" rx="10" fill="${bgColor}"/>
+    <rect x="0" y="0" width="80" height="80" rx="10" fill="${bgColor}" stroke="${borderColor}" stroke-width="${borderWidth}"/>
     <text x="40" y="50" text-anchor="middle" fill="${fgColor}" font-size="40" font-weight="bold" font-family="sans-serif">
       ${typeof data.total_jobs === "number" ? data.total_jobs : ""}
     </text>

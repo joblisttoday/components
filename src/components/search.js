@@ -21,6 +21,7 @@ export default class JoblistSearch extends HTMLElement {
 	async search(query = "", searchType = null) {
 		const activeSearchType = searchType || this.searchType;
 		let companies = [], jobs = [];
+		let isHighlightedQuery = false;
 		
 		console.log(`🔎 SEARCH DEBUG: query="${query}", requestedType="${searchType}", activeType="${activeSearchType}"`);
 		console.log(`🔎 SEARCH DEBUG: this.searchType="${this.searchType}", attribute="${this.getAttribute('search-type')}"`);
@@ -28,16 +29,31 @@ export default class JoblistSearch extends HTMLElement {
 		try {
 			if (activeSearchType === "companies" || activeSearchType === "both") {
 				console.log("🏢 WILL search companies");
-				companies = await this.joblistSDK.searchCompanies(query);
-				console.log("🏢 FOUND companies:", companies.length);
+				if (!query || query.trim() === "") {
+					// Show highlighted companies when no search query
+					companies = await this.joblistSDK.getCompaniesHighlighted();
+					isHighlightedQuery = true;
+					console.log("🏢 FOUND highlighted companies:", companies.length);
+				} else {
+					companies = await this.joblistSDK.searchCompanies(query);
+					console.log("🏢 FOUND companies:", companies.length);
+				}
 			} else {
 				console.log("🏢 SKIPPING companies search");
 			}
 			
 			if (activeSearchType === "jobs" || activeSearchType === "both") {
 				console.log("💼 WILL search jobs");
-				jobs = await this.joblistSDK.searchJobs(query);
-				console.log("💼 FOUND jobs:", jobs.length);
+				if (!query || query.trim() === "") {
+					// Show jobs from highlighted companies when no search query
+					if (isHighlightedQuery || activeSearchType === "jobs") {
+						jobs = await this.joblistSDK.getJobsFromHighlightedCompanies();
+						console.log("💼 FOUND jobs from highlighted companies:", jobs.length);
+					}
+				} else {
+					jobs = await this.joblistSDK.searchJobs(query);
+					console.log("💼 FOUND jobs:", jobs.length);
+				}
 				console.log("💼 Jobs sample:", jobs.slice(0, 1));
 			} else {
 				console.log("💼 SKIPPING jobs search");
@@ -51,6 +67,7 @@ export default class JoblistSearch extends HTMLElement {
 			companies, 
 			query, 
 			searchType: activeSearchType,
+			isHighlightedQuery,
 			stats: {
 				totalCompanies: companies.length,
 				totalJobs: jobs.length,
@@ -84,6 +101,9 @@ export default class JoblistSearch extends HTMLElement {
 		await this.joblistSDK.initialize();
 		if (this.query) {
 			this.search(this.query);
+		} else {
+			// Load highlighted companies by default when no query
+			this.search("");
 		}
 		this._render(this.query);
 	}

@@ -225,6 +225,39 @@ export class JoblistDuckDBSDK {
 		return this._rowsToPlain(table.toArray());
 	}
 
+	async getJobsFromHighlightedCompanies() {
+		if (!this.conn) throw new Error("DuckDB not initialized");
+		const companiesVname = "companies.parquet";
+		const jobsVname = "jobs.parquet";
+		const companiesUrl = this.parquetUrl("companies");
+		const jobsUrl = this.parquetUrl("jobs");
+		
+		await this.ensureParquetRegistered(companiesVname, companiesUrl);
+		
+		try {
+			await this.ensureParquetRegistered(jobsVname, jobsUrl);
+		} catch (e) {
+			console.log("Jobs parquet file not found or failed to load:", e.message);
+			return []; // Return empty array if jobs file doesn't exist
+		}
+
+		let table;
+		const sql = `
+			SELECT j.* FROM '${jobsVname}' j
+			INNER JOIN '${companiesVname}' c ON j.company_id = c.id
+			WHERE c.is_highlighted = true OR c.is_highlighted = 1 OR lower(cast(c.is_highlighted as varchar)) = 'true'
+			LIMIT 100
+		`;
+		try {
+			table = await this.conn.query(sql);
+		} catch (e) {
+			await this.fetchAndRegister(companiesVname, companiesUrl);
+			await this.fetchAndRegister(jobsVname, jobsUrl);
+			table = await this.conn.query(sql);
+		}
+		return this._rowsToPlain(table.toArray());
+	}
+
 	async getCompany(id) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const vname = "companies.parquet";

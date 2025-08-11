@@ -18,7 +18,7 @@ export default class JoblistSearchResults extends HTMLElement {
 
 	_render() {
 		this.textContent = "";
-		const { companies, jobs, query, searchType, stats } = this.results;
+		const { companies, jobs, query, searchType, stats, isHighlightedQuery } = this.results;
 		
 		console.log("🎨 Rendering search results:", {
 			searchType,
@@ -34,16 +34,28 @@ export default class JoblistSearchResults extends HTMLElement {
 			statsEl.className = "search-stats";
 			
 			let statsText = "";
-			if (searchType === "companies") {
-				statsText = `Found ${stats.totalCompanies} companies`;
-			} else if (searchType === "jobs") {
-				statsText = `Found ${stats.totalJobs} jobs`;
+			if (isHighlightedQuery) {
+				// Special messaging for highlighted companies
+				if (searchType === "companies") {
+					statsText = `Showing ${stats.totalCompanies} highlighted companies`;
+				} else if (searchType === "jobs") {
+					statsText = `Showing ${stats.totalJobs} jobs from highlighted companies`;
+				} else {
+					statsText = `Showing ${stats.totalCompanies} highlighted companies and ${stats.totalJobs} jobs from highlighted companies (${stats.total} total results)`;
+				}
 			} else {
-				statsText = `Found ${stats.totalCompanies} companies and ${stats.totalJobs} jobs (${stats.total} total)`;
-			}
-			
-			if (query) {
-				statsText += ` for "${query}"`;
+				// Regular search results
+				if (searchType === "companies") {
+					statsText = `Found ${stats.totalCompanies} company results`;
+				} else if (searchType === "jobs") {
+					statsText = `Found ${stats.totalJobs} job results`;
+				} else {
+					statsText = `Found ${stats.totalCompanies} companies and ${stats.totalJobs} jobs (${stats.total} total results)`;
+				}
+				
+				if (query) {
+					statsText += ` for "${query}"`;
+				}
 			}
 			
 			statsEl.textContent = statsText;
@@ -74,8 +86,17 @@ export default class JoblistSearchResults extends HTMLElement {
 		// Check if there are no results
 		if ((!companies || !companies.length) && (!jobs || !jobs.length)) {
 			const noResults = document.createElement("joblist-results-404");
-			if (!query) {
+			if (!query && !isHighlightedQuery) {
 				noResults.textContent = "Input a query to see the matching search results.";
+			} else if (isHighlightedQuery) {
+				const { searchType } = this.results;
+				if (searchType === "jobs") {
+					noResults.textContent = "No jobs from highlighted companies found.";
+				} else if (searchType === "companies") {
+					noResults.textContent = "No highlighted companies found.";
+				} else {
+					noResults.textContent = "No highlighted companies or jobs found.";
+				}
 			} else {
 				noResults.textContent = "No results found ø.";
 			}

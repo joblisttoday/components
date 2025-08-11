@@ -112,13 +112,13 @@ const companiesResultsToMapMarkers = (companies) => {
 };
 
 const companyToMapMarkers = (company) => {
-	const { positions, title, id, total_jobs } = company;
+	const { positions, title, id, total_jobs, is_highlighted } = company;
 
 	if (!positions || positions.length === 0) {
 		/* no markers for this company */
 		return [];
 	}
-	// For each map position, include the precomputed total_jobs count.
+	// For each map position, include the precomputed total_jobs count and is_highlighted status.
 	const markers = positions.map((position) => {
 		const mapData = parsePosition(position);
 		if (mapData) {
@@ -127,6 +127,7 @@ const companyToMapMarkers = (company) => {
 				text: title,
 				id: id,
 				total_jobs,
+				is_highlighted,
 				...mapData,
 			};
 		}
