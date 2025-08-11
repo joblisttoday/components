@@ -22,7 +22,7 @@
 				window.location.hash = newHash;
 			};
 
-			(({ query = "" }) => {
+			(({ query = "", view = "", type = "" }) => {
 				const $search = document.createElement("joblist-search");
 				const $results = document.createElement("joblist-results");
 				
@@ -33,7 +33,7 @@
 					
 					// Update hash with search query for privacy-preserving URL sharing
 					if (detail.query && detail.query.trim()) {
-						updateHashParams({ query: detail.query, type: detail.searchType });
+						updateHashParams({ query: detail.query, view: detail.searchType });
 					} else {
 						// Clear hash when no query
 						window.location.hash = '';
@@ -42,6 +42,11 @@
 				
 				if (query) {
 					$search.setAttribute("query", query);
+				}
+				// Support new 'view' param; fallback to legacy 'type'
+				const initialView = view || type;
+				if (initialView) {
+					$search.setAttribute("search-type", initialView);
 				}
 				
 				document

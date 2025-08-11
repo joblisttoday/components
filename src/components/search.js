@@ -18,6 +18,11 @@ export default class JoblistSearch extends HTMLElement {
 		return this.getAttribute("search-type") || "both"; // "companies", "jobs", or "both"
 	}
 
+	get limit() {
+		const val = Number(this.getAttribute("limit"));
+		return Number.isFinite(val) && val >= 0 ? val : 1000; // default higher to reduce truncation
+	}
+
 	async search(query = "", searchType = null) {
 		const activeSearchType = searchType || this.searchType;
 		let companies = [], jobs = [];
@@ -35,7 +40,7 @@ export default class JoblistSearch extends HTMLElement {
 					isHighlightedQuery = true;
 					console.log("🏢 FOUND highlighted companies:", companies.length);
 				} else {
-					companies = await this.joblistSDK.searchCompanies(query);
+					companies = await this.joblistSDK.searchCompanies(query, this.limit);
 					console.log("🏢 FOUND companies:", companies.length);
 				}
 			} else {
@@ -47,11 +52,11 @@ export default class JoblistSearch extends HTMLElement {
 				if (!query || query.trim() === "") {
 					// Show jobs from highlighted companies when no search query
 					if (isHighlightedQuery || activeSearchType === "jobs") {
-						jobs = await this.joblistSDK.getJobsFromHighlightedCompanies();
+						jobs = await this.joblistSDK.getJobsFromHighlightedCompanies(this.limit);
 						console.log("💼 FOUND jobs from highlighted companies:", jobs.length);
 					}
 				} else {
-					jobs = await this.joblistSDK.searchJobs(query);
+					jobs = await this.joblistSDK.searchJobs(query, this.limit);
 					console.log("💼 FOUND jobs:", jobs.length);
 				}
 				console.log("💼 Jobs sample:", jobs.slice(0, 1));
@@ -94,11 +99,19 @@ export default class JoblistSearch extends HTMLElement {
 		super();
 		this.debounceTimeout = null;
 		this.debouncingDelay = 333;
+		this.columns = { companies: [], jobs: [] };
 	}
 
 	async connectedCallback() {
 		this.joblistSDK = new JoblistDuckDBSDK(this.databaseUrl);
 		await this.joblistSDK.initialize();
+		// Load searchable columns for suggestions
+		try {
+			this.columns.companies = await this.joblistSDK.getColumns("companies");
+		} catch {}
+		try {
+			this.columns.jobs = await this.joblistSDK.getColumns("jobs");
+		} catch {}
 		if (this.query) {
 			this.search(this.query);
 		} else {
@@ -119,6 +132,24 @@ export default class JoblistSearch extends HTMLElement {
 		if (query) {
 			$input.value = query;
 		}
+
+		// Column suggestions via datalist
+		const listId = "joblist-search-columns";
+		$input.setAttribute("list", listId);
+		const $datalist = document.createElement("datalist");
+		$datalist.id = listId;
+		let cols = [];
+		if (this.searchType === "companies") cols = this.columns.companies;
+		else if (this.searchType === "jobs") cols = this.columns.jobs;
+		else cols = Array.from(new Set([...(this.columns.companies || []), ...(this.columns.jobs || [])]));
+		cols
+			.filter(Boolean)
+			.sort()
+			.forEach((c) => {
+				const opt = document.createElement("option");
+				opt.value = `${c}:`;
+				$datalist.appendChild(opt);
+			});
 		
 		// Filter options
 		const filterContainer = document.createElement("div");
@@ -178,7 +209,7 @@ export default class JoblistSearch extends HTMLElement {
 			}
 		`;
 		
-		this.replaceChildren(style, container);
+		this.replaceChildren(style, container, $datalist);
 	}
 
 	_debounceOnInput(event) {
@@ -204,6 +235,7 @@ export default class JoblistSearch extends HTMLElement {
 		const input = this.querySelector('input[type="search"]');
 		const currentQuery = input ? input.value : "";
 		this.search(currentQuery, newSearchType);
+		this._render(currentQuery);
 	}
 
 	async _onCoordinatesInput(event = { target: { value: {} } }) {

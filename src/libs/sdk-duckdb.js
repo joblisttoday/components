@@ -10,43 +10,48 @@ export class JoblistDuckDBSDK {
 		this.db = null;
 		this.conn = null;
 		this._registered = new Set();
+		// FTS is disabled by default in WASM to avoid match_bm25 errors
+		this.enableFTS = Boolean(options.enableFTS);
 		this.ftsEnabled = false;
+		this._columnsCache = new Map();
 	}
 
 	async initialize() {
 		if (this.db) return; // already initialized
 
 		console.log("🔧 Initializing DuckDB...");
-		
+
 		const bundle = await duckdb.selectBundle({
 			eh: { mainModule: duckdb_wasm_eh, mainWorker: duckdb_worker_eh },
 		});
-		
+
 		const worker = new Worker(bundle.mainWorker);
 		const logger = new duckdb.ConsoleLogger();
 		const db = new duckdb.AsyncDuckDB(logger, worker);
 		await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
 
 		const conn = await db.connect();
-		
+
 		// Use same HTTP configuration as working version
 		try {
 			await conn.query(
-				"INSTALL httpfs; LOAD httpfs; SET enable_http_metadata_cache=true; SET http_metadata_cache_size=10485760; SET enable_object_cache=true;"
+				"INSTALL httpfs; LOAD httpfs; SET enable_http_metadata_cache=true; SET http_metadata_cache_size=10485760; SET enable_object_cache=true;",
 			);
 			console.log("✅ httpfs loaded successfully");
 		} catch (e) {
 			console.log("⚠️ httpfs configuration:", e.message);
 		}
 
-		// Try to enable FTS; ignore if unavailable in this WASM build
-		try {
-			await conn.query("INSTALL fts; LOAD fts;");
-			this.ftsEnabled = true;
-			console.log("✅ FTS extension loaded");
-		} catch (e) {
-			this.ftsEnabled = false;
-			console.log("ℹ️ FTS extension not available:", e.message);
+		// Optionally enable FTS; off by default to avoid browser WASM issues
+		if (this.enableFTS) {
+			try {
+				await conn.query("INSTALL fts; LOAD fts;");
+				this.ftsEnabled = true;
+				console.log("✅ FTS extension loaded");
+			} catch (e) {
+				this.ftsEnabled = false;
+				console.log("ℹ️ FTS extension not available:", e.message);
+			}
 		}
 
 		this.db = db;
@@ -78,10 +83,28 @@ export class JoblistDuckDBSDK {
 		return vname;
 	}
 
+	async _getColumnsForVName(vname) {
+		const key = `cols:${vname}`;
+		if (this._columnsCache.has(key)) return this._columnsCache.get(key);
+		const table = await this.conn.query(`SELECT * FROM '${vname}' LIMIT 0`);
+		const cols = table.schema.fields.map((f) => f.name);
+		this._columnsCache.set(key, cols);
+		return cols;
+	}
+
+	async getColumns(base) {
+		const vname = `${base}.parquet`;
+		const url = this.parquetUrl(base);
+		await this.ensureParquetRegistered(vname, url);
+		return await this._getColumnsForVName(vname);
+	}
+
 	async ensureViewForParquet(viewName, vname) {
 		// Create a stable view name for FTS to target; safe if it already exists
 		try {
-			await this.conn.query(`CREATE VIEW IF NOT EXISTS ${viewName} AS SELECT * FROM '${vname}'`);
+			await this.conn.query(
+				`CREATE VIEW IF NOT EXISTS ${viewName} AS SELECT * FROM '${vname}'`,
+			);
 			return true;
 		} catch (e) {
 			console.log(`Failed to create view ${viewName}:`, e.message);
@@ -92,10 +115,13 @@ export class JoblistDuckDBSDK {
 	async createFTSIndex(viewName, idColumn, fields = []) {
 		if (!this.ftsEnabled) return false;
 		try {
-			const cols = (fields && fields.length)
-				? ", " + fields.map((c) => `'${c}'`).join(", ")
-				: ", '*'"; // index all VARCHAR columns if fields omitted
-			await this.conn.query(`PRAGMA create_fts_index('${viewName}', '${idColumn}'${cols})`);
+			const cols =
+				fields && fields.length
+					? ", " + fields.map((c) => `'${c}'`).join(", ")
+					: ", '*'"; // index all VARCHAR columns if fields omitted
+			await this.conn.query(
+				`PRAGMA create_fts_index('${viewName}', '${idColumn}'${cols})`,
+			);
 			return true;
 		} catch (e) {
 			// Index may already exist or schema unsupported; treat as non-fatal
@@ -106,7 +132,7 @@ export class JoblistDuckDBSDK {
 
 	async query(sql, params = []) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
-		
+
 		// Simple parameter substitution
 		let processedSql = sql;
 		params.forEach((param, index) => {
@@ -116,7 +142,13 @@ export class JoblistDuckDBSDK {
 		});
 
 		const table = await this.conn.query(processedSql);
-		return table.toArray().map(row => Object.fromEntries(table.schema.fields.map((field, i) => [field.name, row[i]])));
+		return table
+			.toArray()
+			.map((row) =>
+				Object.fromEntries(
+					table.schema.fields.map((field, i) => [field.name, row[i]]),
+				),
+			);
 	}
 
 	// Parse field-specific syntax like "tags:hardware" or "id:ableton"
@@ -146,7 +178,9 @@ export class JoblistDuckDBSDK {
 		let terms = [];
 		if (parts.length > 1) {
 			// parts like [term1, op, term2, op, term3 ...]; use first op if consistent
-			const ops = parts.filter((_, i) => i % 2 === 1).map((s) => s.toUpperCase());
+			const ops = parts
+				.filter((_, i) => i % 2 === 1)
+				.map((s) => s.toUpperCase());
 			op = ops.every((o) => o === ops[0]) ? ops[0] : "AND";
 			terms = parts.filter((_, i) => i % 2 === 0);
 		} else {
@@ -215,32 +249,44 @@ export class JoblistDuckDBSDK {
 	}
 
 	// Core methods
-	async searchCompanies(query = "") {
+    async searchCompanies(query = "", limit = 100) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const vname = "companies.parquet";
 		const url = this.parquetUrl("companies");
 		await this.ensureParquetRegistered(vname, url);
-		
+
 		if (!query.trim()) {
 			return await this.getCompaniesHighlighted();
 		}
 
-		const { op, groups } = this._parseBooleanSearch(query);
+        const { op, groups } = this._parseBooleanSearch(query);
+        const limitClause = Number(limit) > 0 ? ` LIMIT ${Number(limit)}` : "";
+		const columns = await this._getColumnsForVName(vname);
 		const makeLikeCond = (g) => {
 			const term = this._escapeLikeTerm(g.term);
-			if (g.field === "tags") return `lower(cast(tags as varchar)) LIKE '%${term}%'`;
-			if (g.field === "id" || g.field === "title") return `lower(cast(${g.field} as varchar)) LIKE '%${term}%'`;
-			// generic
+			if (g.field && columns.includes(g.field)) {
+				// Field-qualified: exact token match. If LIST -> membership; else -> equality
+				return `list_contains(
+					CASE WHEN typeof(${g.field}) = 'LIST'
+						THEN CAST(${g.field} AS VARCHAR[])
+						ELSE list_value(lower(cast(${g.field} AS varchar)))
+					END,
+					'${term}'
+				)`;
+			}
+			// Generic: substring across common fields; tags via csv boundary for precision
 			return `(
 				lower(id) LIKE '%${term}%'
 				OR lower(title) LIKE '%${term}%'
-				OR lower(cast(tags as varchar)) LIKE '%${term}%'
+				OR (',' || regexp_replace(lower(cast(tags AS varchar)), '\\s*,\\s*', ',') || ',') LIKE '%,${term},%'
 			)`;
 		};
 		const joiner = op === "OR" ? " OR " : " AND ";
-		const whereLike = groups.length ? groups.map(makeLikeCond).join(joiner) : "TRUE";
-		const sql = `SELECT * FROM '${vname}' WHERE ${whereLike} LIMIT 100`;
-		
+        const whereLike = groups.length
+            ? groups.map(makeLikeCond).join(joiner)
+            : "TRUE";
+        const sql = `SELECT * FROM '${vname}' WHERE ${whereLike}${limitClause}`;
+
 		// Try FTS (bm25) if available
 		if (this.ftsEnabled) {
 			try {
@@ -251,7 +297,10 @@ export class JoblistDuckDBSDK {
 				const ftsSchema = `fts_main_${viewName}`;
 				// Group by field for FTS
 				const byField = groups.reduce((acc, g) => {
-					const key = g.field && ["id", "title", "tags"].includes(g.field) ? g.field : "__generic";
+					const key =
+						g.field && ["id", "title", "tags"].includes(g.field)
+							? g.field
+							: "__generic";
 					(acc[key] ||= []).push(this._escapeLikeTerm(g.term));
 					return acc;
 				}, {});
@@ -259,29 +308,33 @@ export class JoblistDuckDBSDK {
 				const selectScores = Object.entries(byField)
 					.map(([key, terms], i) => {
 						const fieldsArg = key !== "__generic" ? `, fields := '${key}'` : "";
-						const conjArg = `, conjunctive := ${op === 'OR' ? 0 : 1}`;
+						const conjArg = `, conjunctive := ${op === "OR" ? 0 : 1}`;
 						const qstr = terms.join(" ");
-						const col = `score_${i+1}`;
+						const col = `score_${i + 1}`;
 						scoreCols.push(col);
 						return `${ftsSchema}.match_bm25(id, '${qstr}'${fieldsArg}${conjArg}) AS ${col}`;
 					})
 					.join(",\n\t\t\t\t\t\t");
-				const whereScores = scoreCols.map((c) => `${c} IS NOT NULL`).join(op === 'OR' ? ' OR ' : ' AND ');
+				const whereScores = scoreCols
+					.map((c) => `${c} IS NOT NULL`)
+					.join(op === "OR" ? " OR " : " AND ");
 				const orderExpr = scoreCols.map((c) => `COALESCE(${c}, 0)`).join(" + ");
-				const ftsSql = `
-					SELECT * FROM (
-						SELECT c.*,\n\t\t\t\t\t\t${selectScores}
-						FROM ${viewName} c
-					) sq
-					WHERE ${whereScores}
-					ORDER BY ${orderExpr} DESC
-					LIMIT 100
-				`;
+                const ftsSql = `
+                    SELECT * FROM (
+                        SELECT c.*,\n\t\t\t\t\t\t${selectScores}
+                        FROM ${viewName} c
+                    ) sq
+                    WHERE ${whereScores}
+                    ORDER BY ${orderExpr} DESC${limitClause}
+                `;
 				const ftsTable = await this.conn.query(ftsSql);
 				const ftsRows = ftsTable.toArray();
 				if (ftsRows.length) return this._rowsToPlain(ftsRows);
 			} catch (e) {
-				console.log("Companies FTS search failed, falling back to LIKE:", e.message);
+				console.log(
+					"Companies FTS search failed, falling back to LIKE:",
+					e.message,
+				);
 			}
 		}
 
@@ -294,29 +347,30 @@ export class JoblistDuckDBSDK {
 		const vname = "companies.parquet";
 		const url = this.parquetUrl("companies");
 		await this.ensureParquetRegistered(vname, url);
-		
+
 		const sql = `SELECT * FROM '${vname}' WHERE is_highlighted = true OR is_highlighted = 1 OR lower(cast(is_highlighted as varchar)) = 'true'`;
 		const table = await this.conn.query(sql);
 		return this._rowsToPlain(table.toArray());
 	}
 
-	async searchJobs(query = "") {
+    async searchJobs(query = "", limit = 100) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const vname = "jobs.parquet";
 		const url = this.parquetUrl("jobs");
-		
+
 		try {
 			await this.ensureParquetRegistered(vname, url);
 		} catch (e) {
 			console.log("Jobs parquet file not found or failed to load:", e.message);
 			return []; // Return empty array if jobs file doesn't exist
 		}
-		
+
 		if (!query.trim()) {
 			return await this.getJobsFromHighlightedCompanies();
 		}
 
-		const { op, groups } = this._parseBooleanSearch(query);
+        const { op, groups } = this._parseBooleanSearch(query);
+        const limitClause = Number(limit) > 0 ? ` LIMIT ${Number(limit)}` : "";
 		const fieldMap = {
 			name: "name",
 			location: "location",
@@ -325,9 +379,20 @@ export class JoblistDuckDBSDK {
 			company_id: "company_id",
 			id: "company_id",
 		};
+		const columns = await this._getColumnsForVName(vname);
 		const makeLikeCond = (g) => {
 			const term = this._escapeLikeTerm(g.term);
-			if (g.field && fieldMap[g.field]) return `lower(cast(${fieldMap[g.field]} as varchar)) LIKE '%${term}%'`;
+			if (g.field && (fieldMap[g.field] || columns.includes(g.field))) {
+				const col = fieldMap[g.field] || g.field;
+				// Field-qualified: exact token match via list_contains on a normalized list
+				return `list_contains(
+					CASE WHEN typeof(${col}) = 'LIST'
+						THEN CAST(${col} AS VARCHAR[])
+						ELSE list_value(lower(cast(${col} AS varchar)))
+					END,
+					'${term}'
+				)`;
+			}
 			// generic
 			return `(
 				lower(name) LIKE '%${term}%'
@@ -337,9 +402,11 @@ export class JoblistDuckDBSDK {
 			)`;
 		};
 		const joiner = op === "OR" ? " OR " : " AND ";
-		const whereLike = groups.length ? groups.map(makeLikeCond).join(joiner) : "TRUE";
-		let sql = `SELECT * FROM '${vname}' WHERE ${whereLike} LIMIT 100`;
-		
+		const whereLike = groups.length
+			? groups.map(makeLikeCond).join(joiner)
+			: "TRUE";
+        let sql = `SELECT * FROM '${vname}' WHERE ${whereLike}${limitClause}`;
+
 		// Try FTS (bm25) if available
 		if (this.ftsEnabled) {
 			try {
@@ -355,7 +422,8 @@ export class JoblistDuckDBSDK {
 				const ftsSchema = `fts_main_${viewName}`;
 				// Group by field for FTS
 				const byField = groups.reduce((acc, g) => {
-					const key = g.field && fieldMap[g.field] ? fieldMap[g.field] : "__generic";
+					const key =
+						g.field && fieldMap[g.field] ? fieldMap[g.field] : "__generic";
 					(acc[key] ||= []).push(this._escapeLikeTerm(g.term));
 					return acc;
 				}, {});
@@ -363,24 +431,25 @@ export class JoblistDuckDBSDK {
 				const selectScores = Object.entries(byField)
 					.map(([key, terms], i) => {
 						const fieldsArg = key !== "__generic" ? `, fields := '${key}'` : "";
-						const conjArg = `, conjunctive := ${op === 'OR' ? 0 : 1}`;
+						const conjArg = `, conjunctive := ${op === "OR" ? 0 : 1}`;
 						const qstr = terms.join(" ");
-						const col = `score_${i+1}`;
+						const col = `score_${i + 1}`;
 						scoreCols.push(col);
 						return `${ftsSchema}.match_bm25(url, '${qstr}'${fieldsArg}${conjArg}) AS ${col}`;
 					})
 					.join(",\n\t\t\t\t\t\t");
-				const whereScores = scoreCols.map((c) => `${c} IS NOT NULL`).join(op === 'OR' ? ' OR ' : ' AND ');
+				const whereScores = scoreCols
+					.map((c) => `${c} IS NOT NULL`)
+					.join(op === "OR" ? " OR " : " AND ");
 				const orderExpr = scoreCols.map((c) => `COALESCE(${c}, 0)`).join(" + ");
-				const ftsSql = `
-					SELECT * FROM (
-						SELECT j.*,\n\t\t\t\t\t\t${selectScores}
-						FROM ${viewName} j
-					) sq
-					WHERE ${whereScores}
-					ORDER BY ${orderExpr} DESC
-					LIMIT 100
-				`;
+                const ftsSql = `
+                    SELECT * FROM (
+                        SELECT j.*,\n\t\t\t\t\t\t${selectScores}
+                        FROM ${viewName} j
+                    ) sq
+                    WHERE ${whereScores}
+                    ORDER BY ${orderExpr} DESC${limitClause}
+                `;
 				const ftsTable = await this.conn.query(ftsSql);
 				const ftsRows = ftsTable.toArray();
 				if (ftsRows.length) return this._rowsToPlain(ftsRows);
@@ -398,13 +467,13 @@ export class JoblistDuckDBSDK {
 		}
 	}
 
-	async getJobsFromHighlightedCompanies() {
+    async getJobsFromHighlightedCompanies(limit = 100) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const companiesVname = "companies.parquet";
 		const jobsVname = "jobs.parquet";
 		const companiesUrl = this.parquetUrl("companies");
 		const jobsUrl = this.parquetUrl("jobs");
-		
+
 		try {
 			await this.ensureParquetRegistered(companiesVname, companiesUrl);
 			await this.ensureParquetRegistered(jobsVname, jobsUrl);
@@ -412,19 +481,22 @@ export class JoblistDuckDBSDK {
 			console.log("Failed to load companies or jobs parquet files:", e.message);
 			return [];
 		}
-		
-		const sql = `
-			SELECT j.* FROM '${jobsVname}' j
-			INNER JOIN '${companiesVname}' c ON j.company_id = c.id
-			WHERE c.is_highlighted = true OR c.is_highlighted = 1 OR lower(cast(c.is_highlighted as varchar)) = 'true'
-			LIMIT 100
-		`;
-		
+
+        const sql = `
+            SELECT j.* FROM '${jobsVname}' j
+            INNER JOIN '${companiesVname}' c ON j.company_id = c.id
+            WHERE c.is_highlighted = true OR c.is_highlighted = 1 OR lower(cast(c.is_highlighted as varchar)) = 'true'
+            ${Number(limit) > 0 ? `LIMIT ${Number(limit)}` : ''}
+        `;
+
 		try {
 			const table = await this.conn.query(sql);
 			return this._rowsToPlain(table.toArray());
 		} catch (error) {
-			console.log("Jobs parquet file not found or failed to load:", error.message);
+			console.log(
+				"Jobs parquet file not found or failed to load:",
+				error.message,
+			);
 			return [];
 		}
 	}
@@ -434,7 +506,7 @@ export class JoblistDuckDBSDK {
 		const vname = "companies.parquet";
 		const url = this.parquetUrl("companies");
 		await this.ensureParquetRegistered(vname, url);
-		
+
 		const lit = String(id).replace(/'/g, "''");
 		const sql = `SELECT * FROM '${vname}' WHERE id = '${lit}' LIMIT 1`;
 		const table = await this.conn.query(sql);
@@ -445,18 +517,18 @@ export class JoblistDuckDBSDK {
 	// Heatmap methods - now implemented like working version
 	async getCompanyHeatmap(id, days = 365, signal) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
-		
+
 		let data;
 		try {
 			const jobsVname = "jobs.parquet";
 			const jobsUrl = this.parquetUrl("jobs");
 			await this.ensureParquetRegistered(jobsVname, jobsUrl);
-			
+
 			const sql = `
-				SELECT 
+				SELECT
 					COUNT(*) AS total,
 					CAST(CAST(published_date AS DATE) AS VARCHAR) AS date
-				FROM '${jobsVname}' 
+				FROM '${jobsVname}'
 				WHERE CAST(published_date AS DATE) >= CURRENT_DATE - INTERVAL ${days} DAY
 				  AND company_id = ?
 				GROUP BY date
@@ -467,24 +539,24 @@ export class JoblistDuckDBSDK {
 			console.warn("Company heatmap failed:", e.message);
 			data = [];
 		}
-		
+
 		return generateMissingDates(data, days);
 	}
 
 	async getJobsHeatmap(days = 365, signal) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
-		
+
 		let data;
 		try {
 			const jobsVname = "jobs.parquet";
 			const jobsUrl = this.parquetUrl("jobs");
 			await this.ensureParquetRegistered(jobsVname, jobsUrl);
-			
+
 			const sql = `
-				SELECT 
+				SELECT
 					COUNT(*) AS total,
 					CAST(CAST(published_date AS DATE) AS VARCHAR) AS date
-				FROM '${jobsVname}' 
+				FROM '${jobsVname}'
 				WHERE CAST(published_date AS DATE) >= CURRENT_DATE - INTERVAL ${days} DAY
 				GROUP BY date
 				ORDER BY date DESC
@@ -494,7 +566,7 @@ export class JoblistDuckDBSDK {
 			console.warn("Jobs heatmap failed:", e.message);
 			data = [];
 		}
-		
+
 		if (!signal?.aborted) {
 			return generateMissingDates(data, days);
 		}
@@ -512,7 +584,9 @@ export class JoblistDuckDBSDK {
 			const companiesVName = "companies.parquet";
 			const companiesUrl = this.parquetUrl("companies");
 			await this.ensureParquetRegistered(companiesVName, companiesUrl);
-			const companyQuery = await this.conn.query(`SELECT COUNT(*) as count FROM '${companiesVName}'`);
+			const companyQuery = await this.conn.query(
+				`SELECT COUNT(*) as count FROM '${companiesVName}'`,
+			);
 			const companyRows = companyQuery.toArray();
 			total_companies = Number(companyRows[0]?.count ?? 0);
 		} catch (e) {
@@ -524,7 +598,9 @@ export class JoblistDuckDBSDK {
 			const jobsVName = "jobs.parquet";
 			const jobsUrl = this.parquetUrl("jobs");
 			await this.ensureParquetRegistered(jobsVName, jobsUrl);
-			const jobsQuery = await this.conn.query(`SELECT COUNT(*) as count FROM '${jobsVName}'`);
+			const jobsQuery = await this.conn.query(
+				`SELECT COUNT(*) as count FROM '${jobsVName}'`,
+			);
 			const jobsRows = jobsQuery.toArray();
 			total_jobs = Number(jobsRows[0]?.count ?? 0);
 		} catch (e) {
@@ -539,7 +615,7 @@ export class JoblistDuckDBSDK {
 		const vname = "companies.parquet";
 		const url = this.parquetUrl("companies");
 		await this.ensureParquetRegistered(vname, url);
-		
+
 		const table = await this.conn.query(`SELECT * FROM '${vname}'`);
 		return this._rowsToPlain(table.toArray());
 	}
@@ -567,11 +643,14 @@ export class JoblistDuckDBSDK {
 				FROM '${companiesVname}' c
 				INNER JOIN '${jobsVname}' j ON c.id = j.company_id
 			`;
-			
+
 			const table = await this.conn.query(sql);
 			return this._rowsToPlain(table.toArray());
 		} catch (e) {
-			console.log("Failed to join companies with jobs, returning all companies:", e.message);
+			console.log(
+				"Failed to join companies with jobs, returning all companies:",
+				e.message,
+			);
 			return await this.getCompanies();
 		}
 	}

@@ -20,54 +20,71 @@
 					window.location.hash = newHash;
 				};
 
-				const handleSearch = ({ detail }) => {
-					const { companies, jobs, query } = detail;
+				const handleSearch = async ({ detail }) => {
+					const { companies, jobs: jobsInput, query, searchType } = detail;
+					let jobs = jobsInput;
 					
 					// Update hash with search query for privacy-preserving URL sharing
 					if (query && query.trim()) {
-						updateHashParams({ query: query, type: detail.searchType });
+						updateHashParams({ query: query, view: detail.searchType });
 					} else {
 						// Clear hash when no query
 						window.location.hash = '';
 					}
 					if (!query) {
 						$map.setAttribute("markers", JSON.stringify(allMarkers));
-					} else if (query && companies) {
-						// Aggregate job counts by company if jobs are available
-						let companiesWithJobCounts = companies;
-						if (jobs && jobs.length > 0) {
-							console.log("📍 Aggregating job counts by company for map");
-							
-							// Create a map of company_id -> job count
-							const jobCountsByCompany = {};
-							jobs.forEach(job => {
-								const companyId = job.company_id;
-								if (companyId) {
-									jobCountsByCompany[companyId] = (jobCountsByCompany[companyId] || 0) + 1;
-								}
-							});
-							
-							console.log("📊 Job counts by company:", jobCountsByCompany);
-							
-							// Add job counts to companies for map display
-							companiesWithJobCounts = companies.map(company => ({
-								...company,
-								total_jobs: jobCountsByCompany[company.id] || 0
-							}));
-							
-							console.log("🏢 Companies with job counts:", companiesWithJobCounts.map(c => ({ id: c.id, total_jobs: c.total_jobs })));
+					} else {
+						// Ensure we have jobs for counting even if view=companies
+						if ((!jobs || jobs.length === 0) && query && query.trim()) {
+							try {
+								jobs = await duckDBSdk.searchJobs(query);
+							} catch (e) {
+								jobs = [];
+							}
 						}
-						
-						// Convert companies to map markers (now with job counts)
+
+						// Compute job counts by company for current result set (if any)
+						const jobCountsByCompany = {};
+						(jobs || []).forEach(job => {
+							const companyId = job.company_id;
+							if (companyId) {
+								jobCountsByCompany[companyId] = (jobCountsByCompany[companyId] || 0) + 1;
+							}
+						});
+
+						// Build company sets
+						const companiesFromCompanies = Array.isArray(companies) ? companies : [];
+						const byId = new Map(allCompanies.map(c => [c.id, c]));
+						const jobCompanyIds = new Set((jobs || []).map(j => j.company_id).filter(Boolean));
+						const companiesFromJobs = Array.from(jobCompanyIds).map(id => byId.get(id)).filter(Boolean);
+
+						let companiesBase = [];
+						if (searchType === 'companies') {
+							companiesBase = companiesFromCompanies;
+						} else if (searchType === 'jobs') {
+							companiesBase = companiesFromJobs;
+						} else {
+							// both: union of companies and job-derived companies
+							const map = new Map();
+							[...companiesFromCompanies, ...companiesFromJobs].forEach(c => { if (c) map.set(c.id, c); });
+							companiesBase = Array.from(map.values());
+						}
+
+						// Attach job counts (if available) for marker sizing/info
+						const companiesWithJobCounts = companiesBase.map(company => ({
+							...company,
+							total_jobs: jobCountsByCompany[company.id] || company.total_jobs || 0
+						}));
+
 						const itemMarkers = companiesToMapMarkers(companiesWithJobCounts);
-						console.log("🗺️ Map markers with job counts:", itemMarkers);
 						$map.setAttribute("markers", JSON.stringify(itemMarkers));
-						
-						// Store jobs data for potential filtering
 						if (jobs && jobs.length > 0) {
 							$map.setAttribute("jobs", JSON.stringify(jobs));
+						} else {
+							$map.removeAttribute("jobs");
 						}
-					} else if (!companies) {
+					}
+					if (!companies && !(jobs && jobs.length)) {
 						$map.removeAttribute("markers");
 						$map.removeAttribute("jobs");
 					}
@@ -102,6 +119,10 @@
 				/* apply attributes to elements */
 				const $search = document.createElement("joblist-search");
 				$search.addEventListener("search", handleSearch);
+				// Apply initial query and view (jobs preferred by default on map)
+				const initial = (() => { const hash = new URLSearchParams(window.location.hash.slice(1)); return Object.fromEntries(hash); })();
+				const initView = initial.view || initial.type || 'jobs';
+				$search.setAttribute('search-type', initView);
 				if (query) {
 					$search.setAttribute("query", query);
 				}
