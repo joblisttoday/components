@@ -1,15 +1,9 @@
 {
   "name": "@joblist/components",
   "private": false,
-  "version": "0.2.14",
+  "version": "0.2.15",
   "homepage": "https://github.com/joblisttoday/components",
-  "keywords": [
-    "web-components",
-    "leaflet",
-    "duckdb",
-    "wasm",
-    "joblist"
-  ],
+  "keywords": ["web-components", "leaflet", "duckdb", "wasm", "joblist"],
   "author": "joblist",
   "license": "GPL-3.0-or-later",
   "type": "module",
@@ -22,10 +16,7 @@
     "./style": "./dist-lib/style.css"
   },
   "main": "./dist-lib/index.js",
-  "files": [
-    "**/*",
-    "dist-lib/*"
-  ],
+  "files": ["**/*", "dist-lib/*"],
   "scripts": {
     "dev": "vite",
     "build": "npm run build-website; npm run build-lib;",
