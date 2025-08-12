@@ -2,6 +2,7 @@ import joblistDuckDBSDK, { JoblistDuckDBSDK } from "../libs/sdk-duckdb.js";
 import { companyToMapMarkers } from "../libs/map.js";
 import text from "../utils/text.js";
 import "giscus";
+import "./social-widget.js";
 
 export default class JoblistCompany extends HTMLElement {
 	get full() {
@@ -151,7 +152,11 @@ export default class JoblistCompany extends HTMLElement {
 	}
 	createWidgets(company) {
 		const $widgets = document.createElement("joblist-company-widgets");
-		$widgets.append(this.createPositions(company), this.createHeatmap(company));
+		$widgets.append(
+			this.createPositions(company), 
+			this.createHeatmap(company),
+			this.createSocialWidget(company)
+		);
 		return $widgets;
 	}
 	createHeatmap({ id, job_board_provider, job_board_hostname }) {
@@ -167,6 +172,23 @@ export default class JoblistCompany extends HTMLElement {
 		const $map = document.createElement("joblist-map-list");
 		$map.setAttribute("markers", JSON.stringify(markers));
 		return $map;
+	}
+	createSocialWidget(company) {
+		const socialLinks = [
+			"wikipedia_url",
+			"linkedin_url",
+			"twitter_url", 
+			"youtube_url",
+			"facebook_url",
+			"instagram_url"
+		];
+		
+		const hasSocialLinks = socialLinks.some(linkKey => company[linkKey]);
+		if (!hasSocialLinks) return "";
+		
+		const $socialWidget = document.createElement("joblist-social-widget");
+		$socialWidget.setAttribute("company", JSON.stringify(company));
+		return $socialWidget;
 	}
 	createBoard({ job_board_provider, job_board_hostname }) {
 		if (!job_board_provider || !job_board_hostname) return "";

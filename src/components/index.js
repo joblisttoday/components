@@ -28,6 +28,8 @@ import JoblistBoardJob from "./board-job.js";
 import JoblistHeatmap from "./heatmap.js";
 import JoblistPricingTable from "./pricing-table.js";
 import JoblistBilling from "./billing.js";
+import JoblistSocialWidget from "./social-widget.js";
+import JoblistSocialLink from "./social-link.js";
 
 const componentDefinitions = {
 	"joblist-umami-script": JoblistUmamiScript,
@@ -67,6 +69,10 @@ const componentDefinitions = {
 	/* stripe */
 	"joblist-pricing-table": JoblistPricingTable,
 	"joblist-billing": JoblistBilling,
+
+	/* social */
+	"joblist-social-widget": JoblistSocialWidget,
+	"joblist-social-link": JoblistSocialLink,
 };
 
 export { componentDefinitions, providerDefinitions };
