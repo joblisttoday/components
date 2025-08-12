@@ -6,7 +6,7 @@
 	--c-gray: gray;
 	--c-purple: violet;
 	--c-whitesmoke: whitesmoke;
-	--c-blue: blue;
+	--c-blue: #3b5fc0;
 	--c-orange: orange;
 	--c-social: rgb(255 255 0 / 50%), rgb(0 0 255 / 50%);
 
@@ -31,7 +31,7 @@
 		--c-bg-alt: #191913f3;
 		--c-fg: lightgray;
 		--c-fg--info: gray;
-		--c-link: skyblue;
+		--c-link: oklch(0.712564 0.257662 265.758);
 		--c-link--active: var(--c-purple);
 		--c-hr: slategray;
 		--c-position: gray;
@@ -55,8 +55,8 @@
 @media (prefers-color-scheme: light) {
 	:root[joblist-layout] {
 		color-scheme: light;
-		--c-bg: ghostwhite;
-		--c-bg-alt: linen;
+		--c-bg: white;
+		--c-bg-alt: #f6f6f6;
 		--c-fg: var(--c-black);
 		--c-fg--info: gray;
 		--c-link: var(--c-blue);
