@@ -3,8 +3,7 @@ joblist-icon {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		gap: calc(var(--s) / 3);
-		padding: calc(var(--s) / 3);
+		padding: calc(var(--s) / 4);
 
 		:is(.icon-svg) {
 			:is(svg) {

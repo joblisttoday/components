@@ -6,11 +6,9 @@ joblist-company {
 		flex-wrap: wrap;
 	}
 	:is(menu) {
+		gap: calc(var(--s) / 2);
 		:is(li) {
 			display: flex;
-		}
-		:is(a) {
-			padding: calc(var(--s) / 5);
 		}
 	}
 	:is(summary) {
@@ -79,25 +77,20 @@ joblist-company {
 		}
 		:is(iframe) {
 			min-height: min(45vh, 100vmin);
+			padding: calc(var(--s) / 3);
+			border: 1px solid var(--c-bg);
 		}
 
 		/* Enhanced social preview styles */
 		:is(.social-preview-header) {
 			display: flex;
 			align-items: center;
+			justify-content: center;
 			gap: calc(var(--s) / 2);
-			margin-bottom: var(--s);
-			padding-bottom: calc(var(--s) / 2);
-			border-bottom: 1px solid var(--c-border--company);
-		}
-
-		:is(.social-preview-content) {
-			margin-bottom: var(--s);
 		}
 
 		:is(.social-preview-cta) {
 			display: inline-block;
-			padding: calc(var(--s) / 3) calc(var(--s) / 2);
 			background-color: var(--c-bg);
 			border: var(--s-border) solid var(--c-border--company);
 			border-radius: var(--s-border-radius);
@@ -126,17 +119,6 @@ joblist-company {
 			min-width: 0;
 		}
 
-		:is(.loading-text) {
-			font-style: italic;
-			color: var(--c-fg-secondary, #666);
-			margin: calc(var(--s) / 2) 0;
-		}
-
-		/* Social header styles */
-		:is(.social-info) {
-			flex: 1;
-		}
-
 		:is(.profile-link) {
 			text-decoration: none;
 			color: inherit;
@@ -150,7 +132,7 @@ joblist-company {
 	}
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--s) / 2);
+	gap: calc(var(--s) / 4);
 }
 joblist-company {
 	&:is([is-highlighted="true"]) {
