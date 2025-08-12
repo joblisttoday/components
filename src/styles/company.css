@@ -43,6 +43,17 @@ joblist-company {
 		justify-content: flex-end;
 		margin: calc(var(--s) / 4);
 	}
+
+	/* Company header with title */
+	:is(joblist-company-title) {
+		:is(.company-header) {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: var(--s);
+		}
+	}
+
 	:is(joblist-social-widget) {
 		:is(ul) {
 			display: flex;
@@ -68,6 +79,73 @@ joblist-company {
 		}
 		:is(iframe) {
 			min-height: min(45vh, 100vmin);
+		}
+
+		/* Enhanced social preview styles */
+		:is(.social-preview-header) {
+			display: flex;
+			align-items: center;
+			gap: calc(var(--s) / 2);
+			margin-bottom: var(--s);
+			padding-bottom: calc(var(--s) / 2);
+			border-bottom: 1px solid var(--c-border--company);
+		}
+
+		:is(.social-preview-content) {
+			margin-bottom: var(--s);
+		}
+
+		:is(.social-preview-cta) {
+			display: inline-block;
+			padding: calc(var(--s) / 3) calc(var(--s) / 2);
+			background-color: var(--c-bg);
+			border: var(--s-border) solid var(--c-border--company);
+			border-radius: var(--s-border-radius);
+			text-decoration: none;
+			font-size: 0.9em;
+			transition: background-color 0.2s ease;
+
+			&:hover {
+				background-color: var(--c-bg-alt);
+			}
+		}
+
+		/* Wikipedia specific styles */
+		:is(.wikipedia-content) {
+			display: flex;
+			gap: var(--s);
+			align-items: flex-start;
+		}
+
+		:is(.wikipedia-image) {
+			flex-shrink: 0;
+		}
+
+		:is(.wikipedia-text) {
+			flex: 1;
+			min-width: 0;
+		}
+
+		:is(.loading-text) {
+			font-style: italic;
+			color: var(--c-fg-secondary, #666);
+			margin: calc(var(--s) / 2) 0;
+		}
+
+		/* Social header styles */
+		:is(.social-info) {
+			flex: 1;
+		}
+
+		:is(.profile-link) {
+			text-decoration: none;
+			color: inherit;
+			display: flex;
+			gap: var(--s);
+			align-items: baseline;
+			&:hover {
+				opacity: 0.8;
+			}
 		}
 	}
 	display: flex;
@@ -142,7 +220,7 @@ joblist-company-links {
 joblist-company-widgets {
 	:is(joblist-map-list) {
 		background-color: var(--c-bg);
-		max-width: 50vmin;
+		/* max-width: 50vmin; */
 	}
 	display: flex;
 	flex-wrap: wrap;

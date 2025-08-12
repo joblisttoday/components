@@ -3,6 +3,8 @@ import { companyToMapMarkers } from "../libs/map.js";
 import text from "../utils/text.js";
 import "giscus";
 import "./social-widget.js";
+import "./icon.js";
+import "./tag.js";
 
 export default class JoblistCompany extends HTMLElement {
 	get full() {
@@ -45,8 +47,7 @@ export default class JoblistCompany extends HTMLElement {
 					this.createDescription(this.company),
 					this.createLinks(this.company),
 					this.createWidgets(this.company),
-					this.createEdit(this.company),
-					this.createGiscus(),
+					// this.createGiscus(),
 					this.createBoard(this.company),
 				);
 			} else {
@@ -73,8 +74,15 @@ export default class JoblistCompany extends HTMLElement {
 		$link.setAttribute("href", this.buildProfileUrl(id));
 
 		$link.append($title);
+
+		// Create header container with title and edit menu
+		const $header = document.createElement("div");
+		$header.className = "company-header";
+		$header.append($link);
+
 		const $wrapper = document.createElement("joblist-company-title");
-		$wrapper.append($link);
+		$wrapper.append($header);
+
 		if (company?.is_highlighted) {
 			$wrapper.append(this.createHighlight(this.company));
 		}
@@ -108,37 +116,112 @@ export default class JoblistCompany extends HTMLElement {
 		return $tag;
 	}
 	createLinks(company) {
-		const companyLinks = ["company_url", "job_board_url", "wikipedia_url"];
-		const socialLinks = [
-			"linkedin_url",
-			"twitter_url",
-			"youtube_url",
-			"facebook_url",
-			"instagram_url",
+		const companyLinks = [
+			{ key: "company_url", icon: "globe", label: "homepage" },
+			{ key: "job_board_url", icon: "briefcase", label: "careers" },
+			{ key: "wikipedia_url", icon: "wikipedia", label: "wikipedia" },
 		];
 
+		const socialLinks = [
+			{ key: "linkedin_url", icon: "linkedin", label: "linkedin" },
+			{ key: "twitter_url", icon: "twitter", label: "twitter" },
+			{ key: "youtube_url", icon: "youtube", label: "youtube" },
+			{ key: "facebook_url", icon: "facebook", label: "facebook" },
+			{ key: "instagram_url", icon: "instagram", label: "instagram" },
+		];
+
+		// Edit options as separate third menu if in full mode
+		const editOptions = this.full
+			? [
+					{
+						key: "edit_cms",
+						icon: "edit",
+						label: "edit",
+						href: `https://edit.joblist.today/#/collections/companies/entries/${company.id}/index`,
+						title: "Edit with a github account in netlify-cms",
+					},
+					{
+						key: "edit_file",
+						icon: "file",
+						label: "file",
+						href: `https://github.com/joblisttoday/data/edit/main/companies/${company.id}/index.json`,
+						title: "Edit with github directly",
+					},
+					{
+						key: "edit_delete",
+						icon: "trash",
+						label: "delete",
+						href: `https://github.com/joblisttoday/data/issues/new?labels=delete-company&template=delete_company.yml&title=%5Bdelete%5D+${company.id}`,
+						title: "Request company deletion",
+					},
+					{
+						key: "edit_issue",
+						icon: "issue",
+						label: "issue",
+						href: `https://github.com/joblisttoday/data/issues/new?labels=update-company&template=update_company.yml&title=%5Bupdate%5D+${company.id}`,
+						title: "New issue to update or discuss this company",
+					},
+				]
+			: [];
+
 		const $wrapper = document.createElement("joblist-company-links");
-		$wrapper.append(
+
+		// Create three separate menus
+		const menus = [
 			this.createLinksMenu(companyLinks, company),
 			this.createLinksMenu(socialLinks, company),
-		);
+		];
+
+		// Add edit menu as third menu if in full mode
+		if (this.full && editOptions.length > 0) {
+			menus.push(this.createLinksMenu(editOptions, company));
+		}
+
+		$wrapper.append(...menus.filter(Boolean));
 		return $wrapper;
 	}
 	createLinksMenu(links, company) {
-		const $links = links.reduce((acc, linkKey) => {
+		const $links = links.reduce((acc, linkInfo) => {
+			// Handle both old string format and new object format
+			const linkKey = typeof linkInfo === "string" ? linkInfo : linkInfo.key;
+			const icon = typeof linkInfo === "object" ? linkInfo.icon : null;
+			const label =
+				typeof linkInfo === "object" ? linkInfo.label : text(linkKey);
+			const href =
+				typeof linkInfo === "object" && linkInfo.href
+					? linkInfo.href
+					: company[linkKey];
+			const title =
+				typeof linkInfo === "object" && linkInfo.title ? linkInfo.title : label;
+
+			// Skip if no URL (for company properties) or if it's an edit option with href
+			if (!href) return acc;
+
 			const $link = document.createElement("a");
-			const linkVal = company[linkKey];
-			if (linkVal) {
-				$link.setAttribute("href", linkVal);
-				$link.setAttribute("target", "_blank");
-				$link.setAttribute("title", linkKey.split("_").join(" "));
-				$link.setAttribute("rel", "noreferrer noopener");
-				$link.textContent = text(linkKey);
-				acc.push($link);
+			$link.setAttribute("href", href);
+			$link.setAttribute("target", "_blank");
+			$link.setAttribute("title", title);
+			$link.setAttribute("rel", "noreferrer noopener");
+
+			// Add icon if provided
+			if (icon) {
+				const iconElement = document.createElement("joblist-icon");
+				iconElement.setAttribute("icon", icon);
+				iconElement.setAttribute("size", "small");
+				$link.appendChild(iconElement);
+
+				const textSpan = document.createElement("span");
+				textSpan.textContent = label;
+				$link.appendChild(textSpan);
+			} else {
+				$link.textContent = label;
 			}
+
+			acc.push($link);
 			return acc;
 		}, []);
-		if ($links) {
+
+		if ($links.length > 0) {
 			const $listItems = $links.map(($link) => {
 				const $li = document.createElement("li");
 				$li.append($link);
@@ -151,6 +234,7 @@ export default class JoblistCompany extends HTMLElement {
 			return "";
 		}
 	}
+
 	createWidgets(company) {
 		const $widgets = document.createElement("joblist-company-widgets");
 		$widgets.append(
@@ -198,54 +282,7 @@ export default class JoblistCompany extends HTMLElement {
 		$board.setAttribute("provider-hostname", job_board_hostname);
 		return $board;
 	}
-	createEdit({ id }) {
-		const editLinks = [
-			{
-				text: "edit",
-				href: `https://edit.joblist.today/#/collections/companies/entries/${id}/index`,
-				title: "Edit with a github account in netlify-cms",
-			},
-			{
-				text: "file",
-				href: `https://github.com/joblisttoday/data/edit/main/companies/${id}/index.json`,
-				title: "Edit with github directly",
-			},
-			{
-				text: "delete",
-				href: `https://github.com/joblisttoday/data/issues/new?labels=delete-company&template=delete_company.yml&title=%5Bdelete%5D+${id}`,
-				title: "Request company deletion",
-			},
-			{
-				text: "issue",
-				href: `https://github.com/joblisttoday/data/issues/new?labels=update-company&template=update_company.yml&title=%5Bupdate%5D+${id}`,
-				title: "New issue to update or dissuss this company",
-			},
-		];
 
-		const links = editLinks.map((linkInfo) => {
-			const { text, href, title } = linkInfo;
-			const listItem = document.createElement("li");
-			const anchor = document.createElement("a");
-			anchor.textContent = text;
-			anchor.setAttribute("href", href);
-			anchor.setAttribute("title", title);
-			anchor.setAttribute("target", "_blank");
-			anchor.setAttribute("rel", "noreferrer noopener");
-			listItem.appendChild(anchor);
-			return listItem;
-		});
-		const menu = document.createElement("menu");
-		menu.append(...links);
-
-		const details = document.createElement("details");
-		const summary = document.createElement("summary");
-		summary.textContent = "Edit";
-		details.append(summary, menu);
-
-		const edit = document.createElement("joblist-company-edit");
-		edit.append(details);
-		return edit;
-	}
 	createGiscus() {
 		const giscus = document.createElement("giscus-widget");
 		giscus.setAttribute("id", "comments");
@@ -264,7 +301,7 @@ export default class JoblistCompany extends HTMLElement {
 
 		const details = document.createElement("details");
 		const summary = document.createElement("summary");
-		summary.textContent = "Discussion";
+		summary.textContent = "Giscuss";
 		details.append(summary, giscus);
 		const wrapper = document.createElement("joblist-giscus");
 		wrapper.append(details);

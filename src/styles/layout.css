@@ -77,6 +77,8 @@ joblist-layout {
 			:is(a) {
 				word-break: break-all;
 				min-width: 10rem;
+				display: flex;
+				align-items: center;
 			}
 		}
 		&:has(input[type="checkbox"][id="joblist-menu"]:checked) {

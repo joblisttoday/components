@@ -39,9 +39,9 @@
 		--c-bg--company: black;
 		--c-border--company: gray;
 		--c-button: darkblue;
-		
+
 		/* Heatmap dark theme colors */
-		--c-heatmap-bg: #0d1117;
+		--c-heatmap-bg: var(--c-bg-alt);
 		--c-heatmap-border: #21262d;
 		--c-heatmap-cell-0: #161b22;
 		--c-heatmap-cell-1: #0e4429;
@@ -67,9 +67,9 @@
 		--c-bg--company: snow;
 		--c-border--company: lightgray;
 		--c-button: lightgray;
-		
+
 		/* Heatmap light theme colors */
-		--c-heatmap-bg: #f6f8fa;
+		--c-heatmap-bg: var(--c-bg-alt);
 		--c-heatmap-border: #d1d9e0;
 		--c-heatmap-cell-0: #ebedf0;
 		--c-heatmap-cell-1: #9be9a8;

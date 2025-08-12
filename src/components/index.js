@@ -30,6 +30,7 @@ import JoblistPricingTable from "./pricing-table.js";
 import JoblistBilling from "./billing.js";
 import JoblistSocialWidget from "./social-widget.js";
 import JoblistSocialLink from "./social-link.js";
+import JoblistIcon from "./icon.js";
 
 const componentDefinitions = {
 	"joblist-umami-script": JoblistUmamiScript,
@@ -73,6 +74,7 @@ const componentDefinitions = {
 	/* social */
 	"joblist-social-widget": JoblistSocialWidget,
 	"joblist-social-link": JoblistSocialLink,
+	"joblist-icon": JoblistIcon,
 };
 
 export { componentDefinitions, providerDefinitions };
