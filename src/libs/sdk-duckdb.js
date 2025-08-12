@@ -151,39 +151,67 @@ export class JoblistDuckDBSDK {
 			);
 	}
 
-	// Enhanced search parsing - handle field:value, boolean operators, and plain text
+	// Enhanced search parsing - treat spaces as AND operations like GitHub search
 	_parseSimpleSearch(query = "") {
 		const q = String(query || "").trim();
 		if (!q) return { terms: [] };
 		
-		// Check for multiple field:value pairs (2 or more)
-		const fieldMatches = q.match(/\b[a-zA-Z_][a-zA-Z0-9_]*:\s*[^\s]+/g);
-		if (fieldMatches && fieldMatches.length > 1) {
+		// Split by spaces to get individual terms
+		const tokens = q.split(/\s+/);
+		const fieldValuePairs = [];
+		const plainTextTerms = [];
+		
+		// Parse each token
+		for (const token of tokens) {
+			const fieldMatch = token.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.+)$/);
+			if (fieldMatch) {
+				fieldValuePairs.push({
+					field: fieldMatch[1].toLowerCase(),
+					value: fieldMatch[2]
+				});
+			} else if (token.trim()) {
+				plainTextTerms.push(token.trim());
+			}
+		}
+		
+		// Determine search type
+		if (fieldValuePairs.length > 1) {
+			// Multiple field:value pairs (e.g., "tags:hardware tags:music")
 			return {
 				isMultiField: true,
-				rawQuery: q,
-				conjunctive: /\b(and|AND)\b/i.test(q) ? 1 : 0
+				fieldValuePairs,
+				plainTextTerms,
+				conjunctive: 1 // Always treat as AND
 			};
-		}
-		
-		// Check for single field-specific search like "tags:python"
-		const fieldMatch = q.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.+)$/);
-		if (fieldMatch) {
+		} else if (fieldValuePairs.length === 1 && plainTextTerms.length > 0) {
+			// Mixed search: field:value and plain text (e.g., "company:spacex freelance")
 			return {
-				field: fieldMatch[1].toLowerCase(),
-				term: fieldMatch[2].trim(),
-				conjunctive: fieldMatch[2].includes(' AND ') || fieldMatch[2].includes(' and ') ? 1 : 0
+				isMixed: true,
+				fieldValuePairs,
+				plainTextTerms,
+				conjunctive: 1
+			};
+		} else if (fieldValuePairs.length === 1) {
+			// Single field-specific search (e.g., "tags:python")
+			return {
+				field: fieldValuePairs[0].field,
+				term: fieldValuePairs[0].value,
+				conjunctive: 0
+			};
+		} else if (plainTextTerms.length > 1) {
+			// Multiple plain text terms (e.g., "python django")
+			return {
+				isPlainTextMulti: true,
+				plainTextTerms,
+				conjunctive: 1
+			};
+		} else {
+			// Single plain text term
+			return {
+				term: plainTextTerms[0] || q,
+				conjunctive: 0
 			};
 		}
-		
-		// Detect boolean AND operations for general search
-		const hasAnd = /\band\b/i.test(q);
-		
-		// Return search term with boolean info
-		return {
-			term: q,
-			conjunctive: hasAnd ? 1 : 0
-		};
 	}
 
 	_escapeSql(s = "") {
@@ -505,12 +533,24 @@ export class JoblistDuckDBSDK {
 	// FTS search with fallback to LIKE
 	async _searchWithFallback(vname, tableName, query, limit, searchColumns) {
 		const parsed = this._parseSimpleSearch(query);
-		const { field, term, isMultiField, rawQuery } = parsed;
+		const { field, term, isMultiField, isMixed, isPlainTextMulti, fieldValuePairs, plainTextTerms } = parsed;
 		const limitClause = Number(limit) > 0 ? ` LIMIT ${Number(limit)}` : "";
 		
-		// Handle multi-field queries (e.g., "tags:radio and tags:music")
+		console.log(`🔍 Parsed search query: "${query}"`, parsed);
+		
+		// Handle multiple field:value pairs (e.g., "tags:hardware tags:music")
 		if (isMultiField) {
-			return await this._multiFieldSearch(vname, rawQuery, limitClause, searchColumns);
+			return await this._multiFieldSearch(vname, fieldValuePairs, plainTextTerms, limitClause, searchColumns);
+		}
+		
+		// Handle mixed field:value and plain text (e.g., "company:spacex freelance")
+		if (isMixed) {
+			return await this._mixedFieldSearch(vname, fieldValuePairs, plainTextTerms, limitClause, searchColumns);
+		}
+		
+		// Handle multiple plain text terms (e.g., "python django")
+		if (isPlainTextMulti) {
+			return await this._plainTextMultiSearch(vname, plainTextTerms, limitClause, searchColumns);
 		}
 		
 		// Validate single field exists in this table's columns
@@ -599,46 +639,98 @@ export class JoblistDuckDBSDK {
 		}
 	}
 
-	// Handle multi-field searches like "tags:radio and tags:music"
-	async _multiFieldSearch(vname, query, limitClause, searchColumns) {
-		console.log(`🔍 Multi-field search: "${query}" in table with columns:`, searchColumns);
+	// Handle mixed field:value and plain text searches like "company:spacex freelance"
+	async _mixedFieldSearch(vname, fieldValuePairs, plainTextTerms, limitClause, searchColumns) {
+		console.log(`🔍 Mixed search in table with columns:`, searchColumns);
+		console.log(`🎯 Field:value pairs:`, fieldValuePairs);
+		console.log(`📝 Plain text terms:`, plainTextTerms);
 		
-		// Extract all field:value pairs
-		const fieldValuePairs = [];
-		const regex = /([a-zA-Z_][a-zA-Z0-9_]*):\s*([^\s]+)/g;
-		let match;
+		const fieldConditions = [];
+		const plainTextConditions = [];
 		
-		while ((match = regex.exec(query)) !== null) {
-			const field = match[1].toLowerCase();
-			const value = match[2];
-			
-			console.log(`🎯 Found field:value pair - ${field}:${value}`);
-			
-			// Validate field exists
+		// Process field:value pairs
+		for (const { field, value } of fieldValuePairs) {
 			if (searchColumns.includes(field)) {
-				fieldValuePairs.push({ field, value });
+				const escapedValue = this._escapeSql(value.toLowerCase());
+				fieldConditions.push(`lower(cast(${field} AS varchar)) LIKE '%${escapedValue}%'`);
 				console.log(`✅ Field '${field}' is valid`);
 			} else {
 				console.log(`❌ Field '${field}' not found in available columns: ${searchColumns.join(', ')}`);
 			}
 		}
 		
-		if (fieldValuePairs.length === 0) {
-			console.log('❌ No valid field:value pairs found');
+		// Process plain text terms - each term must match at least one column
+		for (const term of plainTextTerms) {
+			if (term.trim()) {
+				const escapedTerm = this._escapeSql(term.toLowerCase());
+				const termCondition = searchColumns.map(col => 
+					`lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`
+				).join(' OR ');
+				plainTextConditions.push(`(${termCondition})`);
+			}
+		}
+		
+		// Combine all conditions with AND
+		const allConditions = [...fieldConditions, ...plainTextConditions];
+		if (allConditions.length === 0) {
+			console.log('❌ No valid conditions found');
 			return [];
 		}
 		
-		// Build SQL conditions
-		const conditions = fieldValuePairs.map(({field, value}) => {
-			const escapedValue = this._escapeSql(value.toLowerCase());
-			return `lower(cast(${field} AS varchar)) LIKE '%${escapedValue}%'`;
-		});
+		const sql = `SELECT * FROM '${vname}' WHERE ${allConditions.join(' AND ')}${limitClause}`;
+		console.log(`🔧 Generated mixed search SQL: ${sql}`);
 		
-		// Use AND for multiple conditions
-		const operator = /\b(and|AND)\b/i.test(query) ? ' AND ' : ' OR ';
-		const sql = `SELECT * FROM '${vname}' WHERE ${conditions.join(operator)}${limitClause}`;
+		try {
+			const table = await this.conn.query(sql);
+			const results = this._rowsToPlain(table.toArray());
+			console.log(`✅ Mixed search returned ${results.length} results`);
+			return results;
+		} catch (e) {
+			console.log(`❌ Mixed search failed: ${e.message}`);
+			return [];
+		}
+	}
+
+	// Handle multi-field searches like "tags:hardware tags:music"
+	async _multiFieldSearch(vname, fieldValuePairs, plainTextTerms, limitClause, searchColumns) {
+		console.log(`🔍 Multi-field search in table with columns:`, searchColumns);
+		console.log(`🎯 Field:value pairs:`, fieldValuePairs);
+		console.log(`📝 Plain text terms:`, plainTextTerms);
 		
-		console.log(`🔧 Generated SQL: ${sql}`);
+		const fieldConditions = [];
+		const plainTextConditions = [];
+		
+		// Process field:value pairs
+		for (const { field, value } of fieldValuePairs) {
+			if (searchColumns.includes(field)) {
+				const escapedValue = this._escapeSql(value.toLowerCase());
+				fieldConditions.push(`lower(cast(${field} AS varchar)) LIKE '%${escapedValue}%'`);
+				console.log(`✅ Field '${field}' is valid`);
+			} else {
+				console.log(`❌ Field '${field}' not found in available columns: ${searchColumns.join(', ')}`);
+			}
+		}
+		
+		// Process any additional plain text terms
+		for (const term of plainTextTerms) {
+			if (term.trim()) {
+				const escapedTerm = this._escapeSql(term.toLowerCase());
+				const termCondition = searchColumns.map(col => 
+					`lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`
+				).join(' OR ');
+				plainTextConditions.push(`(${termCondition})`);
+			}
+		}
+		
+		// Combine all conditions with AND
+		const allConditions = [...fieldConditions, ...plainTextConditions];
+		if (allConditions.length === 0) {
+			console.log('❌ No valid conditions found');
+			return [];
+		}
+		
+		const sql = `SELECT * FROM '${vname}' WHERE ${allConditions.join(' AND ')}${limitClause}`;
+		console.log(`🔧 Generated multi-field search SQL: ${sql}`);
 		
 		try {
 			const table = await this.conn.query(sql);
@@ -647,6 +739,33 @@ export class JoblistDuckDBSDK {
 			return results;
 		} catch (e) {
 			console.log(`❌ Multi-field search failed: ${e.message}`);
+			return [];
+		}
+	}
+
+	// Handle multiple plain text terms like "python django"
+	async _plainTextMultiSearch(vname, plainTextTerms, limitClause, searchColumns) {
+		console.log(`🔍 Plain text multi search: ${plainTextTerms.join(' ')} in table with columns:`, searchColumns);
+		
+		// Each term must match at least one column (AND logic)
+		const termConditions = plainTextTerms.map(term => {
+			const escapedTerm = this._escapeSql(term.toLowerCase());
+			const columnMatches = searchColumns.map(col => 
+				`lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`
+			);
+			return `(${columnMatches.join(' OR ')})`;
+		});
+		
+		const sql = `SELECT * FROM '${vname}' WHERE ${termConditions.join(' AND ')}${limitClause}`;
+		console.log(`🔧 Generated plain text multi search SQL: ${sql}`);
+		
+		try {
+			const table = await this.conn.query(sql);
+			const results = this._rowsToPlain(table.toArray());
+			console.log(`✅ Plain text multi search returned ${results.length} results`);
+			return results;
+		} catch (e) {
+			console.log(`❌ Plain text multi search failed: ${e.message}`);
 			return [];
 		}
 	}

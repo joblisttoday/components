@@ -25,21 +25,21 @@
 			(({ query = "", view = "", type = "" }) => {
 				const $search = document.createElement("joblist-search");
 				const $results = document.createElement("joblist-results");
-				
+
 				$search.addEventListener("search", ({ detail }) => {
 					console.log("🎯 Search event received:", detail);
 					// Always set results, even if arrays are empty - let the component handle the display
 					$results.setAttribute("results", JSON.stringify(detail));
-					
+
 					// Update hash with search query for privacy-preserving URL sharing
 					if (detail.query && detail.query.trim()) {
 						updateHashParams({ query: detail.query, view: detail.searchType });
 					} else {
 						// Clear hash when no query
-						window.location.hash = '';
+						window.location.hash = "";
 					}
 				});
-				
+
 				if (query) {
 					$search.setAttribute("query", query);
 				}
@@ -48,7 +48,7 @@
 				if (initialView) {
 					$search.setAttribute("search-type", initialView);
 				}
-				
+
 				document
 					.querySelector("joblist-page-main")
 					.append($search, document.createElement("hr"), $results);
@@ -62,7 +62,6 @@
 				<joblist-page-header>
 					<header>
 						<h1><a href="./"> Search </a></h1>
-						<p>Explore companies and jobs indices.</p>
 					</header>
 				</joblist-page-header>
 				<joblist-page-main> </joblist-page-main>
