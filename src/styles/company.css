@@ -156,6 +156,7 @@ joblist-company-title {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
+	gap: calc(var(--s) / 3);
 }
 joblist-company-tags {
 	:is(menu) {
@@ -218,5 +219,17 @@ joblist-company-edit {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: flex-end;
+	}
+}
+
+joblist-company-favicon {
+	background-color: var(--c-fg);
+	padding: calc(var(--s) / 3);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	img {
+		width: var(--s);
+		height: var(--s);
 	}
 }

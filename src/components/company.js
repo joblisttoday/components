@@ -81,12 +81,27 @@ export default class JoblistCompany extends HTMLElement {
 		$header.append($link);
 
 		const $wrapper = document.createElement("joblist-company-title");
+		$wrapper.append(this.createFavicon(this.company));
 		$wrapper.append($header);
 
 		if (company?.is_highlighted) {
 			$wrapper.append(this.createHighlight(this.company));
 		}
 		return $wrapper;
+	}
+	createFavicon({ company_url }) {
+		const $favicon = document.createElement("joblist-company-favicon");
+		if (!company_url) return "";
+		try {
+			const url = new URL(company_url);
+			const $img = document.createElement("img");
+			$img.src = `https://icons.duckduckgo.com/ip2/${url.hostname}.ico`;
+			$img.setAttribute("loading", "lazy");
+			$favicon.append($img);
+		} catch (err) {
+			console.warn(err);
+		}
+		return $favicon;
 	}
 	createDescription({ description }) {
 		if (!description) return "";
