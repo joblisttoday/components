@@ -22,7 +22,7 @@ joblist-layout {
 		text-decoration: none;
 	}
 	:is(a, a:visited) {
-		color: var(--c-link);
+		color: var(--c-fg);
 	}
 	:is(a:active, a:hover) {
 		color: var(--c-link--active);

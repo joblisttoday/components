@@ -27,11 +27,6 @@ const MENUS = [
 			textContent: "tags",
 			icon: "tag",
 		},
-		{
-			href: "https://components.joblist.today/apps/boards",
-			textContent: "providers",
-			icon: "briefcase",
-		},
 	],
 	[
 		{
@@ -54,6 +49,11 @@ const MENUS = [
 			href: "https://api.joblist.today",
 			textContent: "api",
 			icon: "code",
+		},
+		{
+			href: "https://components.joblist.today/apps/boards",
+			textContent: "providers",
+			icon: "briefcase",
 		},
 		{
 			href: "https://dashboards.joblist.today/",

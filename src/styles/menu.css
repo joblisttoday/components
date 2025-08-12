@@ -63,7 +63,7 @@ joblist-menu {
 			&::after {
 				transform: rotateY(180deg);
 			}
-			color: var(--c-link);
+			color: var(--c-fg);
 		}
 		cursor: pointer;
 		position: sticky;
@@ -122,7 +122,4 @@ joblist-menu li {
 joblist-menu li a {
 	flex-grow: 1;
 	text-transform: capitalize;
-}
-joblist-menu li a:hover {
-	background-color: var(--c-bg-alt);
 }

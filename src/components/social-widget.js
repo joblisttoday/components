@@ -86,15 +86,15 @@ export default class JoblistSocialWidget extends HTMLElement {
 		if (provider === "wikipedia" && id) {
 			this.addWikipediaContent(content, id, url);
 		} else if (provider === "youtube" && id) {
-			this.addYouTubeContent(content, id, url);
+			// this.addYouTubeContent(content, id, url);
 		} else if (provider === "twitter" && url) {
-			this.addTwitterContent(content, url, id);
+			// this.addTwitterContent(content, url, id);
 		} else if (provider === "instagram" && url) {
 			this.addInstagramContent(content, url, id);
 		} else if (provider === "facebook" && url) {
 			this.addFacebookContent(content, url, id);
 		} else if (provider === "linkedin" && url) {
-			this.addLinkedInContent(content, url, id);
+			// this.addLinkedInContent(content, url, id);
 		}
 
 		preview.appendChild(content);
@@ -291,7 +291,7 @@ export default class JoblistSocialWidget extends HTMLElement {
 		const instagramSrc = "https://platform.twitter.com/widgets.js";
 		if (
 			!window.twttr &&
-			!document.querySelector(`script[src*=${instagramSrc}]`)
+			!document.querySelector(`script[src*="${instagramSrc}"]`)
 		) {
 			const script = document.createElement("script");
 			script.src = instagramSrc;
@@ -437,8 +437,7 @@ export default class JoblistSocialWidget extends HTMLElement {
 		// LinkedIn doesn't allow easy embedding, so show simple description
 		const description = document.createElement("p");
 		description.className = "platform-description";
-		description.textContent =
-			"LinkedIn company page with business information, employee insights, and company updates.";
+		description.textContent = `See LinkedIn profile @${username}`;
 		container.appendChild(description);
 	}
 

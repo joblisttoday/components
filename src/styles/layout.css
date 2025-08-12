@@ -34,6 +34,9 @@ joblist-layout {
 			display: flex;
 			flex-direction: column;
 		}
+		:is(a, a:visited) {
+			color: var(--c-link);
+		}
 		&:is(:not([full])) {
 			padding: calc(var(--s) / 2);
 		}
@@ -82,6 +85,7 @@ joblist-layout {
 				min-width: 10rem;
 				display: flex;
 				align-items: center;
+				color: var(--c-fg);
 			}
 		}
 		&:has(input[type="checkbox"][id="joblist-menu"]:checked) {
