@@ -66,3 +66,19 @@ joblist-board-job {
 	flex-wrap: wrap;
 	margin-bottom: 0.5rem;
 }
+joblist-board-search {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: calc(var(--s) / 3);
+	:is(input) {
+		flex-grow: 1;
+	}
+	:is(& + joblist-board-jobs) {
+		padding-top: calc(var(--s) / 2);
+		display: flex;
+	}
+}
+joblist-board-search-results {
+	/* padding: calc(var(--s) / 2); */
+}

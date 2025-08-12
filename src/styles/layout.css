@@ -11,6 +11,10 @@
 
 joblist-layout {
 	line-height: var(--line-height);
+	:is(input, textarea, button) {
+		color: var(--c-fg);
+		padding: calc(var(--s) / 3);
+	}
 }
 
 joblist-layout {
