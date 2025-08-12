@@ -45,11 +45,23 @@ joblist-company {
 	}
 	:is(joblist-social-widget) {
 		:is(ul) {
-			/* background-color: red; */
 			display: flex;
 			flex-wrap: wrap;
-			gap: var(--s);
 			list-style: none;
+			gap: var(--s);
+		}
+		:is(li) {
+			flex-grow: 1;
+			display: flex;
+			align-content: center;
+			justify-content: center;
+			padding: var(--s);
+			background-color: var(--c-bg-alt);
+		}
+		:is(iframe) {
+			/* flex-grow: 1; */
+
+			/* width: 100%; */
 		}
 		:is(p) {
 			max-width: max(20rem, 40vmin);

@@ -39,6 +39,17 @@
 		--c-bg--company: black;
 		--c-border--company: gray;
 		--c-button: darkblue;
+		
+		/* Heatmap dark theme colors */
+		--c-heatmap-bg: #0d1117;
+		--c-heatmap-border: #21262d;
+		--c-heatmap-cell-0: #161b22;
+		--c-heatmap-cell-1: #0e4429;
+		--c-heatmap-cell-2: #006d32;
+		--c-heatmap-cell-3: #26a641;
+		--c-heatmap-cell-4: #39d353;
+		--c-heatmap-stroke: rgba(240, 246, 252, 0.1);
+		--c-heatmap-text: #7d8590;
 	}
 }
 @media (prefers-color-scheme: light) {
@@ -56,6 +67,17 @@
 		--c-bg--company: snow;
 		--c-border--company: lightgray;
 		--c-button: lightgray;
+		
+		/* Heatmap light theme colors */
+		--c-heatmap-bg: #f6f8fa;
+		--c-heatmap-border: #d1d9e0;
+		--c-heatmap-cell-0: #ebedf0;
+		--c-heatmap-cell-1: #9be9a8;
+		--c-heatmap-cell-2: #40c463;
+		--c-heatmap-cell-3: #30a14e;
+		--c-heatmap-cell-4: #216e39;
+		--c-heatmap-stroke: rgba(27, 31, 35, 0.06);
+		--c-heatmap-text: #656d76;
 	}
 }
 
