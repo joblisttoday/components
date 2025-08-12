@@ -42,14 +42,14 @@ export default class JoblistBoard extends HTMLElement {
 	/* the provider's component, fetching jobs */
 	renderProvider(provider, hostname) {
 		const componentName = `joblist-board-${provider}`;
-		let $providerComponent = document.createElement(componentName);
+		const $providerComponent = document.createElement(componentName);
 		$providerComponent.setAttribute("hostname", hostname);
 		this.replaceChildren($providerComponent);
 	}
 
 	/* not a known provider */
 	renderMissingProvider() {
-		let $text = document.createElement("p");
+		const $text = document.createElement("p");
 		$text.textContent = "Job board provider or hostname unknown";
 		this.replaceChildren($text);
 	}

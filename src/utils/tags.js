@@ -1,5 +1,5 @@
 const getAllCompaniesTags = (companies) => {
-	let allTags = []
+	const allTags = []
 	companies.forEach(({tags}) => {
 		tags && tags.forEach(tag => {
 			if (allTags.indexOf(tag) === -1) {

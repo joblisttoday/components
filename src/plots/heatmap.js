@@ -15,8 +15,8 @@ export default function heatmap(
 		};
 	});
 
-	let idLabel = id ? `for ${id}` : "";
-	let label = `Jobs postings over the last ${days} day${days > 1 ? "s" : ""
+	const idLabel = id ? `for ${id}` : "";
+	const label = `Jobs postings over the last ${days} day${days > 1 ? "s" : ""
 		} ${idLabel}`;
 
 	return Plot.plot({

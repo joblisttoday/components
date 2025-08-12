@@ -3,13 +3,7 @@
   "private": false,
   "version": "0.2.12",
   "homepage": "https://gitlab.com/joblist/components",
-  "keywords": [
-    "web-components",
-    "leaflet",
-    "duckdb",
-    "wasm",
-    "joblist"
-  ],
+  "keywords": ["web-components", "leaflet", "duckdb", "wasm", "joblist"],
   "author": "joblist",
   "license": "GPL-3.0-or-later",
   "type": "module",
@@ -22,17 +16,15 @@
     "./style": "./dist-lib/style.css"
   },
   "main": "./dist-lib/index.js",
-  "files": [
-    "**/*",
-    "dist-lib/*"
-  ],
+  "files": ["**/*", "dist-lib/*"],
   "scripts": {
     "dev": "vite",
     "build": "npm run build-website; npm run build-lib;",
     "build-lib": "vite build --config ./src/vite/lib.js",
     "build-website": "vite build --config ./src/vite/website.js",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "npx @biomejs/biome lint --write"
   },
   "dependencies": {
     "@duckdb/duckdb-wasm": "^1.28.0",

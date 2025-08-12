@@ -11,16 +11,16 @@ const providersList =  {
 /* how to parse for the hostname inside a provider url */
 const providerMethods = {
   recruitee: (url) => {
-		let pregex = /(\w+)(?:\.recruitee\.com)/g
-		let result = pregex.exec(url)
+		const pregex = /(\w+)(?:\.recruitee\.com)/g
+		const result = pregex.exec(url)
 		if (!result) {
 			console.info('Could not find id from Workable URL')
 		}
 		return result[1]
 	},
   greenhouse: (url) => {
-		let pregex = /(?:boards\.greenhouse\.io\/)(\w+)/g
-		let result = pregex.exec(url)
+		const pregex = /(?:boards\.greenhouse\.io\/)(\w+)/g
+		const result = pregex.exec(url)
 		if (!result) {
 			console.info('Could not find id from Greenhouse URL')
 			return
@@ -28,8 +28,8 @@ const providerMethods = {
 		return result[1]
 	},
   personio: (url) => {
-		let pregex = /([\w-]+)(?:-jobs\.personio\.de)/g
-		let result = pregex.exec(url)
+		const pregex = /([\w-]+)(?:-jobs\.personio\.de)/g
+		const result = pregex.exec(url)
 		if (!result) {
 			console.info('Could not find id from Personio URL')
 			return
@@ -52,7 +52,7 @@ const findId = (url, provider, extractMethod) => {
 
 	if (typeof extractMethod !== 'function') return null
 
-	let extractedId = extractMethod(url)
+	const extractedId = extractMethod(url)
 
 	if (!extractedId) return null
 
@@ -77,7 +77,7 @@ const findProvider = (url, providersList) => {
 }
 
 const extractHostId = (host) => {
-	let els = host.split('.')
+	const els = host.split('.')
 	// the top domain name and its extension
 	return els
 		.slice(els.length - 2, els.length)
@@ -100,7 +100,7 @@ const find = (inputUrl) => {
 	let id;
 
 	// 1. detect which provider's url it is
-	let provider = findProvider(url, providersList)
+	const provider = findProvider(url, providersList)
 
 	if (!provider) {
 		console.info('Could not detect a known provider: %s', url)

@@ -88,7 +88,7 @@ const getJobs = async ({
 		console.log("Error", error, providerUrl);
 	}
 
-	let jobs = [];
+	const jobs = [];
 	if (jobs) {
 		return serializeJobs(response, hostname, companyTitle, companyId);
 	}
