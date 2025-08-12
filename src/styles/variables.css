@@ -29,8 +29,8 @@
 		color-scheme: dark;
 		--c-bg: #1e1e1e;
 		--c-bg-alt: #191913f3;
-		--c-fg: lightgray;
-		--c-fg--info: gray;
+		--c-fg: #dfdfd6;
+		--c-fg--info: #9d9d9d;
 		--c-link: oklch(0.712564 0.257662 265.758);
 		--c-link--active: var(--c-purple);
 		--c-hr: slategray;

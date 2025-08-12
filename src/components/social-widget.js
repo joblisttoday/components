@@ -19,6 +19,7 @@ export default class JoblistSocialWidget extends HTMLElement {
 			"youtube_url",
 			"facebook_url",
 			"instagram_url",
+			"atproto_url",
 		];
 
 		// single UL for all providers
@@ -94,6 +95,9 @@ export default class JoblistSocialWidget extends HTMLElement {
 		} else if (provider === "facebook" && url) {
 			this.addFacebookContent(content, url, id);
 		} else if (provider === "linkedin" && url) {
+			// this.addLinkedInContent(content, url, id);
+		} else if ((provider === "atproto" && url) || true) {
+			console.log("at proto", content);
 			// this.addLinkedInContent(content, url, id);
 		}
 

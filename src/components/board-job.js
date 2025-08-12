@@ -1,3 +1,5 @@
+import { sanitizeHtmlToDom } from "../utils/html-sanitizer.js";
+
 export default class JoblistBoardJob extends HTMLElement {
 	get title() {
 		return this.getAttribute("title");
@@ -8,6 +10,9 @@ export default class JoblistBoardJob extends HTMLElement {
 	get location() {
 		return this.getAttribute("location");
 	}
+	get description() {
+		return this.getAttribute("description");
+	}
 	connectedCallback() {
 		this.render();
 	}
@@ -16,10 +21,11 @@ export default class JoblistBoardJob extends HTMLElement {
 			title: this.title,
 			url: this.url,
 			location: this.location,
+			description: this.description,
 		});
 		this.replaceChildren(...$jobDoms);
 	}
-	createJobDoms({ title, url, location }) {
+	createJobDoms({ title, url, location, description }) {
 		const $jobName = document.createElement("joblist-board-job-name");
 		const $jobNameAnchor = document.createElement("a");
 		$jobNameAnchor.setAttribute("href", url);
@@ -31,6 +37,18 @@ export default class JoblistBoardJob extends HTMLElement {
 		const $jobLocation = document.createElement("joblist-board-job-location");
 		$jobLocation.innerText = location;
 
-		return [$jobName, $jobLocation];
+		const $doms = [$jobName, $jobLocation];
+
+		if (description) {
+			const $jobDescription = document.createElement(
+				"joblist-board-job-description",
+			);
+			$jobDescription.textContent =
+				sanitizeHtmlToDom(description).textContent.slice(0, 321) + "...";
+			$jobDescription.title = sanitizeHtmlToDom(description).textContent;
+			$doms.push($jobDescription);
+		}
+
+		return $doms;
 	}
 }

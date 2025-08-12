@@ -3,6 +3,7 @@
  */
 
 import { Provider, Job } from "../utils/models.js";
+import { sanitizeHtml } from "../utils/html-sanitizer.js";
 
 const providerId = "lever";
 
@@ -11,6 +12,8 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 		const {
 			id,
 			text,
+			description,
+			descriptionPlain,
 			createdAt,
 			country,
 			hostedUrl,
@@ -27,6 +30,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 		return new Job({
 			id: `${providerId}-${hostname}-${id}`,
 			name: text,
+			description: (descriptionPlain ? sanitizeHtml(descriptionPlain) : undefined) || (description ? sanitizeHtml(description) : undefined),
 			url: hostedUrl,
 			publishedDate: createdAt,
 			location: fullLocation,

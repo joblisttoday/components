@@ -61,7 +61,15 @@ joblist-board-job {
 
 	:is(joblist-board-job-location) {
 		margin-right: 0.5rem;
+		font-size: 0.9em;
+		color: var(--c-fg--info);
 	}
+
+	:is(joblist-board-job-description) {
+		flex-grow: 1;
+		flex-basis: 100%;
+	}
+
 	display: inline-flex;
 	flex-wrap: wrap;
 	margin-bottom: 0.5rem;

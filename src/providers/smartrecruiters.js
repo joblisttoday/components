@@ -6,6 +6,7 @@
  */
 
 import { Provider, Job } from "../utils/models.js";
+import { sanitizeHtml } from "../utils/html-sanitizer.js";
 
 const providerId = "smartrecruiters";
 const baseUrl = "https://api.smartrecruiters.com/v1/companies";
@@ -16,6 +17,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 		return new Job({
 			id: `${providerId}-${hostname}-${job.uuid}`,
 			name: job.name,
+			description: job.description ? sanitizeHtml(job.description) : undefined,
 			url: `${jobPostingBaseUrl}/${hostname}/${job.id}`,
 			publishedDate: job.releasedDate,
 			location: `${job.location.city}, ${job.location.country}`,
@@ -25,6 +27,28 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 			companyId: companyId || hostname,
 		});
 	});
+};
+
+const getJobDescription = async (hostname, postingId) => {
+	const url = `${baseUrl}/${hostname}/postings/${postingId}`;
+	try {
+		const response = await fetch(url);
+		const data = await response.json();
+		
+		const jobAd = data.jobAd?.sections;
+		if (!jobAd) return "";
+		
+		const sections = [
+			jobAd.jobDescription?.text,
+			jobAd.qualifications?.text,
+			jobAd.additionalInformation?.text,
+		].filter(Boolean);
+		
+		return sections.join(' ');
+	} catch (error) {
+		console.log(`error fetching job description for ${postingId}:`, error);
+		return "";
+	}
 };
 
 const getJobs = async ({
@@ -55,7 +79,15 @@ const getJobs = async ({
 	}
 
 	if (jobs) {
-		return serializeJobs(jobs, hostname, companyTitle, companyId);
+		// Fetch job descriptions for all jobs
+		const jobsWithDescriptions = await Promise.all(
+			jobs.map(async (job) => {
+				const description = await getJobDescription(hostname, job.id);
+				return { ...job, description };
+			})
+		);
+		
+		return serializeJobs(jobsWithDescriptions, hostname, companyTitle, companyId);
 	} else {
 		return [];
 	}

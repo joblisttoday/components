@@ -71,6 +71,7 @@ class Job {
 			/* job data */
 			"id",
 			"name",
+			"description",
 			"url",
 			"publishedDate",
 			"location",
@@ -96,13 +97,16 @@ class Job {
 	}
 
 	getMissingAttributes(attributes, jobData) {
-		return attributes.filter((attr) => !jobData[attr]);
+		// Description is optional, so don't require it
+		const requiredAttributes = attributes.filter(attr => attr !== 'description');
+		return requiredAttributes.filter((attr) => !jobData[attr]);
 	}
 
 	createJob(data) {
 		const id = `${data.providerId}-${data.providerHostname}-${data.id}`;
 		this.id = id;
 		this.name = data.name;
+		this.description = data.description;
 		this.url = data.url;
 		this.publishedDate = data.publishedDate;
 		this.location = data.location;

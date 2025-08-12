@@ -6,6 +6,7 @@
 import { Provider, Job } from "../utils/models.js";
 import mwc from "../libs/mwc.js";
 import { MATRIX_ROOM_FILTER_JOB } from "../libs/sdk.js";
+import { sanitizeHtml } from "../utils/html-sanitizer.js";
 
 const providerId = "matrix";
 const EVENTS_LIMIT = 200;
@@ -18,6 +19,7 @@ const serializeJobs = ({ jobs = [], hostname, companyTitle, companyId }) => {
 			providerId,
 			id: `${providerId}-${hostname}-${id}`,
 			name: title,
+			description: description ? sanitizeHtml(description) : undefined,
 			url,
 			publishedDate: new Date(origin_server_ts),
 			companyTitle: companyTitle || hostname,

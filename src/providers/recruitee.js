@@ -5,14 +5,25 @@
  */
 
 import { Provider, Job } from "../utils/models.js";
+import { sanitizeHtml } from "../utils/html-sanitizer.js";
 
 const providerId = "recruitee";
 
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
+		// Combine description and requirements for full job description
+		let description = '';
+		if (job.description) {
+			description = job.description;
+		}
+		if (job.requirements) {
+			description += (description ? ' ' : '') + job.requirements;
+		}
+		
 		return new Job({
 			id: `${providerId}-${hostname}-${job.id}`,
 			name: job.title,
+			description: description ? sanitizeHtml(description) : undefined,
 			url: job.careers_url,
 			publishedDate: job.created_at,
 			location: `${job.city}, ${job.country}`,

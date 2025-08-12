@@ -5,16 +5,18 @@
  */
 
 import { Provider, Job } from "../utils/models.js";
+import { sanitizeHtml } from "../utils/html-sanitizer.js";
 
 const providerId = "personio";
 
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	const baseUrl = `https://${hostname}.jobs.personio.de`;
 	return jobs.map((job) => {
-		const { name, id, office, createdAt } = job;
+		const { name, id, office, createdAt, description } = job;
 		const newJob = new Job({
 			id: `${providerId}-${hostname}-${id}`,
 			name,
+			description: description ? sanitizeHtml(description) : undefined,
 			url: `${baseUrl}/job/${id}`,
 			publishedDate: createdAt,
 			location: office,
@@ -40,10 +42,10 @@ const parseResXml = (textRes) => {
 		"office",
 		"createdAt",
 	];
+
 	const parser = new DOMParser();
 	const xmlDoc = parser.parseFromString(textRes, "text/xml");
 
-	const xmlJobs = xmlDoc.getElementsByTagName("workzag-jobs")[0];
 	const positions = xmlDoc.getElementsByTagName("position");
 
 	const jsonJobs = Object.entries(positions).map((item) => {
@@ -59,6 +61,25 @@ const parseResXml = (textRes) => {
 			}
 		};
 		params.forEach(setParam);
+
+		// Parse job descriptions
+		const jobDescriptions = job.getElementsByTagName("jobDescriptions");
+		if (jobDescriptions && jobDescriptions[0]) {
+			const descriptionElements =
+				jobDescriptions[0].getElementsByTagName("jobDescription");
+			const descriptions = [];
+
+			for (let i = 0; i < descriptionElements.length; i++) {
+				const descElement = descriptionElements[i];
+				const valueEl = descElement.getElementsByTagName("value");
+				if (valueEl && valueEl[0] && valueEl[0].textContent) {
+					descriptions.push(valueEl[0].textContent.trim());
+				}
+			}
+
+			newJob.description = descriptions.join(" ");
+		}
+
 		return newJob;
 	});
 	return jsonJobs;
@@ -89,7 +110,7 @@ const getJobs = async ({
 	}
 
 	const jobs = [];
-	if (jobs) {
+	if (response) {
 		return serializeJobs(response, hostname, companyTitle, companyId);
 	}
 	return jobs;

@@ -54,7 +54,11 @@ export default class JoblistBoardProvider extends HTMLElement {
 				? job.companyTitle.toLowerCase()
 				: "";
 			const location = job.location ? job.location.toLowerCase() : "";
-			const searchableText = `${jobName} ${companyTitle} ${location}`;
+			// Strip HTML tags from description for search
+			const description = job.description 
+				? job.description.replace(/<[^>]*>/g, '').toLowerCase() 
+				: "";
+			const searchableText = `${jobName} ${companyTitle} ${location} ${description}`;
 
 			return terms.every((term) => this.fuzzyMatch(searchableText, term));
 		});
@@ -165,12 +169,15 @@ export default class JoblistBoardProvider extends HTMLElement {
 		$error.setAttribute("error", JSON.stringify(error));
 		return $error;
 	}
-	createJob({ name, url, location }) {
+	createJob({ name, url, location, description }) {
 		if (name && url) {
 			const $newJobItem = document.createElement("joblist-board-job");
 			$newJobItem.setAttribute("title", name);
 			$newJobItem.setAttribute("url", url);
 			$newJobItem.setAttribute("location", location);
+			if (description) {
+				$newJobItem.setAttribute("description", description);
+			}
 			return $newJobItem;
 		}
 	}

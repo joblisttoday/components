@@ -1,4 +1,4 @@
-import sanitize from "../libs/sanitizer.js";
+import { sanitizeHtml } from "../utils/html-sanitizer.js";
 
 const JOB_KEYS = ["title", "description", "url"];
 

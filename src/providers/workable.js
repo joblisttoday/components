@@ -14,6 +14,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 		return new Job({
 			id: `${providerId}-${hostname}-${id}`,
 			name: title,
+			// Workable widget API doesn't provide job descriptions (requires auth for enhanced API)
 			url: url,
 			publishedDate: published_on,
 			location: `${city}, ${country}`,

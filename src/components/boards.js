@@ -5,6 +5,20 @@ export default class JobBoards extends HTMLElement {
 		return Object.keys(providerApis);
 	}
 
+	get providerExamples() {
+		return {
+			ashby: "ashby",
+			greenhouse: "greenhouse",
+			lever: "teleport",
+			smartrecruiters: "smartrecruiters",
+			personio: "gnosis",
+			recruitee: "dataforce",
+			workable: "workmotion",
+			rippling: "rippling",
+			matrix: "!room:matrix.org",
+		};
+	}
+
 	get providerName() {
 		return this.getAttribute("provider-name");
 	}
@@ -68,6 +82,9 @@ export default class JobBoards extends HTMLElement {
 			'Enter a "provider-hostname", the identification name for this job board, when registered at the "provider"';
 		$providerInput.addEventListener("input", this.onChange.bind(this));
 
+		// Store reference to the hostname input for updating placeholder
+		this.$hostnameInput = $providerInput;
+
 		this.$form.append($providerSelect);
 		this.$form.append($providerInput);
 	}
@@ -78,6 +95,20 @@ export default class JobBoards extends HTMLElement {
 		} else {
 			this.removeAttribute(name);
 		}
+
+		// Update hostname input placeholder when provider changes
+		if (name === "provider-name" && this.$hostnameInput) {
+			const example = this.providerExamples[value];
+			if (example) {
+				this.$hostnameInput.placeholder = `e.g. ${example}`;
+				this.$hostnameInput.title = `Enter a "${value}" hostname, e.g. "${example}"`;
+			} else {
+				this.$hostnameInput.placeholder = "provider-hostname";
+				this.$hostnameInput.title =
+					'Enter a "provider-hostname", the identification name for this job board, when registered at the "provider"';
+			}
+		}
+
 		this.renderBoard();
 	}
 	onSnippetClick({ target }) {

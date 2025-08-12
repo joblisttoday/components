@@ -6,17 +6,19 @@
  */
 
 import { Provider, Job } from "../utils/models.js";
+import { sanitizeHtml } from "../utils/html-sanitizer.js";
 
 const providerId = "ashby";
 
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
-		const { id, title, locationName, secondaryLocations, publishedDate } = job;
+		const { id, title, locationName, secondaryLocations, publishedDate, description } = job;
 		const jobUrl = `https://jobs.ashbyhq.com/${hostname}/${id}`;
 		return new Job({
 			providerId,
 			id: `${providerId}-${hostname}-${id}`,
 			name: title,
+			description: description ? sanitizeHtml(description) : undefined,
 			url: jobUrl,
 			publishedDate: publishedDate || Date.now(),
 			companyTitle: companyTitle || hostname,
@@ -28,6 +30,37 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 			].join(", "),
 		});
 	});
+};
+
+const getJobDetails = async (jobId, hostname) => {
+	const url = "https://jobs.ashbyhq.com/api/non-user-graphql";
+	const body = {
+		operationName: "ApiJobPosting",
+		variables: {
+			organizationHostedJobsPageName: hostname,
+			jobPostingId: jobId,
+		},
+		query: `
+			query ApiJobPosting($organizationHostedJobsPageName: String!, $jobPostingId: String!) {
+				jobPosting(organizationHostedJobsPageName: $organizationHostedJobsPageName, jobPostingId: $jobPostingId) {
+					descriptionHtml
+				}
+			}
+		`,
+	};
+
+	try {
+		const response = await fetch(url, {
+			method: "POST",
+			body: JSON.stringify(body),
+			headers: { "content-type": "application/json" },
+		});
+		const { data } = await response.json();
+		return data?.jobPosting?.descriptionHtml || "";
+	} catch (error) {
+		console.log("error fetching job details", error);
+		return "";
+	}
 };
 
 const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
@@ -70,6 +103,15 @@ const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
 			throw Error(`Company ${hostname} not found`);
 		}
 		allJobs = data.jobBoard.jobPostings || [];
+
+		// Fetch job descriptions for all jobs
+		const jobsWithDescriptions = await Promise.all(
+			allJobs.map(async (job) => {
+				const description = await getJobDetails(job.id, hostname);
+				return { ...job, description };
+			})
+		);
+		allJobs = jobsWithDescriptions;
 	} catch (error) {
 		console.log("error fetching jobs", error);
 	}

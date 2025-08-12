@@ -4,6 +4,7 @@
  */
 
 import { Provider, Job } from "../utils/models.js";
+import { sanitizeHtml, sanitizeHtmlToDom } from "../utils/html-sanitizer.js";
 
 const providerId = "greenhouse";
 
@@ -14,9 +15,11 @@ const getLocation = ({ location, offices }) => {
 
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
+		const description = sanitizeHtmlToDom(job.content).textContent;
 		return new Job({
 			id: `${providerId}-${hostname}-${job.id}`,
 			name: job.title,
+			description,
 			url: job.absolute_url,
 			publishedDate: job.updated_at,
 			location: getLocation(job),
