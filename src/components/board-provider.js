@@ -12,7 +12,7 @@ import matrixApi from "../providers/matrix.js";
 export default class JoblistBoardProvider extends HTMLElement {
 	model = [];
 	filteredModel = [];
-	searchTerm = '';
+	searchTerm = "";
 
 	getJobs = async () => {
 		console.log("getJobs method not implemented for this job board provider");
@@ -48,29 +48,31 @@ export default class JoblistBoardProvider extends HTMLElement {
 		}
 
 		const terms = searchTerm.toLowerCase().trim().split(/\s+/);
-		this.filteredModel = this.model.filter(job => {
-			const jobName = job.name ? job.name.toLowerCase() : '';
-			const companyTitle = job.companyTitle ? job.companyTitle.toLowerCase() : '';
-			const location = job.location ? job.location.toLowerCase() : '';
+		this.filteredModel = this.model.filter((job) => {
+			const jobName = job.name ? job.name.toLowerCase() : "";
+			const companyTitle = job.companyTitle
+				? job.companyTitle.toLowerCase()
+				: "";
+			const location = job.location ? job.location.toLowerCase() : "";
 			const searchableText = `${jobName} ${companyTitle} ${location}`;
-			
-			return terms.every(term => this.fuzzyMatch(searchableText, term));
+
+			return terms.every((term) => this.fuzzyMatch(searchableText, term));
 		});
 	}
 
 	fuzzyMatch(text, pattern) {
 		if (text.includes(pattern)) return true;
-		
+
 		let textIndex = 0;
 		let patternIndex = 0;
-		
+
 		while (textIndex < text.length && patternIndex < pattern.length) {
 			if (text[textIndex] === pattern[patternIndex]) {
 				patternIndex++;
 			}
 			textIndex++;
 		}
-		
+
 		return patternIndex === pattern.length;
 	}
 
@@ -79,7 +81,7 @@ export default class JoblistBoardProvider extends HTMLElement {
 
 		const $searchInput = document.createElement("input");
 		$searchInput.type = "text";
-		$searchInput.placeholder = "Search jobs by company, title, or location...";
+		$searchInput.placeholder = "Search jobs";
 		$searchInput.value = this.searchTerm;
 
 		$searchInput.addEventListener("input", (e) => {
@@ -88,19 +90,21 @@ export default class JoblistBoardProvider extends HTMLElement {
 			this.renderJobs();
 		});
 
-		const $resultsCount = document.createElement("joblist-board-search-results");
+		const $resultsCount = document.createElement(
+			"joblist-board-search-results",
+		);
 		const total = this.model.length;
 		const filtered = this.filteredModel.length;
-		$resultsCount.textContent = this.searchTerm ? 
-			`Showing ${filtered} of ${total} jobs` : 
-			`${total} jobs available`;
+		$resultsCount.textContent = this.searchTerm
+			? `Showing ${filtered} of ${total} jobs`
+			: `${total} jobs available`;
 
 		$searchContainer.append($searchInput, $resultsCount);
 		return $searchContainer;
 	}
 
 	renderJobs() {
-		const $jobsContainer = this.querySelector('joblist-board-jobs');
+		const $jobsContainer = this.querySelector("joblist-board-jobs");
 		if (!$jobsContainer) return;
 
 		if (this.filteredModel && this.filteredModel.length) {
@@ -119,18 +123,19 @@ export default class JoblistBoardProvider extends HTMLElement {
 			$jobsContainer.replaceChildren($noResults);
 		} else {
 			const $noJob = document.createElement("joblist-board-job");
-			$noJob.textContent = "Cannot get fetch jobs for this project and provider";
+			$noJob.textContent =
+				"Cannot get fetch jobs for this project and provider";
 			$jobsContainer.replaceChildren($noJob);
 		}
 
 		// Update results count
-		const $resultsCount = this.querySelector('joblist-board-search-results');
+		const $resultsCount = this.querySelector("joblist-board-search-results");
 		if ($resultsCount) {
 			const total = this.model.length;
 			const filtered = this.filteredModel.length;
-			$resultsCount.textContent = this.searchTerm ? 
-				`Showing ${filtered} of ${total} jobs` : 
-				`${total} jobs available`;
+			$resultsCount.textContent = this.searchTerm
+				? `Showing ${filtered} of ${total} jobs`
+				: `${total} jobs available`;
 		}
 	}
 
@@ -140,10 +145,10 @@ export default class JoblistBoardProvider extends HTMLElement {
 			$doms.push(this.createError(this.error));
 		} else if (this.model && this.model.length) {
 			$doms.push(this.createSearchInput());
-			
+
 			const $jobsContainer = document.createElement("joblist-board-jobs");
 			$doms.push($jobsContainer);
-			
+
 			this.replaceChildren(...$doms);
 			this.renderJobs();
 			return;

@@ -21,6 +21,11 @@ joblist-company {
 			display: none;
 		}
 	}
+	:is(joblist-board-search) {
+		position: sticky;
+		top: 0;
+		background: var(--c-bg);
+	}
 	:is(joblist-giscus, joblist-company-edit) {
 		:is(details) {
 			&:is([open]) {
