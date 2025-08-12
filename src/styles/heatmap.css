@@ -1,31 +1,58 @@
 joblist-heatmap {
 	:is(svg) {
 		border-radius: var(--s-border-radius);
+		border: var(--s-border) solid var(--c-heatmap-border);
+		background: var(--c-bg);
 	}
+	
 	:is(figure) {
 		:is(.joblist-legend-ramp) {
 			order: 1;
-			/* max-width: calc(var(--s) * 10); */
 			position: sticky;
 			left: 0;
 			padding: calc(var(--s) / 3);
+			background: var(--c-bg);
+			border-radius: var(--s-border-radius);
+			font-size: 11px;
+			color: var(--c-heatmap-text);
+			border: var(--s-border) solid var(--c-heatmap-border);
 		}
+		
 		:is([class^="plot-"]) {
-			/* width: 100%; */
-			/* min-width: 100%; */
+			/* GitHub-style heatmap spacing */
 		}
+		
 		display: flex;
 		flex-direction: column;
-		display: flex;
 		overflow-x: auto;
 		margin: 0;
+		gap: calc(var(--s) / 3);
 	}
+	
+	/* Hide legend when attribute is set */
 	&:is([show-legend="false"]) {
 		:is(.joblist-legend-ramp) {
 			display: none;
 		}
 	}
+	
+	/* Container styling with theme support */
 	display: flex;
-	max-width: clamp(90vmin, calc(100vmin - (var(--s) * 10)));
-	padding: calc(var(--s) / 2);
+	max-width: 100%;
+	padding: var(--s);
+	background: var(--c-heatmap-bg);
+	border: var(--s-border) solid var(--c-heatmap-border);
+	border-radius: var(--s-border-radius);
+	
+	/* Axis styling improvements */
+	:is(.plot-axis) {
+		font-family: var(--font-family);
+		font-size: 11px;
+		color: var(--c-heatmap-text);
+	}
+	
+	/* Remove grid lines */
+	:is(.plot-grid) {
+		display: none;
+	}
 }

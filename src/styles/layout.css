@@ -59,7 +59,7 @@ joblist-layout {
 		bottom: 0;
 		top: 0;
 		max-height: 100vh;
-		background-color: var(--c-bg);
+		background-color: var(--c-bg-alt);
 		outline: var(--c-hr) solid 1px;
 		display: flex;
 		flex-direction: column;

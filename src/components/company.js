@@ -25,9 +25,10 @@ export default class JoblistCompany extends HTMLElement {
 	}
 	async connectedCallback() {
 		if (this.companyId) {
-            const base = this.getAttribute("parquet-base") || undefined;
-            const mode = this.getAttribute("parquet-mode") || "buffer";
-            this.sdk = base || mode ? new JoblistDuckDBSDK(base, { mode }) : joblistDuckDBSDK;
+			const base = this.getAttribute("parquet-base") || undefined;
+			const mode = this.getAttribute("parquet-mode") || "buffer";
+			this.sdk =
+				base || mode ? new JoblistDuckDBSDK(base, { mode }) : joblistDuckDBSDK;
 			await this.sdk.initialize();
 			this.company = await this.sdk.getCompany(this.companyId);
 		}
@@ -153,9 +154,9 @@ export default class JoblistCompany extends HTMLElement {
 	createWidgets(company) {
 		const $widgets = document.createElement("joblist-company-widgets");
 		$widgets.append(
-			this.createPositions(company), 
+			this.createPositions(company),
+			this.createSocialWidget(company),
 			this.createHeatmap(company),
-			this.createSocialWidget(company)
 		);
 		return $widgets;
 	}
@@ -177,15 +178,15 @@ export default class JoblistCompany extends HTMLElement {
 		const socialLinks = [
 			"wikipedia_url",
 			"linkedin_url",
-			"twitter_url", 
+			"twitter_url",
 			"youtube_url",
 			"facebook_url",
-			"instagram_url"
+			"instagram_url",
 		];
-		
-		const hasSocialLinks = socialLinks.some(linkKey => company[linkKey]);
+
+		const hasSocialLinks = socialLinks.some((linkKey) => company[linkKey]);
 		if (!hasSocialLinks) return "";
-		
+
 		const $socialWidget = document.createElement("joblist-social-widget");
 		$socialWidget.setAttribute("company", JSON.stringify(company));
 		return $socialWidget;

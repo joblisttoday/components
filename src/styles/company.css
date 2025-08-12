@@ -43,9 +43,24 @@ joblist-company {
 		justify-content: flex-end;
 		margin: calc(var(--s) / 4);
 	}
+	:is(joblist-social-widget) {
+		:is(ul) {
+			/* background-color: red; */
+			display: flex;
+			flex-wrap: wrap;
+			gap: var(--s);
+			list-style: none;
+		}
+		:is(p) {
+			max-width: max(20rem, 40vmin);
+		}
+		:is(iframe) {
+			min-height: min(45vh, 100vmin);
+		}
+	}
 	display: flex;
 	flex-direction: column;
-	padding: calc(var(--s) / 2);
+	gap: calc(var(--s) / 2);
 }
 joblist-company {
 	&:is([is-highlighted="true"]) {
@@ -95,31 +110,31 @@ joblist-company-description {
 	:is(joblist-company[full]) & :is(p) {
 		white-space: pre-wrap;
 	}
+	:is(p) {
+		margin: 0;
+	}
 	max-width: var(--s-container);
 }
 joblist-company-links {
 	:is(menu) {
+		background-color: var(--c-bg-alt);
 		margin-right: var(--s);
 		display: flex;
 		flex-wrap: wrap;
 	}
 	display: flex;
 	flex-wrap: wrap;
-	padding: calc(var(--s) / 2);
+	gap: calc(var(--s) / 2);
 }
 
 joblist-company-widgets {
 	:is(joblist-map-list) {
-		padding: calc(var(--s) / 2);
 		background-color: var(--c-bg);
-	}
-	:is(& > *) {
-		flex-basis: 50vmin;
-		flex-shrink: 0;
-		flex-grow: 1;
+		max-width: 50vmin;
 	}
 	display: flex;
 	flex-wrap: wrap;
+	gap: var(--s);
 }
 
 joblist-company-edit {

@@ -27,8 +27,8 @@
 @media (prefers-color-scheme: dark) {
 	:root[joblist-layout] {
 		color-scheme: dark;
-		--c-bg: #151517f7;
-		--c-bg-alt:#191913f3;
+		--c-bg: #1e1e1e;
+		--c-bg-alt: #191913f3;
 		--c-fg: lightgray;
 		--c-fg--info: gray;
 		--c-link: skyblue;
