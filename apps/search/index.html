@@ -6,53 +6,86 @@
 		<title>@joblist/components/search</title>
 		<script type="module" src="../../src/index.js"></script>
 		<script type="module">
-			// Parse parameters from hash (for privacy) instead of URL search params
-			const getHashParams = () => {
-				const hash = window.location.hash.slice(1); // Remove the '#'
-				return Object.fromEntries(new URLSearchParams(hash));
-			};
+			import { hashRouter } from "../../src/libs/router-hash.js";
 
-			// Update hash when search changes (for URL sharing without server logs)
-			const updateHashParams = (params) => {
-				const hashParams = new URLSearchParams();
-				Object.entries(params).forEach(([key, value]) => {
-					if (value) hashParams.set(key, value);
-				});
-				const newHash = hashParams.toString();
-				window.location.hash = newHash;
-			};
+			// Initialize components
+			const $search = document.createElement("joblist-search");
+			const $results = document.createElement("joblist-results");
 
-			(({ query = "", view = "", type = "" }) => {
-				const $search = document.createElement("joblist-search");
-				const $results = document.createElement("joblist-results");
+			// Handle search events
+			$search.addEventListener("search", ({ detail }) => {
+				console.log("🎯 Search event received:", detail);
+				// Always set results, even if arrays are empty - let the component handle the display
+				$results.setAttribute("results", JSON.stringify(detail));
 
-				$search.addEventListener("search", ({ detail }) => {
-					console.log("🎯 Search event received:", detail);
-					// Always set results, even if arrays are empty - let the component handle the display
-					$results.setAttribute("results", JSON.stringify(detail));
+				// Update hash with search query for privacy-preserving URL sharing
+				if (detail.query && detail.query.trim()) {
+					hashRouter.setParams({ 
+						query: detail.query, 
+						view: detail.searchType 
+					});
+				} else {
+					// Clear hash when no query
+					hashRouter.clearParams();
+				}
+			});
 
-					// Update hash with search query for privacy-preserving URL sharing
-					if (detail.query && detail.query.trim()) {
-						updateHashParams({ query: detail.query, view: detail.searchType });
-					} else {
-						// Clear hash when no query
-						window.location.hash = "";
-					}
-				});
-
-				if (query) {
+			// Handle hash changes (browser back/forward, direct URL changes)
+			const handleRouteChange = (newParams, oldParams) => {
+				console.log("🔄 Hash route changed:", newParams, "from:", oldParams);
+				
+				const { query = "", view = "", type = "" } = newParams;
+				const currentQuery = $search.getAttribute("query") || "";
+				const currentView = $search.getAttribute("search-type") || "";
+				
+				// Support new 'view' param; fallback to legacy 'type'
+				const newView = view || type;
+				
+				// Only update if values actually changed to avoid infinite loops
+				if (query !== currentQuery) {
 					$search.setAttribute("query", query);
 				}
-				// Support new 'view' param; fallback to legacy 'type'
-				const initialView = view || type;
-				if (initialView) {
-					$search.setAttribute("search-type", initialView);
+				
+				if (newView && newView !== currentView) {
+					$search.setAttribute("search-type", newView);
 				}
+				
+				// Trigger search if we have a query
+				if (query && query.trim()) {
+					// Let the search component handle the search
+					$search.dispatchEvent(new CustomEvent('search-trigger'));
+				} else if (!query) {
+					// Clear results when no query
+					$results.setAttribute("results", JSON.stringify({
+						companies: [],
+						jobs: [],
+						query: "",
+						searchType: newView || "both",
+						stats: { totalCompanies: 0, totalJobs: 0, total: 0 }
+					}));
+				}
+			};
 
-				document
-					.querySelector("joblist-page-main")
-					.append($search, document.createElement("hr"), $results);
-			})(getHashParams());
+			// Listen for hash changes
+			hashRouter.onParamsChange(handleRouteChange);
+
+			// Initialize with current hash params
+			const initialParams = hashRouter.getParams();
+			const { query = "", view = "", type = "" } = initialParams;
+			
+			if (query) {
+				$search.setAttribute("query", query);
+			}
+			
+			// Support new 'view' param; fallback to legacy 'type'
+			const initialView = view || type;
+			if (initialView) {
+				$search.setAttribute("search-type", initialView);
+			}
+
+			document
+				.querySelector("joblist-page-main")
+				.append($search, document.createElement("hr"), $results);
 		</script>
 	</head>
 	<body>

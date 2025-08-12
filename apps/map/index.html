@@ -6,100 +6,33 @@
 		<title>@joblist/components/map</title>
 		<script type="module">
 			import joblist from "../../src/index.js";
+			import { hashRouter } from "../../src/libs/router-hash.js";
 			const { duckDBSdk, mapSdk } = joblist;
 			const { companiesToMapMarkers } = mapSdk;
 
-			(async ({ query = "", latitude = "", longitude = "", zoom = 3 }) => {
-				// Update hash when search changes (for URL sharing without server logs)
-				const updateHashParams = (params) => {
-					const hashParams = new URLSearchParams();
-					Object.entries(params).forEach(([key, value]) => {
-						if (value) hashParams.set(key, value);
-					});
-					const newHash = hashParams.toString();
-					window.location.hash = newHash;
-				};
+			// Global variables
+			let allCompanies = [];
+			let allJobs = [];
+			let allMarkers = [];
+			let initialJobCountsByCompany = {};
 
-				const handleSearch = async ({ detail }) => {
-					const { companies, jobs: jobsInput, query, searchType } = detail;
-					let jobs = jobsInput;
-					
-					// Update hash with search query for privacy-preserving URL sharing
-					if (query && query.trim()) {
-						updateHashParams({ query: query, view: detail.searchType });
-					} else {
-						// Clear hash when no query
-						window.location.hash = '';
-					}
-					if (!query) {
-						$map.setAttribute("markers", JSON.stringify(allMarkers));
-					} else {
-						// Ensure we have jobs for counting even if view=companies
-						if ((!jobs || jobs.length === 0) && query && query.trim()) {
-							try {
-								jobs = await duckDBSdk.searchJobs(query);
-							} catch (e) {
-								jobs = [];
-							}
-						}
+			// Components
+			const $search = document.createElement("joblist-search");
+			const $map = document.createElement("joblist-map-list");
+			const $results = document.createElement("joblist-results");
 
-						// Compute job counts by company for current result set (if any)
-						const jobCountsByCompany = {};
-						(jobs || []).forEach(job => {
-							const companyId = job.company_id;
-							if (companyId) {
-								jobCountsByCompany[companyId] = (jobCountsByCompany[companyId] || 0) + 1;
-							}
-						});
-
-						// Build company sets
-						const companiesFromCompanies = Array.isArray(companies) ? companies : [];
-						const byId = new Map(allCompanies.map(c => [c.id, c]));
-						const jobCompanyIds = new Set((jobs || []).map(j => j.company_id).filter(Boolean));
-						const companiesFromJobs = Array.from(jobCompanyIds).map(id => byId.get(id)).filter(Boolean);
-
-						let companiesBase = [];
-						if (searchType === 'companies') {
-							companiesBase = companiesFromCompanies;
-						} else if (searchType === 'jobs') {
-							companiesBase = companiesFromJobs;
-						} else {
-							// both: union of companies and job-derived companies
-							const map = new Map();
-							[...companiesFromCompanies, ...companiesFromJobs].forEach(c => { if (c) map.set(c.id, c); });
-							companiesBase = Array.from(map.values());
-						}
-
-						// Attach job counts (if available) for marker sizing/info
-						const companiesWithJobCounts = companiesBase.map(company => ({
-							...company,
-							total_jobs: jobCountsByCompany[company.id] || company.total_jobs || 0
-						}));
-
-						const itemMarkers = companiesToMapMarkers(companiesWithJobCounts);
-						$map.setAttribute("markers", JSON.stringify(itemMarkers));
-						if (jobs && jobs.length > 0) {
-							$map.setAttribute("jobs", JSON.stringify(jobs));
-						} else {
-							$map.removeAttribute("jobs");
-						}
-					}
-					if (!companies && !(jobs && jobs.length)) {
-						$map.removeAttribute("markers");
-						$map.removeAttribute("jobs");
-					}
-				};
+			// Initialize the application
+			async function init() {
 				// Load initial data with job counts
 				await duckDBSdk.initialize();
-				const allCompanies = await duckDBSdk.getAllCompaniesWithJobs();
+				allCompanies = await duckDBSdk.getAllCompaniesWithJobs();
 				console.log("allCompanies", allCompanies);
 				
 				// Load all jobs to get job counts for initial display
-				const allJobs = await duckDBSdk.getAllJobsData();
+				allJobs = await duckDBSdk.getAllJobsData();
 				console.log("allJobs count:", allJobs.length);
 				
 				// Aggregate job counts by company for initial display
-				const initialJobCountsByCompany = {};
 				allJobs.forEach(job => {
 					const companyId = job.company_id;
 					if (companyId) {
@@ -114,28 +47,128 @@
 				}));
 				
 				console.log("📊 Initial job counts by company:", Object.keys(initialJobCountsByCompany).length, "companies with jobs");
-				const allMarkers = companiesToMapMarkers(allCompaniesWithJobCounts);
+				allMarkers = companiesToMapMarkers(allCompaniesWithJobCounts);
+			}
 
-				/* apply attributes to elements */
-				const $search = document.createElement("joblist-search");
-				$search.addEventListener("search", handleSearch);
-				// Apply initial query and view (jobs preferred by default on map)
-				const initial = (() => { const hash = new URLSearchParams(window.location.hash.slice(1)); return Object.fromEntries(hash); })();
-				const initView = initial.view || initial.type || 'jobs';
-				$search.setAttribute('search-type', initView);
-				if (query) {
-					$search.setAttribute("query", query);
+			// Handle search events
+			const handleSearch = async ({ detail }) => {
+				const { companies, jobs: jobsInput, query, searchType } = detail;
+				let jobs = jobsInput;
+				
+				// Update hash with search query for privacy-preserving URL sharing
+				if (query && query.trim()) {
+					hashRouter.updateParams({ 
+						query: query, 
+						view: searchType 
+					});
+				} else {
+					// Clear hash when no query
+					hashRouter.clearParams();
 				}
 
-				const $map = document.createElement("joblist-map-list");
-				$map.setAttribute("latitude", latitude);
-				$map.setAttribute("longitude", longitude);
-				$map.setAttribute("zoom", zoom);
-				$map.setAttribute("origin", "https://joblist.today/{}");
-				$map.setAttribute("markers", JSON.stringify(allMarkers));
+				if (!query) {
+					$map.setAttribute("markers", JSON.stringify(allMarkers));
+					$map.removeAttribute("jobs");
+				} else {
+					// Ensure we have jobs for counting even if view=companies
+					if ((!jobs || jobs.length === 0) && query && query.trim()) {
+						try {
+							jobs = await duckDBSdk.searchJobs(query);
+						} catch (e) {
+							jobs = [];
+						}
+					}
+
+					// Compute job counts by company for current result set (if any)
+					const jobCountsByCompany = {};
+					(jobs || []).forEach(job => {
+						const companyId = job.company_id;
+						if (companyId) {
+							jobCountsByCompany[companyId] = (jobCountsByCompany[companyId] || 0) + 1;
+						}
+					});
+
+					// Build company sets
+					const companiesFromCompanies = Array.isArray(companies) ? companies : [];
+					const byId = new Map(allCompanies.map(c => [c.id, c]));
+					const jobCompanyIds = new Set((jobs || []).map(j => j.company_id).filter(Boolean));
+					const companiesFromJobs = Array.from(jobCompanyIds).map(id => byId.get(id)).filter(Boolean);
+
+					let companiesBase = [];
+					if (searchType === 'companies') {
+						companiesBase = companiesFromCompanies;
+					} else if (searchType === 'jobs') {
+						companiesBase = companiesFromJobs;
+					} else {
+						// both: union of companies and job-derived companies
+						const map = new Map();
+						[...companiesFromCompanies, ...companiesFromJobs].forEach(c => { if (c) map.set(c.id, c); });
+						companiesBase = Array.from(map.values());
+					}
+
+					// Attach job counts (if available) for marker sizing/info
+					const companiesWithJobCounts = companiesBase.map(company => ({
+						...company,
+						total_jobs: jobCountsByCompany[company.id] || company.total_jobs || 0
+					}));
+
+					const itemMarkers = companiesToMapMarkers(companiesWithJobCounts);
+					$map.setAttribute("markers", JSON.stringify(itemMarkers));
+					if (jobs && jobs.length > 0) {
+						$map.setAttribute("jobs", JSON.stringify(jobs));
+					} else {
+						$map.removeAttribute("jobs");
+					}
+				}
 				
-				// Create results container for job filtering
-				const $results = document.createElement("joblist-results");
+				if (!companies && !(jobs && jobs.length)) {
+					$map.removeAttribute("markers");
+					$map.removeAttribute("jobs");
+				}
+			};
+
+			// Handle hash changes (browser back/forward, direct URL changes)
+			const handleRouteChange = (newParams, oldParams) => {
+				console.log("🔄 Hash route changed:", newParams, "from:", oldParams);
+				
+				const { query = "", view = "", type = "", latitude = "", longitude = "", zoom = "3" } = newParams;
+				const currentQuery = $search.getAttribute("query") || "";
+				const currentView = $search.getAttribute("search-type") || "";
+				
+				// Support new 'view' param; fallback to legacy 'type'
+				const newView = view || type || "jobs";
+				
+				// Update map position if specified
+				if (latitude) $map.setAttribute("latitude", latitude);
+				if (longitude) $map.setAttribute("longitude", longitude);
+				if (zoom) $map.setAttribute("zoom", zoom);
+				
+				// Only update if values actually changed to avoid infinite loops
+				if (query !== currentQuery) {
+					$search.setAttribute("query", query);
+				}
+				
+				if (newView && newView !== currentView) {
+					$search.setAttribute("search-type", newView);
+				}
+				
+				// Trigger search if we have a query
+				if (query && query.trim()) {
+					// Let the search component handle the search
+					$search.dispatchEvent(new CustomEvent('search-trigger'));
+				} else if (!query) {
+					// Reset to show all markers when no query
+					$map.setAttribute("markers", JSON.stringify(allMarkers));
+					$map.removeAttribute("jobs");
+				}
+			};
+
+			// Initialize and setup
+			(async () => {
+				await init();
+				
+				// Setup components
+				$search.addEventListener("search", handleSearch);
 				$results.style.display = "none"; // Initially hidden
 				
 				// Handle job filtering events from map markers
@@ -162,11 +195,28 @@
 					}
 				});
 
+				// Listen for hash changes
+				hashRouter.onParamsChange(handleRouteChange);
+
+				// Initialize with current hash params
+				const initialParams = hashRouter.getParams();
+				const { query = "", view = "", type = "", latitude = "", longitude = "", zoom = "3" } = initialParams;
+				
+				// Setup initial attributes
+				const initView = view || type || 'jobs';
+				$search.setAttribute('search-type', initView);
+				
+				if (query) {
+					$search.setAttribute("query", query);
+				}
+				
+				$map.setAttribute("latitude", latitude || "");
+				$map.setAttribute("longitude", longitude || "");
+				$map.setAttribute("zoom", zoom);
+				$map.setAttribute("origin", "https://joblist.today/{}");
+				$map.setAttribute("markers", JSON.stringify(allMarkers));
+
 				document.querySelector("joblist-page").append($search, $map, $results);
-			})(() => {
-				// Parse parameters from hash (for privacy) instead of URL search params
-				const hash = window.location.hash.slice(1); // Remove the '#'
-				return Object.fromEntries(new URLSearchParams(hash));
 			})();
 		</script>
 	</head>

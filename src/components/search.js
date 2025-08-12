@@ -90,6 +90,10 @@ export default class JoblistSearch extends HTMLElement {
 		try {
 			this.columns.jobs = await this.joblistSDK.getColumns("jobs");
 		} catch {}
+		
+		// Listen for external search trigger events
+		this.addEventListener('search-trigger', this._onSearchTrigger.bind(this));
+		
 		if (this.query) {
 			this.search(this.query);
 		} else {
@@ -203,6 +207,13 @@ export default class JoblistSearch extends HTMLElement {
 	async _onInput(event) {
 		const { value: query } = event.target;
 		this.search(query);
+	}
+
+	async _onSearchTrigger(event) {
+		// Triggered externally to perform a search with current attributes
+		const query = this.getAttribute("query") || "";
+		const searchType = this.getAttribute("search-type") || "both";
+		this.search(query, searchType);
 	}
 
 	async _onFilterChange(event) {
