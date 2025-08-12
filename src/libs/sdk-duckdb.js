@@ -155,25 +155,25 @@ export class JoblistDuckDBSDK {
 	_parseSimpleSearch(query = "") {
 		const q = String(query || "").trim();
 		if (!q) return { terms: [] };
-		
+
 		// Split by spaces to get individual terms
 		const tokens = q.split(/\s+/);
 		const fieldValuePairs = [];
 		const plainTextTerms = [];
-		
+
 		// Parse each token
 		for (const token of tokens) {
 			const fieldMatch = token.match(/^([a-zA-Z_][a-zA-Z0-9_]*):(.+)$/);
 			if (fieldMatch) {
 				fieldValuePairs.push({
 					field: fieldMatch[1].toLowerCase(),
-					value: fieldMatch[2]
+					value: fieldMatch[2],
 				});
 			} else if (token.trim()) {
 				plainTextTerms.push(token.trim());
 			}
 		}
-		
+
 		// Determine search type
 		if (fieldValuePairs.length > 1) {
 			// Multiple field:value pairs (e.g., "tags:hardware tags:music")
@@ -181,7 +181,7 @@ export class JoblistDuckDBSDK {
 				isMultiField: true,
 				fieldValuePairs,
 				plainTextTerms,
-				conjunctive: 1 // Always treat as AND
+				conjunctive: 1, // Always treat as AND
 			};
 		} else if (fieldValuePairs.length === 1 && plainTextTerms.length > 0) {
 			// Mixed search: field:value and plain text (e.g., "company:spacex freelance")
@@ -189,27 +189,27 @@ export class JoblistDuckDBSDK {
 				isMixed: true,
 				fieldValuePairs,
 				plainTextTerms,
-				conjunctive: 1
+				conjunctive: 1,
 			};
 		} else if (fieldValuePairs.length === 1) {
 			// Single field-specific search (e.g., "tags:python")
 			return {
 				field: fieldValuePairs[0].field,
 				term: fieldValuePairs[0].value,
-				conjunctive: 0
+				conjunctive: 0,
 			};
 		} else if (plainTextTerms.length > 1) {
 			// Multiple plain text terms (e.g., "python django")
 			return {
 				isPlainTextMulti: true,
 				plainTextTerms,
-				conjunctive: 1
+				conjunctive: 1,
 			};
 		} else {
 			// Single plain text term
 			return {
 				term: plainTextTerms[0] || q,
-				conjunctive: 0
+				conjunctive: 0,
 			};
 		}
 	}
@@ -269,7 +269,7 @@ export class JoblistDuckDBSDK {
 	}
 
 	// Core methods
-    async searchCompanies(query = "", limit = 100) {
+	async searchCompanies(query = "", limit = 100) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const vname = "companies.parquet";
 		const url = this.parquetUrl("companies");
@@ -280,7 +280,12 @@ export class JoblistDuckDBSDK {
 		}
 
 		// Try FTS search first, fallback to LIKE search
-		return await this._searchWithFallback(vname, 'companies', query, limit, ['id', 'title', 'description', 'tags']);
+		return await this._searchWithFallback(vname, "companies", query, limit, [
+			"id",
+			"title",
+			"description",
+			"tags",
+		]);
 	}
 
 	async getCompaniesHighlighted() {
@@ -294,7 +299,7 @@ export class JoblistDuckDBSDK {
 		return this._rowsToPlain(table.toArray());
 	}
 
-    async searchJobs(query = "", limit = 100) {
+	async searchJobs(query = "", limit = 100) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const vname = "jobs.parquet";
 		const url = this.parquetUrl("jobs");
@@ -314,10 +319,16 @@ export class JoblistDuckDBSDK {
 		const processedQuery = this._processJobsQuery(query);
 
 		// Try FTS search first, fallback to LIKE search
-		return await this._searchWithFallback(vname, 'jobs', processedQuery, limit, ['name', 'company_title', 'location', 'company_id']);
+		return await this._searchWithFallback(
+			vname,
+			"jobs",
+			processedQuery,
+			limit,
+			["name", "company_title", "location", "company_id"],
+		);
 	}
 
-    async getJobsFromHighlightedCompanies(limit = 100) {
+	async getJobsFromHighlightedCompanies(limit = 100) {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 		const companiesVname = "companies.parquet";
 		const jobsVname = "jobs.parquet";
@@ -332,11 +343,11 @@ export class JoblistDuckDBSDK {
 			return [];
 		}
 
-        const sql = `
+		const sql = `
             SELECT j.* FROM '${jobsVname}' j
             INNER JOIN '${companiesVname}' c ON j.company_id = c.id
             WHERE c.is_highlighted = true OR c.is_highlighted = 1 OR lower(cast(c.is_highlighted as varchar)) = 'true'
-            ${Number(limit) > 0 ? `LIMIT ${Number(limit)}` : ''}
+            ${Number(limit) > 0 ? `LIMIT ${Number(limit)}` : ""}
         `;
 
 		try {
@@ -533,76 +544,114 @@ export class JoblistDuckDBSDK {
 	// FTS search with fallback to LIKE
 	async _searchWithFallback(vname, tableName, query, limit, searchColumns) {
 		const parsed = this._parseSimpleSearch(query);
-		const { field, term, isMultiField, isMixed, isPlainTextMulti, fieldValuePairs, plainTextTerms } = parsed;
+		const {
+			field,
+			term,
+			isMultiField,
+			isMixed,
+			isPlainTextMulti,
+			fieldValuePairs,
+			plainTextTerms,
+		} = parsed;
 		const limitClause = Number(limit) > 0 ? ` LIMIT ${Number(limit)}` : "";
-		
+
 		console.log(`🔍 Parsed search query: "${query}"`, parsed);
-		
+
 		// Handle multiple field:value pairs (e.g., "tags:hardware tags:music")
 		if (isMultiField) {
-			return await this._multiFieldSearch(vname, fieldValuePairs, plainTextTerms, limitClause, searchColumns);
+			return await this._multiFieldSearch(
+				vname,
+				fieldValuePairs,
+				plainTextTerms,
+				limitClause,
+				searchColumns,
+			);
 		}
-		
+
 		// Handle mixed field:value and plain text (e.g., "company:spacex freelance")
 		if (isMixed) {
-			return await this._mixedFieldSearch(vname, fieldValuePairs, plainTextTerms, limitClause, searchColumns);
+			return await this._mixedFieldSearch(
+				vname,
+				fieldValuePairs,
+				plainTextTerms,
+				limitClause,
+				searchColumns,
+			);
 		}
-		
+
 		// Handle multiple plain text terms (e.g., "python django")
 		if (isPlainTextMulti) {
-			return await this._plainTextMultiSearch(vname, plainTextTerms, limitClause, searchColumns);
+			return await this._plainTextMultiSearch(
+				vname,
+				plainTextTerms,
+				limitClause,
+				searchColumns,
+			);
 		}
-		
+
 		// Validate single field exists in this table's columns
 		if (field && !searchColumns.includes(field)) {
-			console.log(`Field '${field}' not available in ${tableName}, available: ${searchColumns.join(', ')}`);
+			console.log(
+				`Field '${field}' not available in ${tableName}, available: ${searchColumns.join(", ")}`,
+			);
 			return []; // Return empty results for invalid field
 		}
-		
+
 		// Try FTS search first if available and no field-specific search
 		if (this.ftsEnabled && !field && term) {
 			try {
 				return await this._ftsSearch(vname, tableName, term, limit);
 			} catch (e) {
 				// Fall back to LIKE search if FTS fails
-				console.log(`FTS search failed for ${tableName}, falling back to LIKE:`, e.message);
+				console.log(
+					`FTS search failed for ${tableName}, falling back to LIKE:`,
+					e.message,
+				);
 			}
 		}
-		
+
 		// Fallback to LIKE search
-		return await this._likeSearch(vname, field, term, limitClause, searchColumns);
+		return await this._likeSearch(
+			vname,
+			field,
+			term,
+			limitClause,
+			searchColumns,
+		);
 	}
 
 	async _ftsSearch(vname, tableName, query, limit) {
 		const viewName = `fts_${tableName}`;
 		const limitClause = Number(limit) > 0 ? ` LIMIT ${Number(limit)}` : "";
-		
+
 		// Create view with rowid for FTS
 		try {
 			await this.conn.query(`DROP VIEW IF EXISTS ${viewName}`);
-			await this.conn.query(`CREATE VIEW ${viewName} AS SELECT ROW_NUMBER() OVER() as rowid, * FROM '${vname}'`);
+			await this.conn.query(
+				`CREATE VIEW ${viewName} AS SELECT ROW_NUMBER() OVER() as rowid, * FROM '${vname}'`,
+			);
 		} catch (e) {
 			console.log(`Failed to create FTS view: ${e.message}`);
 			throw e;
 		}
-		
+
 		// Try to create FTS index (will fail silently if already exists)
-		await this.createFTSIndex(viewName, 'id');
-		
+		await this.createFTSIndex(viewName, "id");
+
 		// Parse query for boolean operations
 		const { term, conjunctive, field } = this._parseSimpleSearch(query);
 		const escapedQuery = this._escapeSql(term);
-		
+
 		// Build FTS query with boolean support
-		const fieldsParam = field ? `fields := '${field}', ` : '';
-		const conjunctiveParam = conjunctive ? 'conjunctive := 1, ' : '';
-		
+		const fieldsParam = field ? `fields := '${field}', ` : "";
+		const conjunctiveParam = conjunctive ? "conjunctive := 1, " : "";
+
 		const sql = `
-			SELECT v.*, score 
+			SELECT v.*, score
 			FROM (
 				SELECT *, fts_main_${viewName}.match_bm25(
-					id, 
-					'${escapedQuery}', 
+					id,
+					'${escapedQuery}',
 					${fieldsParam}${conjunctiveParam}k := 1.2, b := 0.75
 				) AS score
 				FROM ${viewName}
@@ -610,24 +659,24 @@ export class JoblistDuckDBSDK {
 			WHERE v.score IS NOT NULL
 			ORDER BY v.score DESC${limitClause}
 		`;
-		
+
 		const table = await this.conn.query(sql);
 		return this._rowsToPlain(table.toArray());
 	}
 
 	async _likeSearch(vname, field, term, limitClause, searchColumns) {
 		const escapedTerm = this._escapeSql(term.toLowerCase());
-		
+
 		let sql;
 		if (field && term) {
 			// Field-specific search: field:value (field already validated)
 			sql = `SELECT * FROM '${vname}' WHERE lower(cast(${field} AS varchar)) LIKE '%${escapedTerm}%'${limitClause}`;
 		} else {
 			// General search across specified columns
-			const conditions = searchColumns.map(col => 
-				`lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`
+			const conditions = searchColumns.map(
+				(col) => `lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`,
 			);
-			sql = `SELECT * FROM '${vname}' WHERE (${conditions.join(' OR ')})${limitClause}`;
+			sql = `SELECT * FROM '${vname}' WHERE (${conditions.join(" OR ")})${limitClause}`;
 		}
 
 		try {
@@ -640,46 +689,58 @@ export class JoblistDuckDBSDK {
 	}
 
 	// Handle mixed field:value and plain text searches like "company:spacex freelance"
-	async _mixedFieldSearch(vname, fieldValuePairs, plainTextTerms, limitClause, searchColumns) {
+	async _mixedFieldSearch(
+		vname,
+		fieldValuePairs,
+		plainTextTerms,
+		limitClause,
+		searchColumns,
+	) {
 		console.log(`🔍 Mixed search in table with columns:`, searchColumns);
 		console.log(`🎯 Field:value pairs:`, fieldValuePairs);
 		console.log(`📝 Plain text terms:`, plainTextTerms);
-		
+
 		const fieldConditions = [];
 		const plainTextConditions = [];
-		
+
 		// Process field:value pairs
 		for (const { field, value } of fieldValuePairs) {
 			if (searchColumns.includes(field)) {
 				const escapedValue = this._escapeSql(value.toLowerCase());
-				fieldConditions.push(`lower(cast(${field} AS varchar)) LIKE '%${escapedValue}%'`);
+				fieldConditions.push(
+					`lower(cast(${field} AS varchar)) LIKE '%${escapedValue}%'`,
+				);
 				console.log(`✅ Field '${field}' is valid`);
 			} else {
-				console.log(`❌ Field '${field}' not found in available columns: ${searchColumns.join(', ')}`);
+				console.log(
+					`❌ Field '${field}' not found in available columns: ${searchColumns.join(", ")}`,
+				);
 			}
 		}
-		
+
 		// Process plain text terms - each term must match at least one column
 		for (const term of plainTextTerms) {
 			if (term.trim()) {
 				const escapedTerm = this._escapeSql(term.toLowerCase());
-				const termCondition = searchColumns.map(col => 
-					`lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`
-				).join(' OR ');
+				const termCondition = searchColumns
+					.map(
+						(col) => `lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`,
+					)
+					.join(" OR ");
 				plainTextConditions.push(`(${termCondition})`);
 			}
 		}
-		
+
 		// Combine all conditions with AND
 		const allConditions = [...fieldConditions, ...plainTextConditions];
 		if (allConditions.length === 0) {
-			console.log('❌ No valid conditions found');
+			console.log("❌ No valid conditions found");
 			return [];
 		}
-		
-		const sql = `SELECT * FROM '${vname}' WHERE ${allConditions.join(' AND ')}${limitClause}`;
+
+		const sql = `SELECT * FROM '${vname}' WHERE ${allConditions.join(" AND ")}${limitClause}`;
 		console.log(`🔧 Generated mixed search SQL: ${sql}`);
-		
+
 		try {
 			const table = await this.conn.query(sql);
 			const results = this._rowsToPlain(table.toArray());
@@ -692,46 +753,58 @@ export class JoblistDuckDBSDK {
 	}
 
 	// Handle multi-field searches like "tags:hardware tags:music"
-	async _multiFieldSearch(vname, fieldValuePairs, plainTextTerms, limitClause, searchColumns) {
+	async _multiFieldSearch(
+		vname,
+		fieldValuePairs,
+		plainTextTerms,
+		limitClause,
+		searchColumns,
+	) {
 		console.log(`🔍 Multi-field search in table with columns:`, searchColumns);
 		console.log(`🎯 Field:value pairs:`, fieldValuePairs);
 		console.log(`📝 Plain text terms:`, plainTextTerms);
-		
+
 		const fieldConditions = [];
 		const plainTextConditions = [];
-		
+
 		// Process field:value pairs
 		for (const { field, value } of fieldValuePairs) {
 			if (searchColumns.includes(field)) {
 				const escapedValue = this._escapeSql(value.toLowerCase());
-				fieldConditions.push(`lower(cast(${field} AS varchar)) LIKE '%${escapedValue}%'`);
+				fieldConditions.push(
+					`lower(cast(${field} AS varchar)) LIKE '%${escapedValue}%'`,
+				);
 				console.log(`✅ Field '${field}' is valid`);
 			} else {
-				console.log(`❌ Field '${field}' not found in available columns: ${searchColumns.join(', ')}`);
+				console.log(
+					`❌ Field '${field}' not found in available columns: ${searchColumns.join(", ")}`,
+				);
 			}
 		}
-		
+
 		// Process any additional plain text terms
 		for (const term of plainTextTerms) {
 			if (term.trim()) {
 				const escapedTerm = this._escapeSql(term.toLowerCase());
-				const termCondition = searchColumns.map(col => 
-					`lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`
-				).join(' OR ');
+				const termCondition = searchColumns
+					.map(
+						(col) => `lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`,
+					)
+					.join(" OR ");
 				plainTextConditions.push(`(${termCondition})`);
 			}
 		}
-		
+
 		// Combine all conditions with AND
 		const allConditions = [...fieldConditions, ...plainTextConditions];
 		if (allConditions.length === 0) {
-			console.log('❌ No valid conditions found');
+			console.log("❌ No valid conditions found");
 			return [];
 		}
-		
-		const sql = `SELECT * FROM '${vname}' WHERE ${allConditions.join(' AND ')}${limitClause}`;
+
+		const sql = `SELECT * FROM '${vname}' WHERE ${allConditions.join(" AND ")}${limitClause}`;
 		console.log(`🔧 Generated multi-field search SQL: ${sql}`);
-		
+
 		try {
 			const table = await this.conn.query(sql);
 			const results = this._rowsToPlain(table.toArray());
@@ -744,25 +817,35 @@ export class JoblistDuckDBSDK {
 	}
 
 	// Handle multiple plain text terms like "python django"
-	async _plainTextMultiSearch(vname, plainTextTerms, limitClause, searchColumns) {
-		console.log(`🔍 Plain text multi search: ${plainTextTerms.join(' ')} in table with columns:`, searchColumns);
-		
+	async _plainTextMultiSearch(
+		vname,
+		plainTextTerms,
+		limitClause,
+		searchColumns,
+	) {
+		console.log(
+			`🔍 Plain text multi search: ${plainTextTerms.join(" ")} in table with columns:`,
+			searchColumns,
+		);
+
 		// Each term must match at least one column (AND logic)
-		const termConditions = plainTextTerms.map(term => {
+		const termConditions = plainTextTerms.map((term) => {
 			const escapedTerm = this._escapeSql(term.toLowerCase());
-			const columnMatches = searchColumns.map(col => 
-				`lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`
+			const columnMatches = searchColumns.map(
+				(col) => `lower(cast(${col} AS varchar)) LIKE '%${escapedTerm}%'`,
 			);
-			return `(${columnMatches.join(' OR ')})`;
+			return `(${columnMatches.join(" OR ")})`;
 		});
-		
-		const sql = `SELECT * FROM '${vname}' WHERE ${termConditions.join(' AND ')}${limitClause}`;
+
+		const sql = `SELECT * FROM '${vname}' WHERE ${termConditions.join(" AND ")}${limitClause}`;
 		console.log(`🔧 Generated plain text multi search SQL: ${sql}`);
-		
+
 		try {
 			const table = await this.conn.query(sql);
 			const results = this._rowsToPlain(table.toArray());
-			console.log(`✅ Plain text multi search returned ${results.length} results`);
+			console.log(
+				`✅ Plain text multi search returned ${results.length} results`,
+			);
 			return results;
 		} catch (e) {
 			console.log(`❌ Plain text multi search failed: ${e.message}`);
@@ -776,16 +859,16 @@ export class JoblistDuckDBSDK {
 		const fieldMap = {
 			company: "company_title",
 			id: "company_id",
-			title: "name" // job title maps to name column
+			title: "name", // job title maps to name column
 		};
-		
+
 		// Replace field aliases in query
 		let processedQuery = query;
 		for (const [alias, actual] of Object.entries(fieldMap)) {
-			const regex = new RegExp(`\\b${alias}:`, 'gi');
+			const regex = new RegExp(`\\b${alias}:`, "gi");
 			processedQuery = processedQuery.replace(regex, `${actual}:`);
 		}
-		
+
 		return processedQuery;
 	}
 
