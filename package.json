@@ -1,8 +1,8 @@
 {
   "name": "@joblist/components",
   "private": false,
-  "version": "0.2.13",
-  "homepage": "https://gitlab.com/joblist/components",
+  "version": "0.2.14",
+  "homepage": "https://github.com/joblisttoday/components",
   "keywords": ["web-components", "leaflet", "duckdb", "wasm", "joblist"],
   "author": "joblist",
   "license": "GPL-3.0-or-later",
@@ -45,10 +45,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/joblist/components.git"
+    "url": "git+ssh://git@github.com/joblisttoday/components.git"
   },
   "bugs": {
-    "url": "https://gitlab.com/joblist/components/issues"
+    "url": "https://github.com/joblisttoday/components/issues"
   },
   "prettier": {}
 }
