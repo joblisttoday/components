@@ -66,8 +66,7 @@ joblist-board-job {
 	}
 
 	:is(joblist-board-job-description) {
-		flex-grow: 1;
-		flex-basis: 100%;
+		word-break: break-word;
 	}
 
 	display: inline-flex;
