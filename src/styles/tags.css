@@ -4,4 +4,6 @@ joblist-tags joblist-aindex-list ul {
 }
 joblist-tag a {
 	padding: calc(var(--s) / 5);
+	display: inline-flex;
+	align-items: center;
 }

@@ -73,6 +73,9 @@ joblist-layout {
 		:is(joblist-favicon) {
 			position: sticky;
 		}
+		:is(button) {
+			background-color: var(--c-bg-alt);
+		}
 		:is(li) {
 			:is(a) {
 				word-break: break-all;

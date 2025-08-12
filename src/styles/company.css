@@ -212,6 +212,10 @@ joblist-company-links {
 		display: flex;
 		flex-wrap: wrap;
 	}
+	:is(a) {
+		display: flex;
+		align-items: center;
+	}
 	display: flex;
 	flex-wrap: wrap;
 	gap: calc(var(--s) / 2);
