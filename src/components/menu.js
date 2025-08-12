@@ -34,8 +34,8 @@ const MENUS = [
 		},
 	],
 	[
-		{ 
-			href: "https://edit.joblist.today", 
+		{
+			href: "https://edit.joblist.today",
 			textContent: "edit data",
 			icon: "edit",
 		},
@@ -50,13 +50,13 @@ const MENUS = [
 			 }, */
 	],
 	[
-		{ 
-			href: "https://api.joblist.today", 
+		{
+			href: "https://api.joblist.today",
 			textContent: "api",
 			icon: "code",
 		},
-		{ 
-			href: "https://dashboards.joblist.today/", 
+		{
+			href: "https://dashboards.joblist.today/",
 			textContent: "dashboards",
 			icon: "chart",
 		},
@@ -72,16 +72,16 @@ const MENUS = [
 		},
 	],
 	[
-		{ 
-			href: "https://github.com/joblisttoday", 
+		{
+			href: "https://github.com/joblisttoday",
 			textContent: "github",
 			icon: "github",
 		},
-		{ 
-			href: "https://gitlab.com/joblist", 
-			textContent: "gitlab",
-			icon: "gitlab",
-		},
+		// {
+		// 	href: "https://gitlab.com/joblist",
+		// 	textContent: "gitlab",
+		// 	icon: "gitlab",
+		// },
 		{
 			href: "https://matrix.to/#/#joblist.today:matrix.org",
 			textContent: "chat",
@@ -195,12 +195,12 @@ export default class JoblistMenu extends HTMLElement {
 		const button = document.createElement("button");
 		button.setAttribute("title", "Menu");
 		button.addEventListener("click", this.onToggle.bind(this));
-		
+
 		const iconElement = document.createElement("joblist-icon");
 		iconElement.setAttribute("icon", "menu");
 		iconElement.setAttribute("size", "medium");
 		button.appendChild(iconElement);
-		
+
 		return button;
 	}
 	createFavicon(href) {
@@ -227,20 +227,20 @@ export default class JoblistMenu extends HTMLElement {
 	createMenuItem({ href, textContent, icon } = {}) {
 		const link = document.createElement("a");
 		link.setAttribute("href", href);
-		
+
 		if (icon) {
 			const iconElement = document.createElement("joblist-icon");
 			iconElement.setAttribute("icon", icon);
 			iconElement.setAttribute("size", "small");
 			link.appendChild(iconElement);
-			
+
 			const textSpan = document.createElement("span");
 			textSpan.textContent = textContent;
 			link.appendChild(textSpan);
 		} else {
 			link.textContent = textContent;
 		}
-		
+
 		return link;
 	}
 }
