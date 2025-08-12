@@ -1,4 +1,5 @@
 // vite.config.js
+import { VitePWA } from "vite-plugin-pwa";
 import { resolve } from "path";
 import { defineConfig } from "vite";
 import recursive from "recursive-readdir";
@@ -38,4 +39,5 @@ export default defineConfig({
 	optimizeDeps: {
 		exclude: ["@duckdb/duckdb-wasm"],
 	},
+	plugins: [VitePWA()],
 });
