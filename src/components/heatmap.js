@@ -89,12 +89,24 @@ export default class JoblistHeatmap extends HTMLElement {
 
 	render() {
 		if (this.heatmap) {
-			const heatmap = heatmapCompany(this.heatmap, {
-				id: this.companyId,
-				days: this.days,
-			});
-			this.replaceChildren(heatmap);
-			this.scrollToEnd();
+			// Check if heatmap has any data (any day with total > 0)
+			const hasData = this.heatmap.some(day => day.total > 0);
+			
+			if (hasData) {
+				// Remove no-data attribute if it exists
+				this.removeAttribute('no-data');
+				
+				const heatmap = heatmapCompany(this.heatmap, {
+					id: this.companyId,
+					days: this.days,
+				});
+				this.replaceChildren(heatmap);
+				this.scrollToEnd();
+			} else {
+				// Set no-data attribute to hide the heatmap
+				this.setAttribute('no-data', 'true');
+				this.replaceChildren(); // Clear content
+			}
 		}
 	}
 }

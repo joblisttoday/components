@@ -16,6 +16,11 @@ joblist-company {
 	:is(summary) {
 		padding: calc(var(--s) / 4);
 	}
+	:is(joblist-heatmap) {
+		&:is([no-data="true"]) {
+			display: none;
+		}
+	}
 	:is(joblist-giscus, joblist-company-edit) {
 		:is(details) {
 			&:is([open]) {
