@@ -1,7 +1,6 @@
 joblist-job {
 	display: flex;
 	flex-wrap: wrap;
-	padding: calc(var(--s) / 2);
 }
 joblist-job-company-title,
 joblist-job-name,

@@ -1,3 +1,14 @@
+joblist-results {
+	:is(.search-section) {
+		margin-bottom: var(--s);
+		display: flex;
+		flex-direction: column;
+		gap: calc(var(--s) / 2);
+	}
+	:is(.search-stats) {
+		color: var(--c-fg--info);
+	}
+}
 joblist-results a {
 	text-decoration: none;
 }
