@@ -1,7 +1,5 @@
 import * as duckdb from "@duckdb/duckdb-wasm";
 import { generateMissingDates } from "../utils/heatmap.js";
-import duckdb_wasm_eh from "@duckdb/duckdb-wasm/dist/duckdb-eh.wasm?url";
-import duckdb_worker_eh from "@duckdb/duckdb-wasm/dist/duckdb-browser-eh.worker.js?url";
 
 export class JoblistDuckDBSDK {
 	constructor(baseParquetUrl = "https://workers.joblist.today", options = {}) {
@@ -21,11 +19,19 @@ export class JoblistDuckDBSDK {
 
 		console.log("🔧 Initializing DuckDB...");
 
-		const bundle = await duckdb.selectBundle({
-			eh: { mainModule: duckdb_wasm_eh, mainWorker: duckdb_worker_eh },
-		});
+		const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
 
-		const worker = new Worker(bundle.mainWorker);
+		// Select a bundle based on browser checks
+		const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+
+		const worker_url = URL.createObjectURL(
+			new Blob([`importScripts("${bundle.mainWorker}");`], {
+				type: "text/javascript",
+			}),
+		);
+
+		// Instantiate the asynchronus version of DuckDB-Wasm
+		const worker = new Worker(worker_url);
 		const logger = new duckdb.ConsoleLogger();
 		const db = new duckdb.AsyncDuckDB(logger, worker);
 		await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
