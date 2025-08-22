@@ -1,0 +1,38 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction" />
+
+# Joblist Components
+
+A collection of web components for building job board interfaces.
+
+## Features
+
+- **Framework Agnostic**: Pure web components that work anywhere
+- **DuckDB Powered**: Client-side analytics and search
+- **Remote Storage**: Save favorites, notes, and cover letters
+- **Provider Support**: Greenhouse, Personio, Lever, and more
+
+## Getting Started
+
+```bash
+npm install @joblist/components
+```
+
+```html
+<script type="module" src="https://unpkg.com/@joblist/components"></script>
+
+<!-- Display a company -->
+<joblist-company company-id="stripe" full="true"></joblist-company>
+
+<!-- Show job board -->
+<joblist-board-greenhouse hostname="boards-api.greenhouse.io"></joblist-board-greenhouse>
+```
+
+## Component Categories
+
+- **Company**: Display company information and job listings
+- **Job Boards**: Connect to various job board providers
+- **Storage**: User favorites, notes, and data management
+- **Maps**: Location-based job displays
+- **Search**: Job search and filtering
