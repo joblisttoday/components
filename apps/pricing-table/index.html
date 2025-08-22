@@ -8,14 +8,61 @@
 		<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
 	</head>
 	<body>
+		<script>
+			// Check URL parameters
+			const urlParams = new URLSearchParams(window.location.search);
+			const companyId = urlParams.get("company");
+
+			document.addEventListener("DOMContentLoaded", () => {
+				const page = document.querySelector("joblist-page");
+
+				// Always add the pricing table
+				const pricingTable = document.createElement("joblist-pricing-table");
+				pricingTable.setAttribute(
+					"pricing-table-id",
+					"prctbl_1Oq2s5HpRVVklMd0UOPfssyl",
+				);
+				pricingTable.setAttribute(
+					"publishable-key",
+					"pk_test_51OhniyHpRVVklMd0xCFlxDwymrxDHaM8irs7sxT8SrA9EpWgqKWcCChaMksqWpsFYkR6JAZMwAa7p8NzkGORCb9H00SunE0zg1",
+				);
+
+				if (companyId) {
+					// Create elements for company-specific instructions
+					const highlightHeading = document.createElement("h1");
+					highlightHeading.textContent = `Highlight ${companyId}`;
+
+					const highlightParagraph = document.createElement("p");
+					highlightParagraph.append(document.createTextNode("Enter" + " "));
+					const codeElement = document.createElement("mark");
+					codeElement.textContent = companyId;
+					highlightParagraph.append(codeElement);
+					highlightParagraph.appendChild(
+						document.createTextNode(
+							" in the field 'joblist.today/company' on the payments page.",
+						),
+					);
+
+					// Append the elements to the page
+					page.append(highlightHeading, highlightParagraph, pricingTable);
+				} else {
+					// Create elements for regular pricing table
+					const regularHeading = document.createElement("h1");
+					regularHeading.textContent = "Highlight Your Company";
+
+					const regularParagraph = document.createElement("p");
+					regularParagraph.textContent =
+						"Feature your company on joblist.today";
+
+					// Append the elements to the page
+					page.append(regularHeading, regularParagraph, pricingTable);
+				}
+			});
+		</script>
+
 		<joblist-layout>
-			<joblist-page>
-				<joblist-pricing-table
-					pricing-table-id="prctbl_1Oq2s5HpRVVklMd0UOPfssyl"
-					publishable-key="pk_test_51OhniyHpRVVklMd0xCFlxDwymrxDHaM8irs7sxT8SrA9EpWgqKWcCChaMksqWpsFYkR6JAZMwAa7p8NzkGORCb9H00SunE0zg1"
-				>
-				</joblist-pricing-table>
-			</joblist-page>
+			<joblist-menu show-default="true"></joblist-menu>
+			<joblist-page></joblist-page>
 		</joblist-layout>
 	</body>
 </html>

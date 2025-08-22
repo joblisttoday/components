@@ -192,6 +192,11 @@ export default class JoblistCompany extends HTMLElement {
 			menus.push(this.createLinksMenu(editOptions, company));
 		}
 
+		// Add highlight button if in full mode and not already highlighted
+		if (this.full && !company.is_highlighted) {
+			menus.push(this.createHighlightMenu(company));
+		}
+
 		$wrapper.append(...menus.filter(Boolean));
 		return $wrapper;
 	}
@@ -331,5 +336,20 @@ export default class JoblistCompany extends HTMLElement {
 			`${company.title} is currently highlighted`,
 		);
 		return highlighted;
+	}
+	
+	createHighlightMenu(company) {
+		// Create a simple link to your existing pricing table with company ID parameter
+		const highlightOptions = [
+			{
+				key: "highlight_company",
+				icon: "star", 
+				label: "highlight",
+				href: `https://components.joblist.today/apps/pricing-table/?company=${company.id}`,
+				title: `Highlight ${company.title} for €50 (31 days)`,
+			}
+		];
+
+		return this.createLinksMenu(highlightOptions, company);
 	}
 }
