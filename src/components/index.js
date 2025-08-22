@@ -89,4 +89,9 @@ const componentDefinitions = {
 	"joblist-resume-manager": JoblistResumeManager,
 };
 
+/**
+ * Export component and provider definitions for custom element registration
+ * @exports componentDefinitions - Main component definitions
+ * @exports providerDefinitions - Job board provider definitions
+ */
 export { componentDefinitions, providerDefinitions };

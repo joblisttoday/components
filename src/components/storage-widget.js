@@ -1,16 +1,32 @@
 import { getJoblistStorage } from '../services/storage.js';
 
 /**
- * Storage connection widget component
- * Handles remoteStorage connection UI and status
+ * Storage connection widget component for managing remoteStorage connections.
+ * Provides UI for connecting to remoteStorage providers, displays connection status,
+ * and handles both local and remote storage states with sync capabilities.
+ * 
+ * @class JoblistStorageWidget
+ * @extends HTMLElement
  */
 export default class JoblistStorageWidget extends HTMLElement {
+	/**
+	 * Creates an instance of JoblistStorageWidget.
+	 * Initializes storage connection state properties.
+	 */
 	constructor() {
 		super();
+		/** @type {JoblistStorage|null} The storage service instance */
 		this.storage = null;
+		/** @type {boolean} Current connection status */
 		this.connected = false;
 	}
 	
+	/**
+	 * Lifecycle callback when component is added to DOM.
+	 * Initializes storage service and sets up connection event listeners.
+	 * 
+	 * @async
+	 */
 	async connectedCallback() {
 		this.storage = getJoblistStorage();
 		await this.storage.initialize();
@@ -30,6 +46,11 @@ export default class JoblistStorageWidget extends HTMLElement {
 		this.render();
 	}
 	
+	/**
+	 * Renders the storage widget UI based on connection state.
+	 * Shows connection status and controls, or connection form if disconnected.
+	 * Displays different UI for local vs remote storage connections.
+	 */
 	render() {
 		if (this.connected) {
 			// Check if connected to remote provider or just local storage

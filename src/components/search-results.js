@@ -1,21 +1,59 @@
+/**
+ * Search results display component for rendering job and company search results.
+ * Handles displaying search statistics, empty states, and organized result sections.
+ * Automatically updates when results data changes.
+ * 
+ * @class JoblistSearchResults
+ * @extends HTMLElement
+ */
 export default class JoblistSearchResults extends HTMLElement {
+	/**
+	 * Specifies which attributes to observe for changes.
+	 * 
+	 * @static
+	 * @returns {string[]} Array of attribute names to observe
+	 */
 	static get observedAttributes() {
 		return ["results"];
 	}
+	/**
+	 * Gets the search results data from the results attribute.
+	 * 
+	 * @returns {Object} Parsed search results object or empty object if not set
+	 */
 	get results() {
 		const resultsAttr = this.getAttribute("results");
 		return resultsAttr ? JSON.parse(resultsAttr) : {};
 	}
+	/**
+	 * Lifecycle callback when component is added to DOM.
+	 * Triggers initial rendering of search results.
+	 */
 	connectedCallback() {
 		this._render();
 	}
 
+	/**
+	 * Lifecycle callback when observed attributes change.
+	 * Re-renders the component when results attribute changes.
+	 * 
+	 * @param {string} name - The name of the changed attribute
+	 * @param {string} oldValue - The previous attribute value
+	 * @param {string} newValue - The new attribute value
+	 */
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name === "results") {
 			this._render();
 		}
 	}
 
+	/**
+	 * Renders the search results display.
+	 * Shows search statistics, handles empty states, and displays organized
+	 * sections for companies and jobs.
+	 * 
+	 * @private
+	 */
 	_render() {
 		this.textContent = "";
 		const { companies, jobs, query, searchType, stats, isHighlightedQuery } =

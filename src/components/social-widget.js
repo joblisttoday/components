@@ -54,7 +54,13 @@ export default class JoblistSocialWidget extends HTMLElement {
 		}
 	}
 
-	// Builds a single <li> for a provider
+	/**
+	 * Builds a single list item for a social media provider.
+	 * 
+	 * @param {Object} socialInfo - Social media information object
+	 * @param {string} socialInfo.provider - The social media provider name
+	 * @returns {HTMLLIElement|null} List item element or null if content creation fails
+	 */
 	createSocialListItem(socialInfo) {
 		const { provider } = socialInfo;
 		const li = document.createElement("li");
@@ -68,7 +74,17 @@ export default class JoblistSocialWidget extends HTMLElement {
 		return li;
 	}
 
-	// Builds the inner content for a list item (with embeds when possible)
+	/**
+	 * Builds the inner content for a social media list item with embeds when possible.
+	 * Creates a harmonized preview with provider-specific embedded content.
+	 * 
+	 * @param {Object} socialInfo - Social media information object
+	 * @param {string} socialInfo.provider - The social media provider
+	 * @param {string} socialInfo.id - Provider-specific identifier
+	 * @param {string} socialInfo.url - Full URL to the social media profile
+	 * @param {string} socialInfo.name - Display name for the profile
+	 * @returns {HTMLDivElement|null} Content container element or null if creation fails
+	 */
 	buildSocialContent(socialInfo) {
 		const { provider, id, url, name } = socialInfo;
 
@@ -106,6 +122,15 @@ export default class JoblistSocialWidget extends HTMLElement {
 		return preview;
 	}
 
+	/**
+	 * Creates a consistent header for social media previews.
+	 * 
+	 * @param {string} provider - The social media provider name
+	 * @param {string} id - Provider-specific identifier
+	 * @param {string} url - Full URL to the social media profile
+	 * @param {string} name - Display name for the profile
+	 * @returns {HTMLDivElement} Header element with icon and profile information
+	 */
 	createSocialHeader(provider, id, url, name) {
 		const header = document.createElement("div");
 		header.className = "social-preview-header";
@@ -174,6 +199,14 @@ export default class JoblistSocialWidget extends HTMLElement {
 		return header;
 	}
 
+	/**
+	 * Adds Wikipedia content to the social media preview.
+	 * Fetches Wikipedia page summary and thumbnail using the REST API.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} pageTitle - Wikipedia page title
+	 * @param {string} url - Full Wikipedia URL
+	 */
 	addWikipediaContent(container, pageTitle, url) {
 		// Show loading state
 		const loading = document.createElement("p");
@@ -234,6 +267,14 @@ export default class JoblistSocialWidget extends HTMLElement {
 			});
 	}
 
+	/**
+	 * Adds YouTube channel content to the social media preview.
+	 * Embeds YouTube channel content or shows description fallback.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} channelId - YouTube channel identifier
+	 * @param {string} url - Full YouTube channel URL
+	 */
 	addYouTubeContent(container, channelId, url) {
 		// Add YouTube embed iframe (no API key required for embedding)
 		if (
@@ -274,6 +315,14 @@ export default class JoblistSocialWidget extends HTMLElement {
 		}
 	}
 
+	/**
+	 * Adds Twitter timeline content to the social media preview.
+	 * Embeds Twitter timeline widget using the Twitter widgets API.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} url - Full Twitter profile URL
+	 * @param {string} username - Twitter username
+	 */
 	addTwitterContent(container, url, username) {
 		// Add Twitter timeline embed (public, no API key required)
 		const embedContainer = document.createElement("div");
@@ -312,6 +361,14 @@ export default class JoblistSocialWidget extends HTMLElement {
 		}
 	}
 
+	/**
+	 * Adds Instagram profile content to the social media preview.
+	 * Attempts to embed Instagram profile directly.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} url - Full Instagram profile URL
+	 * @param {string} username - Instagram username
+	 */
 	addInstagramContent(container, url, username) {
 		const loading = document.createElement("p");
 		loading.className = "loading-text";
@@ -322,6 +379,13 @@ export default class JoblistSocialWidget extends HTMLElement {
 		this.tryInstagramProfileEmbed(container, url, username);
 	}
 
+	/**
+	 * Attempts to embed an Instagram profile using iframe.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} url - Full Instagram profile URL
+	 * @param {string} username - Instagram username
+	 */
 	tryInstagramProfileEmbed(container, url, username) {
 		// Try direct profile iframe embed first (works for many public profiles)
 		const embedUrl = url.substr(-1) === "/" ? `${url}embed/` : `${url}/embed/`;
@@ -348,6 +412,13 @@ export default class JoblistSocialWidget extends HTMLElement {
 		container.appendChild(iframeContainer);
 	}
 
+	/**
+	 * Attempts to use Instagram oEmbed API as fallback.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} url - Full Instagram profile URL
+	 * @param {string} username - Instagram username
+	 */
 	tryInstagramOEmbed(container, url, username) {
 		// Clear existing content
 		container.replaceChildren();
@@ -401,6 +472,12 @@ export default class JoblistSocialWidget extends HTMLElement {
 			});
 	}
 
+	/**
+	 * Creates a simple Instagram preview as final fallback.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} username - Instagram username
+	 */
 	createSimpleInstagramPreview(container, username) {
 		const simplePreview = document.createElement("div");
 		simplePreview.className = "instagram-simple-preview";
@@ -427,6 +504,14 @@ export default class JoblistSocialWidget extends HTMLElement {
 		container.appendChild(simplePreview);
 	}
 
+	/**
+	 * Adds Facebook page content to the social media preview.
+	 * Attempts to embed Facebook page using the page plugin.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} url - Full Facebook page URL
+	 * @param {string} pageName - Facebook page name
+	 */
 	addFacebookContent(container, url, pageName) {
 		const loading = document.createElement("p");
 		loading.className = "loading-text";
@@ -437,6 +522,14 @@ export default class JoblistSocialWidget extends HTMLElement {
 		this.tryFacebookPageEmbed(container, url, pageName);
 	}
 
+	/**
+	 * Adds LinkedIn profile content to the social media preview.
+	 * LinkedIn doesn't allow easy embedding, so shows simple description.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} url - Full LinkedIn profile URL
+	 * @param {string} username - LinkedIn username
+	 */
 	addLinkedInContent(container, url, username) {
 		// LinkedIn doesn't allow easy embedding, so show simple description
 		const description = document.createElement("p");
@@ -445,6 +538,14 @@ export default class JoblistSocialWidget extends HTMLElement {
 		container.appendChild(description);
 	}
 
+	/**
+	 * Attempts to embed a Facebook page using the page plugin iframe.
+	 * Includes timeout fallback to simple preview if embedding fails.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} url - Full Facebook page URL
+	 * @param {string} pageName - Facebook page name
+	 */
 	tryFacebookPageEmbed(container, url, pageName) {
 		// Use Facebook's page plugin embed URL (no SDK dependencies)
 		const encodedUrl = encodeURIComponent(url);
@@ -492,6 +593,12 @@ export default class JoblistSocialWidget extends HTMLElement {
 		container.appendChild(iframeContainer);
 	}
 
+	/**
+	 * Creates a simple Facebook preview as fallback.
+	 * 
+	 * @param {HTMLElement} container - Container element to add content to
+	 * @param {string} pageName - Facebook page name
+	 */
 	createSimpleFacebookPreview(container, pageName) {
 		const simplePreview = document.createElement("div");
 		simplePreview.className = "facebook-simple-preview";

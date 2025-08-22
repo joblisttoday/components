@@ -1,24 +1,41 @@
 import { getJoblistStorage } from '../services/storage.js';
 
 /**
- * Favorite button component
- * Add/remove items from favorites with a star button
+ * Custom web component for favoriting/unfavoriting companies and jobs
+ * @class JoblistFavoriteButton
+ * @extends HTMLElement
  */
 export default class JoblistFavoriteButton extends HTMLElement {
+	/**
+	 * Constructor to initialize component state
+	 */
 	constructor() {
 		super();
+		/** @type {Object|null} Storage service instance */
 		this.storage = null;
+		/** @type {boolean} Current favorite status */
 		this.isFavorited = false;
 	}
 	
+	/**
+	 * Gets the item ID to favorite
+	 * @returns {string} The item ID
+	 */
 	get itemId() {
 		return this.getAttribute('item-id');
 	}
 	
+	/**
+	 * Gets the item type (company or job)
+	 * @returns {string} The item type
+	 */
 	get itemType() {
 		return this.getAttribute('item-type'); // 'company' or 'job'
 	}
 	
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	async connectedCallback() {
 		if (!this.itemId || !this.itemType) {
 			console.warn('FavoriteButton requires item-id and item-type attributes');
@@ -40,6 +57,9 @@ export default class JoblistFavoriteButton extends HTMLElement {
 		this.addEventListener('click', this.handleClick.bind(this));
 	}
 	
+	/**
+	 * Checks if the current item is favorited
+	 */
 	async checkFavoriteStatus() {
 		// Prevent multiple simultaneous checks
 		if (this.checkingStatus) return;
@@ -65,6 +85,10 @@ export default class JoblistFavoriteButton extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Handles click events to toggle favorite status
+	 * @param {Event} e - Click event
+	 */
 	async handleClick(e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -99,6 +123,9 @@ export default class JoblistFavoriteButton extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Renders the favorite button
+	 */
 	render() {
 		this.innerHTML = `
 			<button type="button" class="favorite-btn" title="${this.isFavorited ? 'Remove from favorites' : 'Add to favorites'}">
@@ -109,6 +136,9 @@ export default class JoblistFavoriteButton extends HTMLElement {
 		
 	}
 	
+	/**
+	 * Updates button appearance based on favorite status
+	 */
 	updateButton() {
 		const btn = this.querySelector('.favorite-btn');
 		const icon = this.querySelector('.favorite-icon');
@@ -122,6 +152,11 @@ export default class JoblistFavoriteButton extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Emits custom events
+	 * @param {string} event - Event name
+	 * @param {Object} data - Event data
+	 */
 	_emit(event, data) {
 		this.dispatchEvent(new CustomEvent(event, {
 			detail: data,

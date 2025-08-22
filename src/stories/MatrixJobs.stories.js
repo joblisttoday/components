@@ -1,12 +1,10 @@
 import { html } from 'lit-html';
-import sinon from 'sinon';
 import '../components/matrix-jobs.js';
 import mwc from '../libs/mwc.js';
-import { expect } from '@storybook/test';
 
-// Mock the mwc library
-sinon.stub(mwc, 'componentDefinitions').value({
-  'matrix-room': class MatrixRoom extends HTMLElement {
+// Mock the mwc library by directly setting componentDefinitions
+if (!mwc.componentDefinitions['matrix-room']) {
+  mwc.componentDefinitions['matrix-room'] = class MatrixRoom extends HTMLElement {
     connectedCallback() {
       let content = 'Mock Matrix Room';
       if (this.hasAttribute('filter')) {
@@ -24,8 +22,8 @@ sinon.stub(mwc, 'componentDefinitions').value({
       
       this.textContent = content;
     }
-  },
-});
+  };
+}
 
 export default {
   title: 'Components/Matrix/MatrixJobs',

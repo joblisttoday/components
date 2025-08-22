@@ -1,18 +1,38 @@
 import { getJoblistStorage } from '../services/storage.js';
 
 /**
- * Cover letter manager component
- * Manage multiple cover letter variations
+ * Resume/Cover letter manager component for managing multiple cover letter variations.
+ * Provides a comprehensive interface for creating, editing, saving, and deleting different
+ * cover letter versions that can be synchronized across devices via remoteStorage.
+ * 
+ * @class JoblistResumeManager
+ * @extends HTMLElement
+ * @fires JoblistResumeManager#cover-letter-saved - Emitted when a cover letter is successfully saved
+ * @fires JoblistResumeManager#cover-letter-deleted - Emitted when a cover letter is successfully deleted
  */
 export default class JoblistResumeManager extends HTMLElement {
+	/**
+	 * Creates an instance of JoblistResumeManager.
+	 * Initializes the component with default state values.
+	 */
 	constructor() {
 		super();
+		/** @type {JoblistStorage|null} The storage service instance */
 		this.storage = null;
+		/** @type {Object<string, string>} Collection of cover letters keyed by name */
 		this.coverLetters = {};
+		/** @type {string} Currently selected cover letter name */
 		this.currentCoverLetter = 'default';
+		/** @type {boolean} Whether the component is in editing mode */
 		this.editing = false;
 	}
 	
+	/**
+	 * Lifecycle callback when component is added to DOM.
+	 * Initializes storage connection and loads existing cover letters.
+	 * 
+	 * @async
+	 */
 	async connectedCallback() {
 		this.storage = getJoblistStorage();
 		await this.storage.initialize();
@@ -30,6 +50,12 @@ export default class JoblistResumeManager extends HTMLElement {
 		this.render();
 	}
 	
+	/**
+	 * Loads all cover letters from storage.
+	 * If storage is not available, initializes with default empty cover letter.
+	 * 
+	 * @async
+	 */
 	async loadCoverLetters() {
 		try {
 			this.coverLetters = await this.storage.getCoverLetters();
@@ -42,6 +68,14 @@ export default class JoblistResumeManager extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Saves a cover letter to storage and updates local state.
+	 * Emits a 'cover-letter-saved' event on successful save.
+	 * 
+	 * @async
+	 * @param {string} name - The name/identifier for the cover letter
+	 * @param {string} content - The cover letter content
+	 */
 	async saveCoverLetter(name, content) {
 		try {
 			await this.storage.setCoverLetter(name, content);
@@ -53,6 +87,14 @@ export default class JoblistResumeManager extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Deletes a cover letter from storage and local state.
+	 * Cannot delete the 'default' cover letter. Emits a 'cover-letter-deleted' event on success.
+	 * 
+	 * @async
+	 * @param {string} name - The name of the cover letter to delete
+	 * @returns {void} Returns early if attempting to delete 'default'
+	 */
 	async deleteCoverLetter(name) {
 		if (name === 'default') return; // Can't delete default
 		
@@ -69,6 +111,11 @@ export default class JoblistResumeManager extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Creates a new cover letter variation.
+	 * Prompts the user for a name and creates an empty cover letter.
+	 * Automatically switches to edit mode for the new cover letter.
+	 */
 	createNewCoverLetter() {
 		const name = prompt('Enter name for new cover letter variation:');
 		if (name && name.trim() && !this.coverLetters[name.trim()]) {
@@ -82,12 +129,22 @@ export default class JoblistResumeManager extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Handles selection of a different cover letter.
+	 * Switches the current cover letter and exits edit mode.
+	 * 
+	 * @param {string} name - The name of the cover letter to select
+	 */
 	handleCoverLetterSelect(name) {
 		this.currentCoverLetter = name;
 		this.editing = false;
 		this.render();
 	}
 	
+	/**
+	 * Enters edit mode for the current cover letter.
+	 * Focuses the textarea after rendering.
+	 */
 	handleEdit() {
 		this.editing = true;
 		this.render();
@@ -98,6 +155,10 @@ export default class JoblistResumeManager extends HTMLElement {
 		}, 0);
 	}
 	
+	/**
+	 * Saves the current cover letter content and exits edit mode.
+	 * Gets content from the textarea element.
+	 */
 	handleSave() {
 		const textarea = this.querySelector('.cover-letter-textarea');
 		if (textarea) {
@@ -106,11 +167,18 @@ export default class JoblistResumeManager extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Cancels editing and reverts to display mode without saving changes.
+	 */
 	handleCancel() {
 		this.editing = false;
 		this.render();
 	}
 	
+	/**
+	 * Renders the component UI based on current state.
+	 * Shows different interfaces for connected/disconnected storage and edit/display modes.
+	 */
 	render() {
 		if (!this.storage.isConnected()) {
 			this.innerHTML = `
@@ -212,6 +280,13 @@ export default class JoblistResumeManager extends HTMLElement {
 		
 	}
 	
+	/**
+	 * Emits a custom event with the provided data.
+	 * 
+	 * @private
+	 * @param {string} event - The event name to emit
+	 * @param {Object} data - The data to include in the event detail
+	 */
 	_emit(event, data) {
 		this.dispatchEvent(new CustomEvent(event, {
 			detail: data,

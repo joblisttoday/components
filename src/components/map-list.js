@@ -1,3 +1,7 @@
+/**
+ * Builds the shadow DOM template for the map component
+ * @returns {HTMLTemplateElement} Template with styles and structure
+ */
 const buildTemplate = () => {
 	const template = document.createElement("template");
 
@@ -41,22 +45,48 @@ const buildTemplate = () => {
 	return template;
 };
 
+/**
+ * Custom web component for displaying interactive Leaflet maps with job markers
+ * @class JoblistMapList
+ * @extends HTMLElement
+ */
 export default class JoblistMapList extends HTMLElement {
+	/**
+	 * Gets the map longitude coordinate
+	 * @returns {number} Longitude value, defaults to 10.09
+	 */
 	get longitude() {
 		return parseFloat(this.getAttribute("longitude") || "10.09");
 	}
+	
+	/**
+	 * Gets the map latitude coordinate
+	 * @returns {number} Latitude value, defaults to 51.505
+	 */
 	get latitude() {
 		return parseFloat(this.getAttribute("latitude") || "51.505");
 	}
+	
+	/**
+	 * Gets the map zoom level
+	 * @returns {number} Zoom level, defaults to 4
+	 */
 	get zoom() {
 		return parseFloat(this.getAttribute("latitude") || "4");
 	}
 
-	/* used to build the url of the marker link */
+	/**
+	 * Gets the origin URL pattern for building marker links
+	 * @returns {string} Origin URL with placeholder
+	 */
 	get origin() {
 		return this.getAttribute("origin") || "https://joblist.today/{}";
 	}
 
+	/**
+	 * Gets the markers data from attribute
+	 * @returns {Array} Array of marker objects
+	 */
 	get markers() {
 		let markers = [];
 		try {
@@ -67,6 +97,10 @@ export default class JoblistMapList extends HTMLElement {
 		return markers;
 	}
 
+	/**
+	 * Gets the jobs data from attribute
+	 * @returns {Array} Array of job objects
+	 */
 	get jobs() {
 		let jobs = [];
 		try {
@@ -80,18 +114,33 @@ export default class JoblistMapList extends HTMLElement {
 		return jobs;
 	}
 
-	/* should have been inserted with `createLeafletScripts` */
+	/**
+	 * Checks if Leaflet dependencies are loaded
+	 * @returns {boolean} True if Leaflet is available
+	 */
 	get checkDependencies() {
 		return typeof this.leaflet !== "undefined";
 	}
 
+	/**
+	 * Gets the Leaflet library instance from window
+	 * @returns {Object} Leaflet library object
+	 */
 	get leaflet() {
 		return window.L;
 	}
 
+	/**
+	 * Observed attributes for the component
+	 * @returns {string[]} Array of attribute names to observe
+	 */
 	static get observedAttributes() {
 		return ["markers", "jobs", "longitude", "latitude", "zoom"];
 	}
+	
+	/**
+	 * Called when observed attributes change
+	 */
 	attributeChangedCallback() {
 		/* restart leaflet js if any observed attr change */
 		if (this.checkDependencies) {
@@ -99,12 +148,18 @@ export default class JoblistMapList extends HTMLElement {
 		}
 	}
 
+	/**
+	 * Constructor to initialize shadow DOM
+	 */
 	constructor() {
 		super();
 		this.attachShadow({ mode: "open" });
 		this.shadowRoot.appendChild(buildTemplate().content.cloneNode(true));
 	}
 
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	async connectedCallback() {
 		this.$component = this.shadowRoot.querySelector("joblist-leaflet");
 
@@ -118,6 +173,11 @@ export default class JoblistMapList extends HTMLElement {
 		}
 	}
 
+	/**
+	 * Inserts Leaflet CSS styles into the shadow DOM context
+	 * @param {HTMLElement} $context - DOM context to insert styles
+	 * @returns {Promise<boolean>} Promise resolving to success status
+	 */
 	async insertStyles($context) {
 		/* We insert the styles with js, as otherwise the shadow dom makes
 			 global styles innefetive on our component
@@ -147,6 +207,11 @@ export default class JoblistMapList extends HTMLElement {
 		return true;
 	}
 
+	/**
+	 * Initializes the Leaflet map instance
+	 * @param {HTMLElement} $el - Element to initialize map on
+	 * @returns {Object} Leaflet map instance
+	 */
 	initLeaflet = ($el) => {
 		const map = this.leaflet
 			.map($el)
@@ -168,6 +233,10 @@ export default class JoblistMapList extends HTMLElement {
 		return map;
 	};
 
+	/**
+	 * Renders markers layer on the map
+	 * @param {Array} markers - Array of marker data objects
+	 */
 	renderMarkersLayer = (markers) => {
 		if (!markers || !this.map) return;
 
@@ -241,7 +310,11 @@ export default class JoblistMapList extends HTMLElement {
 		}
 	};
 
-	/* build a URL from the widget origin and marker id */
+	/**
+	 * Builds a URL from the widget origin and marker id
+	 * @param {string} id - Marker ID
+	 * @returns {string} Complete URL for the marker
+	 */
 	buildOrigin(id) {
 		if (this.origin.indexOf("{}") < 0) {
 			return `${this.origin}/${id}`;
@@ -251,7 +324,10 @@ export default class JoblistMapList extends HTMLElement {
 		}
 	}
 
-	/* filter jobs by company and emit event */
+	/**
+	 * Filters jobs by company and emits custom event
+	 * @param {string} companyId - Company ID to filter by
+	 */
 	filterJobsByCompany(companyId) {
 		const jobs = this.jobs;
 		const filteredJobs = jobs.filter((job) => job.company_id === companyId);

@@ -11,7 +11,7 @@ export default {
 };
 
 const Template = ({ job }) => html`
-  <joblist-job .job=${job}></joblist-job>
+  <joblist-job job=${JSON.stringify(job)}></joblist-job>
 `;
 
 export const Default = Template.bind({});

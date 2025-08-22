@@ -2,19 +2,40 @@ import { JoblistDuckDBSDK } from "../libs/sdk-duckdb.js";
 import { JoblistApiSDK } from "../libs/sdk-api.js";
 import heatmapCompany from "../plots/heatmap.js";
 
+/**
+ * Custom web component for displaying job posting heatmaps
+ * @class JoblistHeatmap
+ * @extends HTMLElement
+ */
 export default class JoblistHeatmap extends HTMLElement {
+	/**
+	 * Observed attributes for the component
+	 * @returns {string[]} Array of attribute names to observe
+	 */
 	static get observedAttributes() {
 		return ["company-id", "days", "database-url", "api-url"];
 	}
 
+	/**
+	 * Gets the company ID for filtering heatmap data
+	 * @returns {string} Company ID
+	 */
 	get companyId() {
 		return this.getAttribute("company-id");
 	}
 
+	/**
+	 * Gets the number of days to include in heatmap
+	 * @returns {number} Number of days, defaults to 365
+	 */
 	get days() {
 		return Number(this.getAttribute("days")) || 365;
 	}
 
+	/**
+	 * Gets the DuckDB database URL
+	 * @returns {string} Database URL
+	 */
 	get databaseUrl() {
 		return (
 			this.getAttribute("database-url") ||
@@ -22,16 +43,30 @@ export default class JoblistHeatmap extends HTMLElement {
 		);
 	}
 
+	/**
+	 * Gets the API URL
+	 * @returns {string} API URL
+	 */
 	get apiUrl() {
 		// Default to API for now; allows working heatmap without explicit attribute
 		return this.getAttribute("api-url") || "https://api.joblist.today";
 	}
 
+	/**
+	 * Constructor to initialize abort controller
+	 */
 	constructor() {
 		super();
+		/** @type {AbortController|null} Controller for aborting requests */
 		this.abortController = null;
 	}
 
+	/**
+	 * Called when observed attributes change
+	 * @param {string} name - Attribute name
+	 * @param {string} oldVal - Old attribute value
+	 * @param {string} val - New attribute value
+	 */
 	attributeChangedCallback(name, oldVal, val) {
 		if (this.abortController) {
 			this.abortController.abort(); // Abort previous request if exists
@@ -39,9 +74,16 @@ export default class JoblistHeatmap extends HTMLElement {
 		this.init();
 	}
 
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	async connectedCallback() {
 		await this.init();
 	}
+	
+	/**
+	 * Scrolls the heatmap to the end (most recent data)
+	 */
 	scrollToEnd() {
 		const $figure = this.querySelector("figure");
 		if ($figure) {
@@ -51,6 +93,9 @@ export default class JoblistHeatmap extends HTMLElement {
 		}
 	}
 
+	/**
+	 * Initializes the heatmap by fetching data and rendering
+	 */
 	async init() {
 		if (this.days) {
 			const controller = new AbortController();
@@ -87,6 +132,9 @@ export default class JoblistHeatmap extends HTMLElement {
 		this.render();
 	}
 
+	/**
+	 * Renders the heatmap visualization
+	 */
 	render() {
 		if (this.heatmap) {
 			// Check if heatmap has any data (any day with total > 0)

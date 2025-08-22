@@ -1,3 +1,7 @@
+/**
+ * SVG content for the Joblist favicon
+ * @const {string}
+ */
 export const JOBLIST_FAVICON_SVG = `
 	<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
 			 width="480.000000pt" height="480.000000pt" viewBox="0 0 480.000000 480.000000"
@@ -44,21 +48,48 @@ export const JOBLIST_FAVICON_SVG = `
 const template = document.createElement("template");
 template.innerHTML = JOBLIST_FAVICON_SVG;
 
+/**
+ * Custom web component for displaying the Joblist favicon with customizable color
+ * @class JoblistFavicon
+ * @extends HTMLElement
+ */
 export default class JoblistFavicon extends HTMLElement {
+	/**
+	 * Gets the favicon color, defaults to random color
+	 * @returns {string} Hex color string
+	 */
 	get color() {
 		return this.getAttribute("color") || this.randomColor;
 	}
+	
+	/**
+	 * Generates a random hex color
+	 * @returns {string} Random hex color string
+	 */
 	get randomColor() {
 		return `#${(0x1000000 + Math.random() * 0xffffff).toString(16).substr(1, 6)}`
 	}
+	
+	/**
+	 * Gets the href attribute for wrapping in a link
+	 * @returns {string} The href URL
+	 */
 	get href() {
 		return this.getAttribute("href");
 	}
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	connectedCallback() {
 		this.style.setProperty("--c-svg", this.color);
 		const svg = template.content.cloneNode(true);
 		this.render(svg);
 	}
+	
+	/**
+	 * Renders the favicon, optionally wrapped in a link
+	 * @param {DocumentFragment} svg - Cloned SVG template content
+	 */
 	render(svg) {
 		if (this.href) {
 			const anchor = this.createAnchor(this.href);
@@ -68,6 +99,11 @@ export default class JoblistFavicon extends HTMLElement {
 			this.replaceChildren(svg);
 		}
 	}
+	/**
+	 * Creates anchor element for wrapping the favicon
+	 * @param {string} href - URL for the anchor
+	 * @returns {HTMLElement} Anchor element
+	 */
 	createAnchor(href) {
 		const anchor = document.createElement("a");
 		anchor.setAttribute("href", href);

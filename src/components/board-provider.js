@@ -8,16 +8,30 @@ import leverApi from "../providers/lever.js";
 import workableApi from "../providers/workable.js";
 import matrixApi from "../providers/matrix.js";
 
-/* a parent class to be extended by each provider */
+/**
+ * Base class for job board provider components with search and filtering functionality
+ * @class JoblistBoardProvider
+ * @extends HTMLElement
+ */
 export default class JoblistBoardProvider extends HTMLElement {
+	/** @type {Array} Array of job objects */
 	model = [];
+	/** @type {Array} Filtered array of job objects */
 	filteredModel = [];
+	/** @type {string} Current search term */
 	searchTerm = "";
 
+	/**
+	 * Abstract method to get jobs from the provider
+	 * @returns {Promise<Array>} Promise resolving to array of job objects
+	 */
 	getJobs = async () => {
 		console.log("getJobs method not implemented for this job board provider");
 	};
 
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	async connectedCallback() {
 		this.hostname = this.getAttribute("hostname");
 		if (!this.hostname) return;
@@ -41,6 +55,10 @@ export default class JoblistBoardProvider extends HTMLElement {
 		this.render();
 	}
 
+	/**
+	 * Filters jobs based on search term with fuzzy matching
+	 * @param {string} searchTerm - The search term to filter by
+	 */
 	filterJobs(searchTerm) {
 		if (!searchTerm.trim()) {
 			this.filteredModel = [...this.model];
@@ -64,6 +82,12 @@ export default class JoblistBoardProvider extends HTMLElement {
 		});
 	}
 
+	/**
+	 * Performs fuzzy matching between text and pattern
+	 * @param {string} text - The text to search in
+	 * @param {string} pattern - The pattern to match
+	 * @returns {boolean} True if pattern matches text
+	 */
 	fuzzyMatch(text, pattern) {
 		// Direct substring match (fastest)
 		if (text.includes(pattern)) return true;
@@ -104,6 +128,12 @@ export default class JoblistBoardProvider extends HTMLElement {
 		return matchedWords >= Math.ceil(patternWords.length * 0.7);
 	}
 
+	/**
+	 * Calculates Levenshtein distance between two strings
+	 * @param {string} a - First string
+	 * @param {string} b - Second string
+	 * @returns {number} Levenshtein distance
+	 */
 	simpleLevenshtein(a, b) {
 		if (a.length === 0) return b.length;
 		if (b.length === 0) return a.length;
@@ -127,6 +157,10 @@ export default class JoblistBoardProvider extends HTMLElement {
 		return matrix[a.length][b.length];
 	}
 
+	/**
+	 * Creates search input and results count elements
+	 * @returns {HTMLElement} Search container element
+	 */
 	createSearchInput() {
 		const $searchContainer = document.createElement("joblist-board-search");
 
@@ -154,6 +188,9 @@ export default class JoblistBoardProvider extends HTMLElement {
 		return $searchContainer;
 	}
 
+	/**
+	 * Renders the filtered job list
+	 */
 	renderJobs() {
 		const $jobsContainer = this.querySelector("joblist-board-jobs");
 		if (!$jobsContainer) return;
@@ -190,6 +227,9 @@ export default class JoblistBoardProvider extends HTMLElement {
 		}
 	}
 
+	/**
+	 * Renders the entire component with search and job list
+	 */
 	render() {
 		const $doms = [];
 		if (this.error) {
@@ -211,11 +251,25 @@ export default class JoblistBoardProvider extends HTMLElement {
 		}
 		this.replaceChildren(...$doms);
 	}
+	/**
+	 * Creates error element for display
+	 * @param {Object} error - Error object to display
+	 * @returns {HTMLElement} Error element
+	 */
 	createError(error) {
 		const $error = document.createElement("joblist-error");
 		$error.setAttribute("error", JSON.stringify(error));
 		return $error;
 	}
+	/**
+	 * Creates a job element from job data
+	 * @param {Object} param0 - Job data object destructured
+	 * @param {string} param0.name - Job name
+	 * @param {string} param0.url - Job URL
+	 * @param {string} param0.location - Job location
+	 * @param {string} param0.description - Job description
+	 * @returns {HTMLElement} Job element
+	 */
 	createJob({ name, url, location, description }) {
 		if (name && url) {
 			const $newJobItem = document.createElement("joblist-board-job");
@@ -234,6 +288,12 @@ export default class JoblistBoardProvider extends HTMLElement {
 		}
 	}
 
+	/**
+	 * Creates unique job ID from URL and title
+	 * @param {string} url - Job URL
+	 * @param {string} title - Job title
+	 * @returns {string} Unique job ID
+	 */
 	createJobId(url, title) {
 		// Create a unique ID based on URL and title  
 		// This ensures consistency across sessions for the same job
@@ -246,45 +306,91 @@ export default class JoblistBoardProvider extends HTMLElement {
 	}
 }
 
+/**
+ * Personio job board provider component
+ * @class JoblistBoardPersonio
+ * @extends JoblistBoardProvider
+ */
 class JoblistBoardPersonio extends JoblistBoardProvider {
 	id = personioApi.id;
 	getJobs = personioApi.getJobs;
 }
 
+/**
+ * Recruitee job board provider component
+ * @class JoblistBoardRecruitee
+ * @extends JoblistBoardProvider
+ */
 class JoblistBoardRecruitee extends JoblistBoardProvider {
 	id = recruiteeApi.id;
 	getJobs = recruiteeApi.getJobs;
 }
 
+/**
+ * SmartRecruiters job board provider component
+ * @class JoblistBoardSmartrecruiters
+ * @extends JoblistBoardProvider
+ */
 class JoblistBoardSmartrecruiters extends JoblistBoardProvider {
 	id = smartrecruitersApi.id;
 	getJobs = smartrecruitersApi.getJobs;
 }
 
+/**
+ * Greenhouse job board provider component
+ * @class JoblistBoardGreenhouse
+ * @extends JoblistBoardProvider
+ */
 class JoblistBoardGreenhouse extends JoblistBoardProvider {
 	id = greenhouseApi.id;
 	getJobs = greenhouseApi.getJobs;
 }
 
+/**
+ * Ashby job board provider component
+ * @class JoblistBoardAshby
+ * @extends JoblistBoardProvider
+ */
 class JoblistBoardAshby extends JoblistBoardProvider {
 	id = ashbyApi.id;
 	getJobs = ashbyApi.getJobs;
 }
 
+/**
+ * Lever job board provider component
+ * @class JoblistBoardLever
+ * @extends JoblistBoardProvider
+ */
 class JoblistBoardLever extends JoblistBoardProvider {
 	id = leverApi.id;
 	getJobs = leverApi.getJobs;
 }
 
+/**
+ * Workable job board provider component
+ * @class JoblistBoardWorkable
+ * @extends JoblistBoardProvider
+ */
 class JoblistBoardWorkable extends JoblistBoardProvider {
 	id = workableApi.id;
 	getJobs = workableApi.getJobs;
 }
+
+/**
+ * Matrix job board provider component
+ * @class JoblistBoardMatrix
+ * @extends JoblistBoardProvider
+ */
 class JoblistBoardMatrix extends JoblistBoardProvider {
 	id = matrixApi.id;
 	getJobs = matrixApi.getJobs;
 }
 
+/**
+ * Rippling job board provider component
+ * @class JoblistBoardRippling
+ * @extends JoblistBoardProvider
+ */
 class JoblistBoardRippling extends JoblistBoardProvider {
 	id = ripplingApi.id;
 	getJobs = ripplingApi.getJobs;

@@ -1,31 +1,54 @@
 import { getJoblistStorage } from '../services/storage.js';
 
 /**
- * Notes editor component
- * Allows users to write and save notes about companies or jobs
+ * Custom web component for editing and saving notes about companies or jobs
+ * @class JoblistNotesEditor
+ * @extends HTMLElement
  */
 export default class JoblistNotesEditor extends HTMLElement {
+	/**
+	 * Constructor to initialize component state
+	 */
 	constructor() {
 		super();
+		/** @type {Object|null} Storage service instance */
 		this.storage = null;
+		/** @type {string} Current note content */
 		this.noteContent = '';
+		/** @type {boolean} Whether currently saving */
 		this.saving = false;
+		/** @type {number|null} Timeout ID for auto-save */
 		this.saveTimeout = null;
 	}
 	
+	/**
+	 * Gets the item ID to save notes for
+	 * @returns {string} Item ID
+	 */
 	get itemId() {
 		return this.getAttribute('item-id');
 	}
 	
+	/**
+	 * Gets the item type (company or job)
+	 * @returns {string} Item type
+	 */
 	get itemType() {
 		return this.getAttribute('item-type'); // 'company' or 'job'
 	}
 	
+	/**
+	 * Gets the placeholder text for the textarea
+	 * @returns {string} Placeholder text
+	 */
 	get placeholder() {
 		const type = this.itemType === 'company' ? 'company' : 'job application';
 		return this.getAttribute('placeholder') || `Write notes about this ${type}...`;
 	}
 	
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	async connectedCallback() {
 		if (!this.itemId || !this.itemType) {
 			console.warn('NotesEditor requires item-id and item-type attributes');
@@ -49,6 +72,9 @@ export default class JoblistNotesEditor extends HTMLElement {
 		this.render();
 	}
 	
+	/**
+	 * Loads existing note from storage
+	 */
 	async loadNote() {
 		// Prevent loading if already in progress
 		if (this.loadingNote) return;
@@ -68,6 +94,10 @@ export default class JoblistNotesEditor extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Saves note content to storage
+	 * @param {string} content - Note content to save
+	 */
 	async saveNote(content) {
 		if (this.saving) return;
 		
@@ -98,6 +128,10 @@ export default class JoblistNotesEditor extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Handles textarea input events with auto-save
+	 * @param {Event} e - Input event
+	 */
 	handleInput(e) {
 		const content = e.target.value;
 		
@@ -117,6 +151,10 @@ export default class JoblistNotesEditor extends HTMLElement {
 		}, 1000);
 	}
 	
+	/**
+	 * Updates the save status display
+	 * @param {string} status - Status text to display
+	 */
 	updateSaveStatus(status) {
 		const statusElement = this.querySelector('.save-status');
 		if (statusElement) {
@@ -125,6 +163,9 @@ export default class JoblistNotesEditor extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Renders the notes editor interface
+	 */
 	render() {
 		// Don't re-render if already rendered and content hasn't changed
 		if (this.lastRenderedContent === this.noteContent && this.querySelector('.notes-editor')) {
@@ -170,6 +211,11 @@ export default class JoblistNotesEditor extends HTMLElement {
 		
 	}
 	
+	/**
+	 * Emits custom events
+	 * @param {string} event - Event name
+	 * @param {Object} data - Event data
+	 */
 	_emit(event, data) {
 		this.dispatchEvent(new CustomEvent(event, {
 			detail: data,

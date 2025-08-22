@@ -1,18 +1,46 @@
 import socialSDK from "../libs/sdk-social.js";
 
+/**
+ * Social media link component that renders enhanced social media links with optional embeds.
+ * Fetches metadata from social platforms and can display embedded content when supported.
+ * 
+ * @class JoblistSocialLink
+ * @extends HTMLElement
+ */
 export default class JoblistSocialLink extends HTMLElement {
+  /**
+   * Gets the social media URL to display.
+   * 
+   * @returns {string} The URL from the url attribute
+   */
   get url() {
     return this.getAttribute("url");
   }
   
+  /**
+   * Gets the social media provider name.
+   * 
+   * @returns {string} The provider name from the provider attribute
+   */
   get provider() {
     return this.getAttribute("provider");
   }
   
+  /**
+   * Gets whether to show embedded content.
+   * 
+   * @returns {boolean} True if show-embed attribute is "true"
+   */
   get showEmbed() {
     return this.getAttribute("show-embed") === "true";
   }
 
+  /**
+   * Lifecycle callback when component is added to DOM.
+   * Fetches social media metadata and renders the link.
+   * 
+   * @async
+   */
   async connectedCallback() {
     if (this.url) {
       this.socialInfo = await socialSDK.fetchBasicInfo(this.url);
@@ -20,6 +48,10 @@ export default class JoblistSocialLink extends HTMLElement {
     this.render();
   }
 
+  /**
+   * Renders the social link with optional embedded content.
+   * Shows enhanced link with metadata or falls back to simple link.
+   */
   render() {
     if (!this.socialInfo) {
       this.innerHTML = this.renderSimpleLink();
@@ -71,6 +103,11 @@ export default class JoblistSocialLink extends HTMLElement {
     this.appendChild(wrapper);
   }
 
+  /**
+   * Renders a simple link fallback when social info is not available.
+   * 
+   * @returns {string} HTML string for the simple link
+   */
   renderSimpleLink() {
     if (!this.url) return "";
     

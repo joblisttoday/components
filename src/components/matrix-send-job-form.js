@@ -1,3 +1,7 @@
+/**
+ * HTML template for job posting form
+ * @const {HTMLTemplateElement}
+ */
 export const formTemplate = document.createElement("template");
 formTemplate.innerHTML = `
 	<form>
@@ -40,6 +44,10 @@ formTemplate.innerHTML = `
 	</form>
 `;
 
+/**
+ * Supported OEmbed providers
+ * @const {Object}
+ */
 export const PROVIDERS = {
 	"www.youtube.com": "youtube",
 	"youtube.com": "youtube",
@@ -48,19 +56,40 @@ export const PROVIDERS = {
 	"vimeo.com": "vimeo",
 };
 
+/**
+ * OEmbed API endpoints for each provider
+ * @const {Object}
+ */
 const OEMBED_PROVIDERS = {
 	soundcloud: "https://soundcloud.com/oembed?format=json&url=",
 	youtube: "https://www.youtube.com/oembed?url=",
 	vimeo: "https://vimeo.com/api/oembed.json?url=",
 };
 
+/**
+ * Gets provider name from hostname
+ * @param {string} hostname - Domain hostname
+ * @returns {string} Provider name
+ */
 const getProvider = (hostname) => {
 	return PROVIDERS[hostname];
 };
+
+/**
+ * Builds OEmbed URL for provider and content URL
+ * @param {string} provider - Provider name
+ * @param {string} urlText - Content URL
+ * @returns {string} Complete OEmbed API URL
+ */
 const getProviderOEmbedUrl = (provider, urlText) => {
 	return `${OEMBED_PROVIDERS[provider]}${urlText}`;
 };
 
+/**
+ * Gets OEmbed URL for any supported content URL
+ * @param {string} urlText - Content URL to get embed data for
+ * @returns {string|undefined} OEmbed API URL or undefined
+ */
 const getOEmbedUrl = (urlText) => {
 	try {
 		const url = new URL(urlText);
@@ -73,11 +102,20 @@ const getOEmbedUrl = (urlText) => {
 	}
 };
 
+/**
+ * Custom web component for Matrix job posting form with OEmbed support
+ * @class MatrixSendJobForm
+ * @extends HTMLElement
+ */
 export default class MatrixSendJobForm extends HTMLElement {
-	/* state */
+	/** @type {Object|null} OEmbed data from external services */
 	oEmbedData = null;
 
-	/* methods */
+	/**
+	 * Fetches OEmbed data for media URLs
+	 * @param {string} mediaProviderUrl - URL to fetch embed data for
+	 * @returns {Promise<Object>} Promise resolving to OEmbed data
+	 */
 	fetchOEmbed(mediaProviderUrl) {
 		const oEmbedUrl = getOEmbedUrl(mediaProviderUrl);
 		if (oEmbedUrl) {
@@ -85,15 +123,26 @@ export default class MatrixSendJobForm extends HTMLElement {
 		}
 	}
 
-	/* dom helps */
+	/**
+	 * Gets the URL input element
+	 * @returns {HTMLInputElement} URL input element
+	 */
 	get $formUrl() {
 		return this.querySelector('input[name="url"]');
 	}
 
+	/**
+	 * Gets the title input element
+	 * @returns {HTMLInputElement} Title input element
+	 */
 	get $formTitle() {
 		return this.querySelector('input[name="title"]');
 	}
 
+	/**
+	 * Sets the form title if not already set
+	 * @param {string} text - Title text to set
+	 */
 	setFormTitle(text) {
 		if (this.$formTitle.value) {
 			return;
@@ -101,6 +150,10 @@ export default class MatrixSendJobForm extends HTMLElement {
 			this.$formTitle.value = text;
 		}
 	}
+	/**
+	 * Handles URL input changes and fetches OEmbed data
+	 * @param {string} value - URL value
+	 */
 	async handleUrl(value) {
 		if (value) {
 			try {
@@ -114,6 +167,10 @@ export default class MatrixSendJobForm extends HTMLElement {
 		}
 	}
 
+	/**
+	 * Handles input events on form fields
+	 * @param {Event} event - Input event
+	 */
 	onUrlInput(event) {
 		const { value, name } = event.target;
 		if (name === "url") {
@@ -122,10 +179,17 @@ export default class MatrixSendJobForm extends HTMLElement {
 			// no thing yet for other inputs
 		}
 	}
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	connectedCallback() {
 		this.render();
 		this.$formUrl.addEventListener("input", this.onUrlInput.bind(this));
 	}
+	
+	/**
+	 * Renders the job posting form
+	 */
 	render() {
 		const $form = formTemplate.content.cloneNode(true);
 		this.replaceChildren($form);

@@ -1,22 +1,37 @@
 import { getJoblistStorage } from '../services/storage.js';
 
 /**
- * Favorites management component
- * Shows and manages favorite companies and jobs
+ * Custom web component for managing and displaying favorite companies and jobs
+ * @class JoblistFavoritesManager
+ * @extends HTMLElement
  */
 export default class JoblistFavoritesManager extends HTMLElement {
+	/**
+	 * Constructor to initialize component state
+	 */
 	constructor() {
 		super();
+		/** @type {Object|null} Storage service instance */
 		this.storage = null;
+		/** @type {Array} Array of favorite company IDs */
 		this.favoriteCompanies = [];
+		/** @type {Array} Array of favorite job IDs */
 		this.favoriteJobs = [];
-		this.type = 'both'; // 'companies', 'jobs', or 'both'
+		/** @type {string} Display type - 'companies', 'jobs', or 'both' */
+		this.type = 'both';
 	}
 	
+	/**
+	 * Gets the view type from attribute
+	 * @returns {string} The view type (companies, jobs, or both)
+	 */
 	get viewType() {
 		return this.getAttribute('type') || 'both';
 	}
 	
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	async connectedCallback() {
 		this.storage = getJoblistStorage();
 		await this.storage.initialize();
@@ -33,6 +48,9 @@ export default class JoblistFavoritesManager extends HTMLElement {
 		this.render();
 	}
 	
+	/**
+	 * Loads favorites from storage
+	 */
 	async loadFavorites() {
 		// Prevent loading if already in progress
 		if (this.loadingFavorites) return;
@@ -52,6 +70,11 @@ export default class JoblistFavoritesManager extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Adds an item to favorites
+	 * @param {string} id - Item ID
+	 * @param {string} type - Item type (company or job)
+	 */
 	async addToFavorites(id, type) {
 		try {
 			if (type === 'company') {
@@ -68,6 +91,11 @@ export default class JoblistFavoritesManager extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Removes an item from favorites
+	 * @param {string} id - Item ID
+	 * @param {string} type - Item type (company or job)
+	 */
 	async removeFromFavorites(id, type) {
 		try {
 			if (type === 'company') {
@@ -84,6 +112,12 @@ export default class JoblistFavoritesManager extends HTMLElement {
 		}
 	}
 	
+	/**
+	 * Checks if an item is favorited
+	 * @param {string} id - Item ID
+	 * @param {string} type - Item type (company or job)
+	 * @returns {boolean} True if item is favorited
+	 */
 	isFavorite(id, type) {
 		if (type === 'company') {
 			return this.favoriteCompanies.includes(id);
@@ -93,6 +127,9 @@ export default class JoblistFavoritesManager extends HTMLElement {
 		return false;
 	}
 	
+	/**
+	 * Renders the favorites manager interface
+	 */
 	render() {
 		const showCompanies = this.type === 'companies' || this.type === 'both';
 		const showJobs = this.type === 'jobs' || this.type === 'both';
@@ -163,6 +200,11 @@ export default class JoblistFavoritesManager extends HTMLElement {
 		
 	}
 	
+	/**
+	 * Emits custom events
+	 * @param {string} event - Event name
+	 * @param {Object} data - Event data
+	 */
 	_emit(event, data) {
 		this.dispatchEvent(new CustomEvent(event, {
 			detail: data,

@@ -2,9 +2,8 @@ import { html } from 'lit-html';
 import '../components/map-list.js';
 import { loadLeaflet } from '../libs/leaflet.js';
 
-
 // Load Leaflet once for all map stories
-loadLeaflet();
+loadLeaflet().catch(err => console.warn('Failed to load Leaflet:', err));
 
 export default {
   title: 'Components/MapList',

@@ -1,10 +1,23 @@
 import providerApis from "../providers/index.js";
 
+/**
+ * Custom web component for building job board components with form interface
+ * @class JobBoards
+ * @extends HTMLElement
+ */
 export default class JobBoards extends HTMLElement {
+	/**
+	 * Gets array of available provider IDs
+	 * @returns {string[]} Array of provider IDs
+	 */
 	get providerIds() {
 		return Object.keys(providerApis);
 	}
 
+	/**
+	 * Gets mapping of providers to example hostnames
+	 * @returns {Object} Object mapping provider names to example hostnames
+	 */
 	get providerExamples() {
 		return {
 			ashby: "ashby",
@@ -19,25 +32,51 @@ export default class JobBoards extends HTMLElement {
 		};
 	}
 
+	/**
+	 * Gets the provider name
+	 * @returns {string} The provider name
+	 */
 	get providerName() {
 		return this.getAttribute("provider-name");
 	}
+	
+	/**
+	 * Sets the provider name
+	 * @param {string} str - The provider name to set
+	 */
 	set providerName(str) {
 		this.setAttribute("provider-name", str);
 	}
+	
+	/**
+	 * Gets the provider hostname, defaults to provider name
+	 * @returns {string} The provider hostname
+	 */
 	get providerHostname() {
 		/* default to the provider's name,
 			 to see if they use their own system (most cases yes) */
 		return this.getAttribute("provider-hostname") || this.providerName;
 	}
+	
+	/**
+	 * Sets the provider hostname
+	 * @param {string} str - The provider hostname to set
+	 */
 	set providerHostname(str) {
 		this.setAttribute("provider-hostname", str);
 	}
 
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	connectedCallback() {
 		this.renderTemplate();
 		this.renderForm();
 	}
+	
+	/**
+	 * Renders the HTML template structure
+	 */
 	renderTemplate() {
 		this.innerHTML = `
 			<form title="Build a job-list web-component"></form>
@@ -49,6 +88,9 @@ export default class JobBoards extends HTMLElement {
 		this.$code = this.querySelector("textarea");
 		this.$code.addEventListener("click", this.onSnippetClick.bind(this));
 	}
+	/**
+	 * Renders the form with provider selection and hostname input
+	 */
 	renderForm() {
 		const $providerSelect = document.createElement("select");
 		$providerSelect.name = "provider-name";
@@ -88,6 +130,11 @@ export default class JobBoards extends HTMLElement {
 		this.$form.append($providerSelect);
 		this.$form.append($providerInput);
 	}
+	/**
+	 * Handles form input changes
+	 * @param {Object} param0 - Event object destructured
+	 * @param {HTMLElement} param0.target - The target element that changed
+	 */
 	onChange({ target }) {
 		const { name, value } = target;
 		if (value) {
@@ -111,9 +158,17 @@ export default class JobBoards extends HTMLElement {
 
 		this.renderBoard();
 	}
+	/**
+	 * Handles click on code snippet to select all text
+	 * @param {Object} param0 - Event object destructured
+	 * @param {HTMLElement} param0.target - The target element that was clicked
+	 */
 	onSnippetClick({ target }) {
 		target.select();
 	}
+	/**
+	 * Renders the job board component with current settings
+	 */
 	renderBoard() {
 		const $board = document.createElement("joblist-board");
 		$board.setAttribute("provider-name", this.providerName);
@@ -122,6 +177,9 @@ export default class JobBoards extends HTMLElement {
 		this.renderBoardCopy();
 		this.$board.append($board);
 	}
+	/**
+	 * Renders the copyable HTML code snippet
+	 */
 	renderBoardCopy() {
 		this.$code.innerText = `
 <joblist-board provider-name="${this.providerName}" provider-hostname="${this.providerHostname}"></joblist-board>

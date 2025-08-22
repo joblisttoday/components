@@ -1,6 +1,9 @@
 import { icons, createElement } from 'lucide';
 
-// Map of social providers to Lucide icon names (PascalCase)
+/**
+ * Map of social providers and common terms to Lucide icon names (PascalCase)
+ * @const {Object}
+ */
 const SOCIAL_ICON_MAP = {
 	'twitter': 'Twitter',
 	'x': 'Twitter', // Use Twitter icon for X
@@ -38,35 +41,70 @@ const SOCIAL_ICON_MAP = {
 	'newspaper': 'Newspaper'
 };
 
+/**
+ * Custom web component for displaying Lucide icons with social provider mapping
+ * @class JoblistIcon
+ * @extends HTMLElement
+ */
 export default class JoblistIcon extends HTMLElement {
+	/**
+	 * Observed attributes for the component
+	 * @returns {string[]} Array of attribute names to observe
+	 */
 	static get observedAttributes() {
 		return ['icon', 'title', 'class'];
 	}
 
+	/**
+	 * Gets the icon name to display
+	 * @returns {string} Icon name
+	 */
 	get icon() {
 		return this.getAttribute('icon') || '';
 	}
 
+	/**
+	 * Gets the title/tooltip for the icon
+	 * @returns {string} Icon title
+	 */
 	get iconTitle() {
 		return this.getAttribute('title') || '';
 	}
 
+	/**
+	 * Gets the CSS class name for the icon
+	 * @returns {string} CSS class name
+	 */
 	get className() {
 		return this.getAttribute('class') || '';
 	}
 
+	/**
+	 * Constructor
+	 */
 	constructor() {
 		super();
 	}
 
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	connectedCallback() {
 		this.render();
 	}
 
+	/**
+	 * Called when observed attributes change
+	 */
 	attributeChangedCallback() {
 		this.render();
 	}
 
+	/**
+	 * Converts kebab-case string to PascalCase
+	 * @param {string} str - String to convert
+	 * @returns {string} PascalCase string
+	 */
 	toPascalCase(str) {
 		return str
 			.split('-')
@@ -74,6 +112,9 @@ export default class JoblistIcon extends HTMLElement {
 			.join('');
 	}
 
+	/**
+	 * Renders the icon using Lucide icons
+	 */
 	render() {
 		// Clear existing content
 		this.innerHTML = '';

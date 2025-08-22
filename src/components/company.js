@@ -6,25 +6,63 @@ import "./social-widget.js";
 import "./icon.js";
 import "./tag.js";
 
+/**
+ * Custom web component for displaying detailed company information
+ * @class JoblistCompany
+ * @extends HTMLElement
+ */
 export default class JoblistCompany extends HTMLElement {
+	/**
+	 * Gets whether to display full company details
+	 * @returns {boolean} True if full details should be shown
+	 */
 	get full() {
 		return this.getAttribute("full") === "true";
 	}
+	
+	/**
+	 * Gets the origin URL for building links
+	 * @returns {string} The origin URL
+	 */
 	get origin() {
 		return this.getAttribute("origin") || "https://joblist.today";
 	}
+	
+	/**
+	 * Gets the company ID
+	 * @returns {string} The company ID
+	 */
 	get companyId() {
 		return this.getAttribute("company-id");
 	}
+	
+	/**
+	 * Gets the company data object
+	 * @returns {Object} Parsed company data object
+	 */
 	get company() {
 		return JSON.parse(this.getAttribute("company") || {});
 	}
+	
+	/**
+	 * Sets the company data object
+	 * @param {Object} obj - Company data object
+	 */
 	set company(obj) {
 		this.setAttribute("company", JSON.stringify(obj));
 	}
+	/**
+	 * Builds profile URL for a company ID
+	 * @param {string} id - Company ID
+	 * @returns {string} Complete profile URL
+	 */
 	buildProfileUrl(id) {
 		return `${this.origin}/${id}`;
 	}
+	
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	async connectedCallback() {
 		if (this.companyId) {
 			const base = this.getAttribute("parquet-base") || undefined;
@@ -36,6 +74,9 @@ export default class JoblistCompany extends HTMLElement {
 		}
 		this.render();
 	}
+	/**
+	 * Renders the company component with appropriate level of detail
+	 */
 	render() {
 		const $doms = [];
 		if (!this.company) {
@@ -65,6 +106,11 @@ export default class JoblistCompany extends HTMLElement {
 		
 		this.append(...$doms);
 	}
+	/**
+	 * Creates basic card DOM elements for the company
+	 * @param {Object} company - Company data object
+	 * @returns {HTMLElement[]} Array of card DOM elements
+	 */
 	createCardDoms(company) {
 		const doms = [
 			this.createTitle(this.company),
@@ -72,6 +118,14 @@ export default class JoblistCompany extends HTMLElement {
 		];
 		return doms;
 	}
+	/**
+	 * Creates company title element with link and favicon
+	 * @param {Object} param0 - Company data object destructured
+	 * @param {string} param0.id - Company ID
+	 * @param {string} param0.title - Company title
+	 * @param {Object} param0.company - Rest of company data
+	 * @returns {HTMLElement} Title wrapper element
+	 */
 	createTitle({ id, title, ...company }) {
 		const $title = document.createElement("h1");
 		$title.textContent = title;
@@ -95,6 +149,12 @@ export default class JoblistCompany extends HTMLElement {
 		}
 		return $wrapper;
 	}
+	/**
+	 * Creates favicon element from company URL
+	 * @param {Object} param0 - Object with company URL
+	 * @param {string} param0.company_url - Company website URL
+	 * @returns {HTMLElement} Favicon element
+	 */
 	createFavicon({ company_url }) {
 		const $favicon = document.createElement("joblist-company-favicon");
 		if (!company_url) return "";
@@ -109,6 +169,12 @@ export default class JoblistCompany extends HTMLElement {
 		}
 		return $favicon;
 	}
+	/**
+	 * Creates company description element
+	 * @param {Object} param0 - Object with description
+	 * @param {string} param0.description - Company description
+	 * @returns {HTMLElement|string} Description element or empty string
+	 */
 	createDescription({ description }) {
 		if (!description) return "";
 		const $wrapper = document.createElement("joblist-company-description");
@@ -117,6 +183,12 @@ export default class JoblistCompany extends HTMLElement {
 		$wrapper.append($element);
 		return $wrapper;
 	}
+	/**
+	 * Creates tags container element
+	 * @param {Object} param0 - Object with tags array
+	 * @param {Array} param0.tags - Array of tag objects
+	 * @returns {HTMLElement|string} Tags wrapper or empty string
+	 */
 	createTags({ tags }) {
 		if (!tags || !tags.length) return "";
 		const $wrapper = document.createElement("joblist-company-tags");
@@ -131,11 +203,21 @@ export default class JoblistCompany extends HTMLElement {
 		$wrapper.append($menu);
 		return $wrapper;
 	}
+	/**
+	 * Creates individual tag element
+	 * @param {Object} tag - Tag data object
+	 * @returns {HTMLElement} Tag element
+	 */
 	createTag(tag) {
 		const $tag = document.createElement("joblist-tag");
 		$tag.setAttribute("tag", JSON.stringify(tag));
 		return $tag;
 	}
+	/**
+	 * Creates links section with company, social, and edit links
+	 * @param {Object} company - Company data object
+	 * @returns {HTMLElement} Links wrapper element
+	 */
 	createLinks(company) {
 		const companyLinks = [
 			{ key: "company_url", icon: "globe", label: "homepage" },
@@ -214,6 +296,12 @@ export default class JoblistCompany extends HTMLElement {
 		$wrapper.append(...menus.filter(Boolean));
 		return $wrapper;
 	}
+	/**
+	 * Creates a menu of links from link configuration
+	 * @param {Array} links - Array of link objects or strings
+	 * @param {Object} company - Company data object
+	 * @returns {HTMLElement|string} Menu element or empty string
+	 */
 	createLinksMenu(links, company) {
 		const $links = links.reduce((acc, linkInfo) => {
 			// Handle both old string format and new object format
@@ -269,6 +357,11 @@ export default class JoblistCompany extends HTMLElement {
 		}
 	}
 
+	/**
+	 * Creates widgets section with positions, social, and heatmap
+	 * @param {Object} company - Company data object
+	 * @returns {HTMLElement} Widgets wrapper element
+	 */
 	createWidgets(company) {
 		const $widgets = document.createElement("joblist-company-widgets");
 		$widgets.append(
@@ -278,12 +371,25 @@ export default class JoblistCompany extends HTMLElement {
 		);
 		return $widgets;
 	}
+	/**
+	 * Creates heatmap widget for company job postings
+	 * @param {Object} param0 - Company data destructured
+	 * @param {string} param0.id - Company ID
+	 * @param {string} param0.job_board_provider - Job board provider
+	 * @param {string} param0.job_board_hostname - Job board hostname
+	 * @returns {HTMLElement|string} Heatmap element or empty string
+	 */
 	createHeatmap({ id, job_board_provider, job_board_hostname }) {
 		if (!job_board_provider || !job_board_hostname) return "";
 		const $heatmap = document.createElement("joblist-heatmap");
 		$heatmap.setAttribute("company-id", id);
 		return $heatmap;
 	}
+	/**
+	 * Creates map positions widget from company data
+	 * @param {Object} company - Company data object
+	 * @returns {HTMLElement|string} Map list element or empty string
+	 */
 	createPositions(company) {
 		// Build markers first; render map only if there are markers
 		const markers = companyToMapMarkers(company) || [];
@@ -292,6 +398,11 @@ export default class JoblistCompany extends HTMLElement {
 		$map.setAttribute("markers", JSON.stringify(markers));
 		return $map;
 	}
+	/**
+	 * Creates social media widget if company has social links
+	 * @param {Object} company - Company data object
+	 * @returns {HTMLElement|string} Social widget or empty string
+	 */
 	createSocialWidget(company) {
 		const socialLinks = [
 			"wikipedia_url",
@@ -309,6 +420,13 @@ export default class JoblistCompany extends HTMLElement {
 		$socialWidget.setAttribute("company", JSON.stringify(company));
 		return $socialWidget;
 	}
+	/**
+	 * Creates job board component for the company
+	 * @param {Object} param0 - Company data destructured
+	 * @param {string} param0.job_board_provider - Job board provider
+	 * @param {string} param0.job_board_hostname - Job board hostname
+	 * @returns {HTMLElement|string} Board element or empty string
+	 */
 	createBoard({ job_board_provider, job_board_hostname }) {
 		if (!job_board_provider || !job_board_hostname) return "";
 		const $board = document.createElement("joblist-board");
@@ -317,6 +435,10 @@ export default class JoblistCompany extends HTMLElement {
 		return $board;
 	}
 
+	/**
+	 * Creates Giscus comments widget
+	 * @returns {HTMLElement} Giscus wrapper element
+	 */
 	createGiscus() {
 		const giscus = document.createElement("giscus-widget");
 		giscus.setAttribute("id", "comments");
@@ -341,6 +463,11 @@ export default class JoblistCompany extends HTMLElement {
 		wrapper.append(details);
 		return wrapper;
 	}
+	/**
+	 * Creates highlight indicator for highlighted companies
+	 * @param {Object} company - Company data object
+	 * @returns {HTMLElement} Highlight element
+	 */
 	createHighlight(company) {
 		const highlighted = document.createElement("joblist-highlight");
 		highlighted.setAttribute("type", "company");
@@ -352,6 +479,11 @@ export default class JoblistCompany extends HTMLElement {
 		return highlighted;
 	}
 
+	/**
+	 * Creates favorite button menu
+	 * @param {Object} company - Company data object
+	 * @returns {HTMLElement} Favorite menu element
+	 */
 	createFavoriteMenu(company) {
 		const $menu = document.createElement("joblist-company-menu");
 		const $favoriteBtn = document.createElement("joblist-favorite-button");
@@ -361,6 +493,11 @@ export default class JoblistCompany extends HTMLElement {
 		return $menu;
 	}
 
+	/**
+	 * Creates notes editor section
+	 * @param {Object} company - Company data object
+	 * @returns {HTMLElement} Notes section element
+	 */
 	createNotesSection(company) {
 		const $section = document.createElement("section");
 		const $header = document.createElement("h3");
@@ -375,6 +512,11 @@ export default class JoblistCompany extends HTMLElement {
 		return $section;
 	}
 
+	/**
+	 * Creates highlight purchase menu
+	 * @param {Object} company - Company data object
+	 * @returns {HTMLElement} Highlight menu element
+	 */
 	createHighlightMenu(company) {
 		// Create a simple link to your existing pricing table with company ID parameter
 		const highlightOptions = [

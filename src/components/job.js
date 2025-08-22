@@ -1,3 +1,8 @@
+/**
+ * Formats a date object into a localized string representation
+ * @param {Date} date - The date to format
+ * @returns {string} Formatted date string or "Invalid date" if date is invalid
+ */
 function formatDate(date) {
 	const options = {
 		year: "numeric",
@@ -14,6 +19,11 @@ function formatDate(date) {
 		return new Intl.DateTimeFormat(navigator.language, options).format(date);
 	}
 }
+/**
+ * Calculates and returns a human-readable time difference from a given date to now
+ * @param {string|Date} inputDate - The input date to compare against current time
+ * @returns {string} Human-readable time difference (e.g., "2 hours ago", "3 days ago")
+ */
 function timeSince(inputDate) {
 	const date = new Date(inputDate);
 	if (isNaN(date.getTime())) {
@@ -49,19 +59,45 @@ function timeSince(inputDate) {
 	return `${yearsPast} years ago`;
 }
 
+/**
+ * Custom web component for displaying job information
+ * @class JoblistJob
+ * @extends HTMLElement
+ */
 export default class JoblistJob extends HTMLElement {
+	/**
+	 * Observed attributes for the component
+	 * @returns {string[]} Array of attribute names to observe
+	 */
 	static get observedAttributes() {
 		return ["job"];
 	}
+	
+	/**
+	 * Gets the job data from the job attribute
+	 * @returns {Object} Parsed job object
+	 */
 	get job() {
 		return JSON.parse(this.getAttribute("job"));
 	}
+	
+	/**
+	 * Gets the origin URL for links
+	 * @returns {string} Origin URL, defaults to https://joblist.today
+	 */
 	get origin() {
 		return this.getAttribute("origin") || "https://joblist.today";
 	}
+	
+	/**
+	 * Lifecycle method called when element is connected to DOM
+	 */
 	connectedCallback() {
 		this.render();
 	}
+	/**
+	 * Renders the job component with all its elements
+	 */
 	render() {
 		const $doms = [];
 
@@ -80,6 +116,13 @@ export default class JoblistJob extends HTMLElement {
 		this.append(...$doms);
 	}
 
+	/**
+	 * Creates a clickable job name link element
+	 * @param {Object} param0 - Job object destructured
+	 * @param {string} param0.url - Job URL
+	 * @param {string} param0.name - Job name/title
+	 * @returns {HTMLElement} Wrapped job name link element
+	 */
 	createNameLink({ url, name }) {
 		const nameLink = document.createElement("a");
 		nameLink.target = "_blank";
@@ -90,6 +133,12 @@ export default class JoblistJob extends HTMLElement {
 		return $wrapper;
 	}
 
+	/**
+	 * Creates a published date element showing time since publication
+	 * @param {Object} param0 - Job object destructured
+	 * @param {string} param0.published_date - Job publication date
+	 * @returns {HTMLElement} Published date element
+	 */
 	createPublishedDate({ published_date }) {
 		const $element = document.createElement("joblist-job-published-date");
 		const parsedDate = new Date(published_date);
@@ -97,6 +146,13 @@ export default class JoblistJob extends HTMLElement {
 		return $element;
 	}
 
+	/**
+	 * Creates a company URL link element
+	 * @param {Object} param0 - Job object destructured
+	 * @param {string} param0.company_id - Company ID
+	 * @param {string} param0.company_title - Company title
+	 * @returns {HTMLElement} Wrapped company URL element
+	 */
 	createCompanyUrl({ company_id, company_title }) {
 		const $companyUrl = document.createElement("a");
 		$companyUrl.target = "_blank";
@@ -108,6 +164,12 @@ export default class JoblistJob extends HTMLElement {
 		return $wrapper;
 	}
 
+	/**
+	 * Creates a location display element
+	 * @param {Object} param0 - Job object destructured
+	 * @param {string} param0.location - Job location
+	 * @returns {HTMLElement} Location element
+	 */
 	createLocation({ location }) {
 		const $location = document.createElement("joblist-job-location");
 		$location.textContent = `${location}`;

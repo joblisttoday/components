@@ -1,28 +1,71 @@
 import { JoblistDuckDBSDK } from "../libs/sdk-duckdb.js";
 
+/**
+ * Search component for querying jobs and companies using DuckDB.
+ * Provides a search interface with filtering options and real-time suggestions.
+ * Supports searching companies, jobs, or both with debounced input handling.
+ * 
+ * @class JoblistSearch
+ * @extends HTMLElement
+ * @fires JoblistSearch#search - Emitted when search results are available
+ */
 export default class JoblistSearch extends HTMLElement {
+	/**
+	 * Gets the placeholder text for the search input.
+	 * 
+	 * @returns {string} The placeholder text from the placeholder attribute
+	 */
 	get placeholder() {
 		return this.getAttribute("placeholder");
 	}
+	/**
+	 * Gets the database URL for the DuckDB connection.
+	 * 
+	 * @returns {string} The database URL from the database-url attribute or default
+	 */
 	get databaseUrl() {
 		return (
 			this.getAttribute("database-url") ||
 			"https://workers.joblist.today"
 		);
 	}
+	/**
+	 * Gets the initial query value.
+	 * 
+	 * @returns {string} The query from the query attribute
+	 */
 	get query() {
 		return this.getAttribute("query");
 	}
 
+	/**
+	 * Gets the search type filter.
+	 * 
+	 * @returns {string} The search type: "companies", "jobs", or "both" (default)
+	 */
 	get searchType() {
 		return this.getAttribute("search-type") || "both"; // "companies", "jobs", or "both"
 	}
 
+	/**
+	 * Gets the result limit for search queries.
+	 * 
+	 * @returns {number} The maximum number of results to return (default: 1000)
+	 */
 	get limit() {
 		const val = Number(this.getAttribute("limit"));
 		return Number.isFinite(val) && val >= 0 ? val : 1000; // default higher to reduce truncation
 	}
 
+	/**
+	 * Performs a search operation for companies and/or jobs.
+	 * Handles both regular searches and highlighted content loading.
+	 * 
+	 * @async
+	 * @param {string} [query=""] - The search query string
+	 * @param {string|null} [searchType=null] - Override search type ("companies", "jobs", "both")
+	 * @returns {Promise<Object>} Search result object with jobs, companies, and metadata
+	 */
 	async search(query = "", searchType = null) {
 		const activeSearchType = searchType || this.searchType;
 		let companies = [], jobs = [];
@@ -73,6 +116,10 @@ export default class JoblistSearch extends HTMLElement {
 		return result;
 	}
 
+	/**
+	 * Creates an instance of JoblistSearch.
+	 * Initializes debouncing and column storage properties.
+	 */
 	constructor() {
 		super();
 		this.debounceTimeout = null;
@@ -80,6 +127,12 @@ export default class JoblistSearch extends HTMLElement {
 		this.columns = { companies: [], jobs: [] };
 	}
 
+	/**
+	 * Lifecycle callback when component is added to DOM.
+	 * Initializes the DuckDB SDK, loads column metadata, and performs initial search.
+	 * 
+	 * @async
+	 */
 	async connectedCallback() {
 		this.joblistSDK = new JoblistDuckDBSDK(this.databaseUrl);
 		await this.joblistSDK.initialize();
@@ -102,6 +155,13 @@ export default class JoblistSearch extends HTMLElement {
 		}
 		this._render(this.query);
 	}
+	/**
+	 * Renders the search component UI.
+	 * Creates the search input, filter options, and column suggestions.
+	 * 
+	 * @private
+	 * @param {string} [query=""] - Initial query value to populate
+	 */
 	_render(query = "") {
 		const container = document.createElement("div");
 		container.className = "search-container";
@@ -194,6 +254,12 @@ export default class JoblistSearch extends HTMLElement {
 		this.replaceChildren(style, container, $datalist);
 	}
 
+	/**
+	 * Debounces input events to prevent excessive search requests.
+	 * 
+	 * @private
+	 * @param {Event} event - The input event
+	 */
 	_debounceOnInput(event) {
 		if (this.debounceTimeout) {
 			clearTimeout(this.debounceTimeout);
@@ -204,11 +270,26 @@ export default class JoblistSearch extends HTMLElement {
 		);
 	}
 
+	/**
+	 * Handles debounced input events and triggers search.
+	 * 
+	 * @private
+	 * @async
+	 * @param {Event} event - The input event
+	 */
 	async _onInput(event) {
 		const { value: query } = event.target;
 		this.search(query);
 	}
 
+	/**
+	 * Handles external search trigger events.
+	 * Performs search with current attribute values.
+	 * 
+	 * @private
+	 * @async
+	 * @param {CustomEvent} event - The search trigger event
+	 */
 	async _onSearchTrigger(event) {
 		// Triggered externally to perform a search with current attributes
 		const query = this.getAttribute("query") || "";
@@ -216,6 +297,14 @@ export default class JoblistSearch extends HTMLElement {
 		this.search(query, searchType);
 	}
 
+	/**
+	 * Handles search type filter changes.
+	 * Updates the search-type attribute and triggers a new search.
+	 * 
+	 * @private
+	 * @async
+	 * @param {Event} event - The filter change event
+	 */
 	async _onFilterChange(event) {
 		const newSearchType = event.target.value;
 		this.setAttribute("search-type", newSearchType);
@@ -227,6 +316,19 @@ export default class JoblistSearch extends HTMLElement {
 		this._render(currentQuery);
 	}
 
+	/**
+	 * Handles coordinate-based search input.
+	 * Searches for companies within a geographic radius.
+	 * 
+	 * @private
+	 * @async
+	 * @param {Event} [event={ target: { value: {} } }] - Event containing coordinate data
+	 * @param {Object} event.target.value - Coordinate search parameters
+	 * @param {number} [event.target.value.lat=52.52] - Latitude coordinate
+	 * @param {number} [event.target.value.lon=13.405] - Longitude coordinate
+	 * @param {number} [event.target.value.radius=0.1] - Search radius
+	 * @returns {Promise<Object>} Search results with companies and jobs
+	 */
 	async _onCoordinatesInput(event = { target: { value: {} } }) {
 		const { value } = event.target;
 		const { lat = 52.52, lon = 13.405, radius = 0.1 } = value;
