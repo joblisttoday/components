@@ -8,65 +8,38 @@
 	</head>
 	<body>
 		<joblist-layout>
-			<joblist-menu show-favicon="true">
-				<menu>
-					<li>
-						<a href="./">Components Home</a>
-					</li>
-					<li>
-						<a href="./apps/">All components</a>
-					</li>
-					<li>
-						<a href="https://github.com/joblisttoday/components">
-							code (github)
-						</a>
-					</li>
-					<li>
-						<a href="https://joblist.today"> joblist.today </a>
-					</li>
-				</menu>
-			</joblist-menu>
 			<joblist-page>
 				<header>
 					<h1>
 						<a href="./">Joblist components</a>
 					</h1>
 					<p>
-						Presentation and development site for the
-						<a href="./apps/">components</a>.
+						Presentation and development website for the components used accross
+						the joblist.today projects.
 					</p>
 				</header>
 				<main>
-					<section>
-						<p>
-							The application components aim to be re-usable graphical interface
-							elements to build the
-							<a href="https://joblist.today">joblist.today</a> projects and
-							pages.
-						</p>
-						<p>
-							Check out the code on
-							<a href="https://github.com/joblisttoday/components"> github </a>
-							(GPLv3).
-						</p>
-					</section>
+					<menu>
+						<li>
+							<a href="./storybook">Storybook</a> for all components and
+							stories.
+						</li>
+						<li>
+							<a href="./apps/">Apps</a> for the components used as mini
+							web-apps.
+						</li>
+						<li>
+							<a href="https://github.com/joblisttoday/components">
+								Code (github)
+							</a>
+							for the web-components written with javascript
+						</li>
+						<li>
+							<a href="https://joblist.today">↑ joblist.today</a> for the
+							homepage of the project
+						</li>
+					</menu>
 				</main>
-				<hr />
-				<aside>
-					<joblist-company
-						full="true"
-						company-id="joblist-today"
-					></joblist-company>
-				</aside>
-				<hr />
-				<joblist-page-footer>
-					<footer>
-						<joblist-favicon
-							title="Thanks for passing by! <3"
-							href="https://joblist.today"
-						></joblist-favicon>
-					</footer>
-				</joblist-page-footer>
 			</joblist-page>
 		</joblist-layout>
 	</body>
