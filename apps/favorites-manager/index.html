@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" joblist-layout>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@joblist/components/favorites-manager</title>
+		<script type="module" src="../../src/index.js"></script>
+	</head>
+	<body>
+		<joblist-layout>
+			<joblist-menu show-default="true"></joblist-menu>
+			<joblist-page>
+				<joblist-page-header>
+					<header>
+						<h1>Favorites Manager</h1>
+						<p>View and manage your favorite companies and jobs</p>
+					</header>
+				</joblist-page-header>
+				<joblist-page-main>
+					<section>
+						<h2>All Favorites (Companies & Jobs)</h2>
+						<joblist-favorites-manager type="both"></joblist-favorites-manager>
+					</section>
+					
+					<hr />
+					
+					<section>
+						<h2>Companies Only</h2>
+						<joblist-favorites-manager type="companies"></joblist-favorites-manager>
+					</section>
+					
+					<hr />
+					
+					<section>
+						<h2>Jobs Only</h2>
+						<joblist-favorites-manager type="jobs"></joblist-favorites-manager>
+					</section>
+					
+					<section>
+						<h2>Usage</h2>
+						<p>Add items to favorites using the favorite buttons on company and job pages, then view them here.</p>
+						<pre><code>&lt;joblist-favorites-manager type="both"&gt;&lt;/joblist-favorites-manager&gt;
+&lt;joblist-favorites-manager type="companies"&gt;&lt;/joblist-favorites-manager&gt;
+&lt;joblist-favorites-manager type="jobs"&gt;&lt;/joblist-favorites-manager&gt;</code></pre>
+					</section>
+				</joblist-page-main>
+			</joblist-page>
+		</joblist-layout>
+	</body>
+</html>

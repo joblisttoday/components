@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" joblist-layout>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@joblist/components/notes-editor</title>
+		<script type="module" src="../../src/index.js"></script>
+	</head>
+	<body>
+		<joblist-layout>
+			<joblist-menu show-default="true"></joblist-menu>
+			<joblist-page>
+				<joblist-page-header>
+					<header>
+						<h1>Notes Editor</h1>
+						<p>Write and auto-save notes about companies and job applications</p>
+					</header>
+				</joblist-page-header>
+				<joblist-page-main>
+					<section>
+						<h2>Company Notes Example</h2>
+						<p>Notes about SpaceX company:</p>
+						<joblist-notes-editor 
+							item-id="spacex" 
+							item-type="company"
+							placeholder="Write your notes about SpaceX here...">
+						</joblist-notes-editor>
+					</section>
+					
+					<hr />
+					
+					<section>
+						<h2>Job Application Notes Example</h2>
+						<p>Notes for a specific job application:</p>
+						<joblist-notes-editor 
+							item-id="spacex-frontend-role" 
+							item-type="job"
+							placeholder="Track your application progress, interview notes, etc...">
+						</joblist-notes-editor>
+					</section>
+					
+					<hr />
+					
+					<section>
+						<h2>Another Job Example</h2>
+						<p>Notes for another job application:</p>
+						<joblist-notes-editor 
+							item-id="ableton-backend-role" 
+							item-type="job">
+						</joblist-notes-editor>
+					</section>
+					
+					<section>
+						<h2>Features</h2>
+						<ul>
+							<li>✅ Auto-save as you type (1 second delay)</li>
+							<li>✅ Save status indicators (Typing... → Saving... → Saved)</li>
+							<li>✅ Sync across devices when connected to storage</li>
+							<li>✅ Works offline with local storage</li>
+							<li>✅ Separate notes for companies vs jobs</li>
+						</ul>
+					</section>
+					
+					<section>
+						<h2>Usage</h2>
+						<pre><code>&lt;joblist-notes-editor 
+    item-id="company-id" 
+    item-type="company"
+    placeholder="Custom placeholder text..."&gt;
+&lt;/joblist-notes-editor&gt;
+
+&lt;joblist-notes-editor 
+    item-id="job-id" 
+    item-type="job"&gt;
+&lt;/joblist-notes-editor&gt;</code></pre>
+						
+						<h3>Attributes</h3>
+						<ul>
+							<li><code>item-id</code> - Unique identifier for the item</li>
+							<li><code>item-type</code> - Either "company" or "job"</li>
+							<li><code>placeholder</code> - Custom placeholder text (optional)</li>
+						</ul>
+						
+						<h3>Events</h3>
+						<ul>
+							<li><code>note-saved</code> - Fired when note is successfully saved</li>
+						</ul>
+					</section>
+				</joblist-page-main>
+			</joblist-page>
+		</joblist-layout>
+	</body>
+</html>

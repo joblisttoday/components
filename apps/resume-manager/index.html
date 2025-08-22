@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en" joblist-layout>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@joblist/components/resume-manager</title>
+		<script type="module" src="../../src/index.js"></script>
+	</head>
+	<body>
+		<joblist-layout>
+			<joblist-menu show-default="true"></joblist-menu>
+			<joblist-page>
+				<joblist-page-header>
+					<header>
+						<h1>Resume Manager</h1>
+						<p>Manage multiple resume variations for different job applications</p>
+					</header>
+				</joblist-page-header>
+				<joblist-page-main>
+					<section>
+						<h2>Resume Manager</h2>
+						<joblist-resume-manager></joblist-resume-manager>
+					</section>
+					
+					<section>
+						<h2>Features</h2>
+						<ul>
+							<li>✅ Multiple resume versions (default, frontend, backend, etc.)</li>
+							<li>✅ Easy switching between versions</li>
+							<li>✅ Create new custom resume variations</li>
+							<li>✅ Edit/preview functionality</li>
+							<li>✅ Delete custom versions (default protected)</li>
+							<li>✅ Plain text format for easy editing</li>
+							<li>✅ Auto-sync across devices</li>
+						</ul>
+					</section>
+					
+					<section>
+						<h2>Use Cases</h2>
+						<ul>
+							<li><strong>Default</strong> - General purpose resume</li>
+							<li><strong>Frontend</strong> - Emphasis on React, JavaScript, CSS skills</li>
+							<li><strong>Backend</strong> - Focus on APIs, databases, server technologies</li>
+							<li><strong>Fullstack</strong> - Balanced frontend and backend experience</li>
+							<li><strong>DevOps</strong> - Infrastructure, CI/CD, cloud platforms</li>
+							<li><strong>Manager</strong> - Leadership and project management experience</li>
+						</ul>
+					</section>
+					
+					<section>
+						<h2>Usage</h2>
+						<pre><code>&lt;joblist-resume-manager&gt;&lt;/joblist-resume-manager&gt;</code></pre>
+						
+						<h3>How to Use</h3>
+						<ol>
+							<li>Connect your storage using the storage widget</li>
+							<li>Start with the "default" resume</li>
+							<li>Click "Edit" to modify your resume</li>
+							<li>Click "+ New" to create variations for different job types</li>
+							<li>Select different versions from the dropdown</li>
+							<li>Use "Delete" to remove custom versions (default is protected)</li>
+						</ol>
+						
+						<h3>Events</h3>
+						<ul>
+							<li><code>resume-saved</code> - Fired when resume is saved</li>
+							<li><code>resume-deleted</code> - Fired when resume is deleted</li>
+						</ul>
+					</section>
+				</joblist-page-main>
+			</joblist-page>
+		</joblist-layout>
+	</body>
+</html>

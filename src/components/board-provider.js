@@ -65,8 +65,10 @@ export default class JoblistBoardProvider extends HTMLElement {
 	}
 
 	fuzzyMatch(text, pattern) {
+		// Direct substring match (fastest)
 		if (text.includes(pattern)) return true;
 
+		// Fuzzy character sequence matching
 		let textIndex = 0;
 		let patternIndex = 0;
 
@@ -77,7 +79,52 @@ export default class JoblistBoardProvider extends HTMLElement {
 			textIndex++;
 		}
 
-		return patternIndex === pattern.length;
+		// If we matched all pattern characters, it's a fuzzy match
+		if (patternIndex === pattern.length) return true;
+
+		// Additional fuzzy matching for common typos and abbreviations
+		// Split pattern into words and check if most words match
+		const patternWords = pattern.split(/\s+/).filter(w => w.length > 0);
+		const textWords = text.split(/\s+/);
+		
+		if (patternWords.length === 1) return false; // Single word already failed above
+		
+		let matchedWords = 0;
+		patternWords.forEach(pWord => {
+			if (textWords.some(tWord => 
+				tWord.includes(pWord) || 
+				pWord.includes(tWord) ||
+				this.simpleLevenshtein(tWord, pWord) <= Math.max(1, Math.floor(pWord.length * 0.2))
+			)) {
+				matchedWords++;
+			}
+		});
+		
+		// Match if at least 70% of words match
+		return matchedWords >= Math.ceil(patternWords.length * 0.7);
+	}
+
+	simpleLevenshtein(a, b) {
+		if (a.length === 0) return b.length;
+		if (b.length === 0) return a.length;
+		
+		const matrix = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(0));
+		
+		for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+		for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+		
+		for (let i = 1; i <= a.length; i++) {
+			for (let j = 1; j <= b.length; j++) {
+				const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+				matrix[i][j] = Math.min(
+					matrix[i - 1][j] + 1,      // deletion
+					matrix[i][j - 1] + 1,      // insertion  
+					matrix[i - 1][j - 1] + cost // substitution
+				);
+			}
+		}
+		
+		return matrix[a.length][b.length];
 	}
 
 	createSearchInput() {
@@ -175,11 +222,27 @@ export default class JoblistBoardProvider extends HTMLElement {
 			$newJobItem.setAttribute("title", name);
 			$newJobItem.setAttribute("url", url);
 			$newJobItem.setAttribute("location", location);
+			
+			// Create unique job ID based on URL and title
+			const jobId = this.createJobId(url, name);
+			$newJobItem.setAttribute("job-id", jobId);
+			
 			if (description) {
 				$newJobItem.setAttribute("description", description);
 			}
 			return $newJobItem;
 		}
+	}
+
+	createJobId(url, title) {
+		// Create a unique ID based on URL and title  
+		// This ensures consistency across sessions for the same job
+		const baseString = `${url}-${title}`;
+		return baseString
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-|-$/g, '')
+			.substring(0, 100); // Limit length
 	}
 }
 

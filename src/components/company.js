@@ -57,6 +57,12 @@ export default class JoblistCompany extends HTMLElement {
 				);
 			}
 		}
+		
+		// Add notes section if in full mode
+		if (this.full) {
+			$doms.push(this.createNotesSection(this.company));
+		}
+		
 		this.append(...$doms);
 	}
 	createCardDoms(company) {
@@ -145,6 +151,9 @@ export default class JoblistCompany extends HTMLElement {
 			{ key: "instagram_url", icon: "instagram", label: "instagram" },
 		];
 
+		// Favorite button as separate menu in full mode
+		const favoriteButton = this.full ? this.createFavoriteMenu(company) : null;
+
 		// Edit options as separate third menu if in full mode
 		const editOptions = this.full
 			? [
@@ -186,6 +195,11 @@ export default class JoblistCompany extends HTMLElement {
 			this.createLinksMenu(companyLinks, company),
 			this.createLinksMenu(socialLinks, company),
 		];
+
+		// Add favorite button if in full mode
+		if (favoriteButton) {
+			menus.push(favoriteButton);
+		}
 
 		// Add edit menu as third menu if in full mode
 		if (this.full && editOptions.length > 0) {
@@ -337,17 +351,40 @@ export default class JoblistCompany extends HTMLElement {
 		);
 		return highlighted;
 	}
-	
+
+	createFavoriteMenu(company) {
+		const $menu = document.createElement("joblist-company-menu");
+		const $favoriteBtn = document.createElement("joblist-favorite-button");
+		$favoriteBtn.setAttribute("item-id", company.id);
+		$favoriteBtn.setAttribute("item-type", "company");
+		$menu.appendChild($favoriteBtn);
+		return $menu;
+	}
+
+	createNotesSection(company) {
+		const $section = document.createElement("section");
+		const $header = document.createElement("h3");
+		$header.textContent = "Notes";
+		
+		const $notesEditor = document.createElement("joblist-notes-editor");
+		$notesEditor.setAttribute("item-id", company.id);
+		$notesEditor.setAttribute("item-type", "company");
+		
+		$section.appendChild($header);
+		$section.appendChild($notesEditor);
+		return $section;
+	}
+
 	createHighlightMenu(company) {
 		// Create a simple link to your existing pricing table with company ID parameter
 		const highlightOptions = [
 			{
 				key: "highlight_company",
-				icon: "star", 
+				icon: "star",
 				label: "highlight",
 				href: `https://components.joblist.today/apps/pricing-table/?company=${company.id}`,
-				title: `Highlight ${company.title} for €50 (31 days)`,
-			}
+				title: `Highlight ${company.title} for a month`,
+			},
 		];
 
 		return this.createLinksMenu(highlightOptions, company);

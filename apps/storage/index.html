@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en" joblist-layout>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@joblist/components/storage</title>
+		<script type="module" src="../../src/index.js"></script>
+		<script type="module">
+
+			document.addEventListener('DOMContentLoaded', () => {
+				const page = document.querySelector('joblist-page-main');
+				
+				// Storage connection widget
+				const storageWidget = document.createElement('joblist-storage-widget');
+				
+				// Favorites manager
+				const favoritesManager = document.createElement('joblist-favorites-manager');
+				favoritesManager.setAttribute('type', 'both');
+				
+				// Resume manager
+				const resumeManager = document.createElement('joblist-resume-manager');
+				
+				// Sample notes editors for demonstration
+				const companyNotesSection = document.createElement('section');
+				companyNotesSection.innerHTML = `
+					<h3>Company Notes Example</h3>
+					<p>Example notes for company "spacex":</p>
+				`;
+				const companyNotes = document.createElement('joblist-notes-editor');
+				companyNotes.setAttribute('item-id', 'spacex');
+				companyNotes.setAttribute('item-type', 'company');
+				companyNotesSection.appendChild(companyNotes);
+				
+				const jobNotesSection = document.createElement('section');
+				jobNotesSection.innerHTML = `
+					<h3>Job Application Notes Example</h3>
+					<p>Example notes for job application:</p>
+				`;
+				const jobNotes = document.createElement('joblist-notes-editor');
+				jobNotes.setAttribute('item-id', 'example-job-123');
+				jobNotes.setAttribute('item-type', 'job');
+				jobNotesSection.appendChild(jobNotes);
+				
+				// Sample favorite buttons
+				const favoriteBtnsSection = document.createElement('section');
+				favoriteBtnsSection.innerHTML = `
+					<h3>Favorite Buttons Example</h3>
+					<div style="display: flex; gap: 1rem; margin: 1rem 0;">
+						<div>
+							<p>Favorite SpaceX:</p>
+						</div>
+						<div>
+							<p>Favorite Example Job:</p>
+						</div>
+					</div>
+				`;
+				
+				const spacexFavorite = document.createElement('joblist-favorite-button');
+				spacexFavorite.setAttribute('item-id', 'spacex');
+				spacexFavorite.setAttribute('item-type', 'company');
+				
+				const jobFavorite = document.createElement('joblist-favorite-button');
+				jobFavorite.setAttribute('item-id', 'example-job-123');
+				jobFavorite.setAttribute('item-type', 'job');
+				
+				const buttons = favoriteBtnsSection.querySelectorAll('div')[0];
+				buttons.appendChild(spacexFavorite);
+				const buttons2 = favoriteBtnsSection.querySelectorAll('div')[1];
+				buttons2.appendChild(jobFavorite);
+				
+				// Add all components to page
+				page.append(
+					storageWidget,
+					document.createElement('hr'),
+					favoritesManager,
+					document.createElement('hr'),
+					favoriteBtnsSection,
+					document.createElement('hr'),
+					companyNotesSection,
+					document.createElement('hr'),
+					jobNotesSection,
+					document.createElement('hr'),
+					resumeManager
+				);
+			});
+		</script>
+	</head>
+	<body>
+		<joblist-layout>
+			<joblist-menu show-default="true"></joblist-menu>
+			<joblist-page>
+				<joblist-page-header>
+					<header>
+						<h1>Personal Storage</h1>
+						<p>Connect your personal storage to save favorites, notes, and resumes</p>
+					</header>
+				</joblist-page-header>
+				<joblist-page-main>
+					<p>Loading storage components...</p>
+				</joblist-page-main>
+			</joblist-page>
+		</joblist-layout>
+	</body>
+</html>

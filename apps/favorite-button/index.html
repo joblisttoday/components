@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" joblist-layout>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@joblist/components/favorite-button</title>
+		<script type="module" src="../../src/index.js"></script>
+	</head>
+	<body>
+		<joblist-layout>
+			<joblist-menu show-default="true"></joblist-menu>
+			<joblist-page>
+				<joblist-page-header>
+					<header>
+						<h1>Favorite Button</h1>
+						<p>Star button to add/remove items from favorites</p>
+					</header>
+				</joblist-page-header>
+				<joblist-page-main>
+					<section>
+						<h2>Company Favorite Button</h2>
+						<div style="display: flex; align-items: center; gap: 1rem; margin: 1rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 4px;">
+							<span>SpaceX Company:</span>
+							<joblist-favorite-button item-id="spacex" item-type="company"></joblist-favorite-button>
+						</div>
+					</section>
+					
+					<section>
+						<h2>Job Favorite Button</h2>
+						<div style="display: flex; align-items: center; gap: 1rem; margin: 1rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 4px;">
+							<span>Example Job:</span>
+							<joblist-favorite-button item-id="example-job-123" item-type="job"></joblist-favorite-button>
+						</div>
+					</section>
+					
+					<section>
+						<h2>Multiple Examples</h2>
+						<div style="display: grid; gap: 0.5rem; margin: 1rem 0;">
+							<div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border: 1px solid #eee;">
+								<span>Ableton</span>
+								<joblist-favorite-button item-id="ableton" item-type="company"></joblist-favorite-button>
+							</div>
+							<div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border: 1px solid #eee;">
+								<span>Frontend Developer Job</span>
+								<joblist-favorite-button item-id="frontend-dev-job" item-type="job"></joblist-favorite-button>
+							</div>
+							<div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border: 1px solid #eee;">
+								<span>Backend Developer Job</span>
+								<joblist-favorite-button item-id="backend-dev-job" item-type="job"></joblist-favorite-button>
+							</div>
+						</div>
+					</section>
+					
+					<section>
+						<h2>Usage</h2>
+						<p>Add favorite buttons to any item with an ID:</p>
+						<pre><code>&lt;joblist-favorite-button item-id="company-id" item-type="company"&gt;&lt;/joblist-favorite-button&gt;
+&lt;joblist-favorite-button item-id="job-id" item-type="job"&gt;&lt;/joblist-favorite-button&gt;</code></pre>
+						
+						<h3>Attributes</h3>
+						<ul>
+							<li><code>item-id</code> - Unique identifier for the item</li>
+							<li><code>item-type</code> - Either "company" or "job"</li>
+						</ul>
+						
+						<h3>Events</h3>
+						<ul>
+							<li><code>favorite-added</code> - Fired when item is added to favorites</li>
+							<li><code>favorite-removed</code> - Fired when item is removed from favorites</li>
+							<li><code>storage-required</code> - Fired when storage connection is needed</li>
+						</ul>
+					</section>
+				</joblist-page-main>
+			</joblist-page>
+		</joblist-layout>
+	</body>
+</html>
