@@ -1,8 +1,10 @@
 import { html } from 'lit-html';
 import '../components/board.js';
-import '../providers/greenhouse.js'; // Ensure a provider is loaded for the story
-import '../providers/personio.js'; // Ensure a provider is loaded for the story
-
+import '../providers/greenhouse.js';
+import '../providers/personio.js';
+import '../providers/lever.js';
+import '../providers/workable.js';
+import '../providers/smartrecruiters.js';
 
 export default {
   title: 'Components/Board',
@@ -10,28 +12,159 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'The Board component is a factory that renders a specific job board provider based on the `provider-name` attribute. The provider component will then fetch and display the jobs for the given `provider-hostname`.\n\n## Events\n\n- `jobs-loaded`: Dispatched by the provider component when the jobs are loaded. The event detail contains the list of jobs.',
+        component: 'Job board component that dynamically loads and renders provider-specific job boards. Supports multiple ATS providers including Greenhouse, Personio, Lever, Workable, SmartRecruiters, and more. Acts as a factory pattern, instantiating the appropriate provider component based on the provider-name attribute.',
       },
     },
   },
   argTypes: {
-    providerUrl: { control: 'text' },
-    providerHostname: { control: 'text' },
-    providerName: { control: 'text' },
+    'provider-url': { 
+      control: 'text',
+      description: 'Full URL to the job board (auto-detects provider type)',
+    },
+    'provider-hostname': { 
+      control: 'select',
+      options: ['abletonag', 'greenhouse', 'stripe', 'github', 'microsoft', 'shopify', 'airbnb', 'netflix'],
+      description: 'Company-specific hostname/subdomain for the job board',
+    },
+    'provider-name': { 
+      control: 'select',
+      options: ['personio', 'greenhouse', 'lever', 'workable', 'smartrecruiters', 'ashby', 'recruitee', 'rippling'],
+      description: 'ATS provider type (overrides auto-detection)',
+    },
     onJobsLoaded: { action: 'jobs-loaded' },
   },
 };
 
-const Template = ({ providerUrl, providerHostname, providerName }) => html`
+const Template = (args) => html`
   <joblist-board
-    provider-url=${providerUrl}
-    provider-hostname=${providerHostname}
-    provider-name=${providerName}
+    ${args['provider-url'] ? `provider-url="${args['provider-url']}"` : ''}
+    ${args['provider-hostname'] ? `provider-hostname="${args['provider-hostname']}"` : ''}
+    ${args['provider-name'] ? `provider-name="${args['provider-name']}"` : ''}
+    @jobs-loaded=${args.onJobsLoaded}
   ></joblist-board>
 `;
 
-export const FromUrl = Template.bind({});
-FromUrl.args = {
-  providerUrl: 'https://boards.greenhouse.io/greenhouse',
+// Auto-detection from URL (most common use case)
+export const AutoDetectFromUrl = Template.bind({});
+AutoDetectFromUrl.args = {
+  'provider-url': 'https://boards.greenhouse.io/greenhouse',
+};
+AutoDetectFromUrl.parameters = {
+  docs: {
+    description: {
+      story: 'Automatically detects provider type from URL. Most common usage pattern when you have a full job board URL.',
+    },
+  },
+};
+
+// Personio job board (as used in production)
+export const PersonioBoard = Template.bind({});
+PersonioBoard.args = {
+  'provider-name': 'personio',
+  'provider-hostname': 'abletonag',
+};
+PersonioBoard.parameters = {
+  docs: {
+    description: {
+      story: 'Personio ATS integration, commonly used by European companies. Shows Ableton\'s job board as example.',
+    },
+  },
+};
+
+// Greenhouse job board
+export const GreenhouseBoard = Template.bind({});
+GreenhouseBoard.args = {
+  'provider-name': 'greenhouse',
+  'provider-hostname': 'greenhouse',
+};
+GreenhouseBoard.parameters = {
+  docs: {
+    description: {
+      story: 'Greenhouse ATS integration, popular with tech companies and startups.',
+    },
+  },
+};
+
+// Lever job board
+export const LeverBoard = Template.bind({});
+LeverBoard.args = {
+  'provider-name': 'lever',
+  'provider-hostname': 'netflix',
+};
+LeverBoard.parameters = {
+  docs: {
+    description: {
+      story: 'Lever ATS integration, used by many high-growth companies.',
+    },
+  },
+};
+
+// Workable job board
+export const WorkableBoard = Template.bind({});
+WorkableBoard.args = {
+  'provider-name': 'workable',
+  'provider-hostname': 'shopify',
+};
+WorkableBoard.parameters = {
+  docs: {
+    description: {
+      story: 'Workable ATS integration, popular among mid-size companies.',
+    },
+  },
+};
+
+// SmartRecruiters job board
+export const SmartRecruitersBoard = Template.bind({});
+SmartRecruitersBoard.args = {
+  'provider-name': 'smartrecruiters',
+  'provider-hostname': 'microsoft',
+};
+SmartRecruitersBoard.parameters = {
+  docs: {
+    description: {
+      story: 'SmartRecruiters ATS integration, used by large enterprises.',
+    },
+  },
+};
+
+// Large tech company example
+export const LargeTechCompany = Template.bind({});
+LargeTechCompany.args = {
+  'provider-url': 'https://jobs.lever.co/github',
+};
+LargeTechCompany.parameters = {
+  docs: {
+    description: {
+      story: 'Example of a large tech company\'s job board, showing high-volume job listings.',
+    },
+  },
+};
+
+// Startup company example
+export const StartupCompany = Template.bind({});
+StartupCompany.args = {
+  'provider-name': 'greenhouse',
+  'provider-hostname': 'airbnb',
+};
+StartupCompany.parameters = {
+  docs: {
+    description: {
+      story: 'Startup or scale-up company job board, typically with fewer but more diverse positions.',
+    },
+  },
+};
+
+// Error handling for invalid provider
+export const InvalidProvider = Template.bind({});
+InvalidProvider.args = {
+  'provider-name': 'nonexistent-ats',
+  'provider-hostname': 'example-company',
+};
+InvalidProvider.parameters = {
+  docs: {
+    description: {
+      story: 'Error state when an unsupported or invalid provider is specified.',
+    },
+  },
 };
 
