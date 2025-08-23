@@ -78,7 +78,21 @@ export default class JoblistJob extends HTMLElement {
 	 * @returns {Object} Parsed job object
 	 */
 	get job() {
-		return JSON.parse(this.getAttribute("job"));
+		const value = this.getAttribute("job");
+		return value ? JSON.parse(value) : null;
+	}
+	/**
+	 * Sets the job data as an attribute (JSON string)
+	 * @param {Object|string|null} value - Job object or JSON string
+	 */
+	set job(value) {
+		if (value == null) {
+			this.removeAttribute("job");
+			return;
+		}
+		const serialized = typeof value === "string" ? value : JSON.stringify(value);
+		this.setAttribute("job", serialized);
+		this.render();
 	}
 	
 	/**
