@@ -195,12 +195,13 @@ export default class JoblistBoardProvider extends HTMLElement {
 	/**
 	 * Renders the filtered job list
 	 */
-	renderJobs() {
+		renderJobs() {
 		const $jobsContainer = this.querySelector("joblist-board-jobs");
 		if (!$jobsContainer) return;
 
 		if (this.filteredModel && this.filteredModel.length) {
-			const $jobs = this.filteredModel.map(this.createJob);
+			// Bind to ensure `this` context inside createJob
+			const $jobs = this.filteredModel.map(this.createJob.bind(this));
 			const $items = $jobs.map(($job) => {
 				const $li = document.createElement("li");
 				$li.append($job);
