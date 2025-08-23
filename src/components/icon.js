@@ -117,7 +117,7 @@ export default class JoblistIcon extends HTMLElement {
 	 */
 	render() {
 		// Clear existing content
-		this.innerHTML = '';
+		this.replaceChildren();
 
 		// Create container
 		const container = document.createElement('i');

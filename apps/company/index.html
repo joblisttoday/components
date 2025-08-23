@@ -12,8 +12,11 @@
 				if (id) {
 					$company.setAttribute("company-id", id);
 				}
-				const $companyFull = $company.cloneNode();
-				$companyFull.setAttribute("full", true);
+				const $companyFull = document.createElement("joblist-company");
+				if (id) {
+					$companyFull.setAttribute("company-id", id);
+				}
+				$companyFull.setAttribute("full", "true");
 				document
 					.querySelector("joblist-page")
 					.append($company, document.createElement("hr"), $companyFull);

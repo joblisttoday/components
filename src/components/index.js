@@ -36,11 +36,6 @@ import JoblistBilling from "./billing.js";
 import JoblistSocialWidget from "./social-widget.js";
 import JoblistSocialLink from "./social-link.js";
 import JoblistIcon from "./icon.js";
-import JoblistStorageWidget from "./storage-widget.js";
-import JoblistFavoritesManager from "./favorites-manager.js";
-import JoblistFavoriteButton from "./favorite-button.js";
-import JoblistNotesEditor from "./notes-editor.js";
-import JoblistResumeManager from "./resume-manager.js";
 
 const componentDefinitions = {
 	"joblist-umami-script": JoblistUmamiScript,
@@ -86,12 +81,6 @@ const componentDefinitions = {
 	"joblist-social-link": JoblistSocialLink,
 	"joblist-icon": JoblistIcon,
 
-	/* storage */
-	"joblist-storage-widget": JoblistStorageWidget,
-	"joblist-favorites-manager": JoblistFavoritesManager,
-	"joblist-favorite-button": JoblistFavoriteButton,
-	"joblist-notes-editor": JoblistNotesEditor,
-	"joblist-resume-manager": JoblistResumeManager,
 };
 
 /**

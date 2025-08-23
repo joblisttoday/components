@@ -78,11 +78,24 @@ export default class JobBoards extends HTMLElement {
 	 * Renders the HTML template structure
 	 */
 	renderTemplate() {
-		this.innerHTML = `
-			<form title="Build a job-list web-component"></form>
-			<textarea readonly title="Copy this code snippet to insert the job listing in any HTML web-page"></textarea>
-			<article title="Job listing"></article>
-		`;
+		// Create form
+		const form = document.createElement("form");
+		form.setAttribute("title", "Build a job-list web-component");
+		
+		// Create textarea
+		const textarea = document.createElement("textarea");
+		textarea.setAttribute("readonly", "");
+		textarea.setAttribute("title", "Copy this code snippet to insert the job listing in any HTML web-page");
+		
+		// Create article
+		const article = document.createElement("article");
+		article.setAttribute("title", "Job listing");
+		
+		// Clear and assemble
+		this.replaceChildren();
+		this.appendChild(form);
+		this.appendChild(textarea);
+		this.appendChild(article);
 		this.$form = this.querySelector("form");
 		this.$board = this.querySelector("article");
 		this.$code = this.querySelector("textarea");
@@ -173,7 +186,7 @@ export default class JobBoards extends HTMLElement {
 		const $board = document.createElement("joblist-board");
 		$board.setAttribute("provider-name", this.providerName);
 		$board.setAttribute("provider-hostname", this.providerHostname);
-		this.$board.innerHTML = "";
+		this.$board.replaceChildren();
 		this.renderBoardCopy();
 		this.$board.append($board);
 	}

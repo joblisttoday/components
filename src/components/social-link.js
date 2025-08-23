@@ -54,7 +54,7 @@ export default class JoblistSocialLink extends HTMLElement {
    */
   render() {
     if (!this.socialInfo) {
-      this.innerHTML = this.renderSimpleLink();
+      this.renderSimpleLink();
       return;
     }
 
@@ -99,17 +99,15 @@ export default class JoblistSocialLink extends HTMLElement {
       wrapper.appendChild(embedContainer);
     }
     
-    this.innerHTML = "";
+    this.replaceChildren();
     this.appendChild(wrapper);
   }
 
   /**
    * Renders a simple link fallback when social info is not available.
-   * 
-   * @returns {string} HTML string for the simple link
    */
   renderSimpleLink() {
-    if (!this.url) return "";
+    if (!this.url) return;
     
     const link = document.createElement("a");
     link.href = this.url;
@@ -117,6 +115,7 @@ export default class JoblistSocialLink extends HTMLElement {
     link.rel = "noreferrer noopener";
     link.textContent = this.provider || "Link";
     
-    return link.outerHTML;
+    this.replaceChildren();
+    this.appendChild(link);
   }
 }

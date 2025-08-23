@@ -60,7 +60,7 @@ export default class JoblistBoardProvider extends HTMLElement {
 	}
 
 	/**
-	 * Filters jobs based on search term with fuzzy matching
+	 * Filters jobs based on search term with simple text matching
 	 * @param {string} searchTerm - The search term to filter by
 	 */
 	filterJobs(searchTerm) {
@@ -82,84 +82,11 @@ export default class JoblistBoardProvider extends HTMLElement {
 				: "";
 			const searchableText = `${jobName} ${companyTitle} ${location} ${description}`;
 
-			return terms.every((term) => this.fuzzyMatch(searchableText, term));
+			// Simple substring matching - much faster and more predictable
+			return terms.every((term) => searchableText.includes(term));
 		});
 	}
 
-	/**
-	 * Performs fuzzy matching between text and pattern
-	 * @param {string} text - The text to search in
-	 * @param {string} pattern - The pattern to match
-	 * @returns {boolean} True if pattern matches text
-	 */
-	fuzzyMatch(text, pattern) {
-		// Direct substring match (fastest)
-		if (text.includes(pattern)) return true;
-
-		// Fuzzy character sequence matching
-		let textIndex = 0;
-		let patternIndex = 0;
-
-		while (textIndex < text.length && patternIndex < pattern.length) {
-			if (text[textIndex] === pattern[patternIndex]) {
-				patternIndex++;
-			}
-			textIndex++;
-		}
-
-		// If we matched all pattern characters, it's a fuzzy match
-		if (patternIndex === pattern.length) return true;
-
-		// Additional fuzzy matching for common typos and abbreviations
-		// Split pattern into words and check if most words match
-		const patternWords = pattern.split(/\s+/).filter(w => w.length > 0);
-		const textWords = text.split(/\s+/);
-		
-		if (patternWords.length === 1) return false; // Single word already failed above
-		
-		let matchedWords = 0;
-		patternWords.forEach(pWord => {
-			if (textWords.some(tWord => 
-				tWord.includes(pWord) || 
-				pWord.includes(tWord) ||
-				this.simpleLevenshtein(tWord, pWord) <= Math.max(1, Math.floor(pWord.length * 0.2))
-			)) {
-				matchedWords++;
-			}
-		});
-		
-		// Match if at least 70% of words match
-		return matchedWords >= Math.ceil(patternWords.length * 0.7);
-	}
-
-	/**
-	 * Calculates Levenshtein distance between two strings
-	 * @param {string} a - First string
-	 * @param {string} b - Second string
-	 * @returns {number} Levenshtein distance
-	 */
-	simpleLevenshtein(a, b) {
-		if (a.length === 0) return b.length;
-		if (b.length === 0) return a.length;
-		
-		const matrix = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(0));
-		
-		for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
-		for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
-		
-		for (let i = 1; i <= a.length; i++) {
-			for (let j = 1; j <= b.length; j++) {
-				const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-				matrix[i][j] = Math.min(
-					matrix[i - 1][j] + 1,      // deletion
-					matrix[i][j - 1] + 1,      // insertion  
-					matrix[i - 1][j - 1] + cost // substitution
-				);
-			}
-		}
-		
-		return matrix[a.length][b.length];
-	}
 
 	/**
 	 * Creates search input and results count elements

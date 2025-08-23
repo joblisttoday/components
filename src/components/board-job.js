@@ -1,6 +1,4 @@
 import { sanitizeHtmlToDom } from "../utils/html-sanitizer.js";
-import "./favorite-button.js";
-import "./notes-editor.js";
 
 /**
  * Custom web component for displaying job information in a board layout
@@ -86,21 +84,13 @@ export default class JoblistBoardJob extends HTMLElement {
 		$jobNameAnchor.setAttribute("href", url);
 		$jobNameAnchor.setAttribute("target", "_blank");
 		$jobNameAnchor.setAttribute("rel", "noreferrer noopener");
-		$jobNameAnchor.innerText = title;
+		$jobNameAnchor.textContent = title;
 		$jobName.append($jobNameAnchor);
 
-		// Add favorite button if we have a job ID
-		if (jobId) {
-			const $favoriteBtn = document.createElement("joblist-favorite-button");
-			$favoriteBtn.setAttribute("item-id", jobId);
-			$favoriteBtn.setAttribute("item-type", "job");
-			$jobHeader.append($jobName, $favoriteBtn);
-		} else {
-			$jobHeader.append($jobName);
-		}
+		$jobHeader.append($jobName);
 
 		const $jobLocation = document.createElement("joblist-board-job-location");
-		$jobLocation.innerText = location;
+		$jobLocation.textContent = location;
 
 		const $doms = [$jobHeader, $jobLocation];
 
@@ -114,19 +104,6 @@ export default class JoblistBoardJob extends HTMLElement {
 			$doms.push($jobDescription);
 		}
 
-		// Add notes section if we have a job ID
-		if (jobId) {
-			const $notesSection = document.createElement("details");
-			const $notesSummary = document.createElement("summary");
-			$notesSummary.textContent = "Notes";
-			
-			const $notesEditor = document.createElement("joblist-notes-editor");
-			$notesEditor.setAttribute("item-id", jobId);
-			$notesEditor.setAttribute("item-type", "job");
-			
-			$notesSection.append($notesSummary, $notesEditor);
-			$doms.push($notesSection);
-		}
 
 		return $doms;
 	}

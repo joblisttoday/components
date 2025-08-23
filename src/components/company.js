@@ -65,12 +65,16 @@ export default class JoblistCompany extends HTMLElement {
 	 */
 	async connectedCallback() {
 		if (this.companyId) {
-			const base = this.getAttribute("parquet-base") || undefined;
-			const mode = this.getAttribute("parquet-mode") || "buffer";
-			this.sdk =
-				base || mode ? new JoblistDuckDBSDK(base, { mode }) : joblistDuckDBSDK;
-			await this.sdk.initialize();
-			this.company = await this.sdk.getCompany(this.companyId);
+			try {
+				const base = this.getAttribute("parquet-base") || undefined;
+				const mode = this.getAttribute("parquet-mode") || "buffer";
+				this.sdk =
+					base || mode ? new JoblistDuckDBSDK(base, { mode }) : joblistDuckDBSDK;
+				await this.sdk.initialize();
+				this.company = await this.sdk.getCompany(this.companyId);
+			} catch (error) {
+				console.error("Company failed to load data:", error);
+			}
 		}
 		this.render();
 	}
@@ -97,11 +101,6 @@ export default class JoblistCompany extends HTMLElement {
 					this.createDescription(this.company),
 				);
 			}
-		}
-		
-		// Add notes section if in full mode
-		if (this.full) {
-			$doms.push(this.createNotesSection(this.company));
 		}
 		
 		this.append(...$doms);
@@ -225,6 +224,8 @@ export default class JoblistCompany extends HTMLElement {
 			{ key: "wikipedia_url", icon: "wikipedia", label: "wikipedia" },
 		];
 
+		// Storage components will be handled separately
+
 		const socialLinks = [
 			{ key: "linkedin_url", icon: "linkedin", label: "linkedin" },
 			{ key: "twitter_url", icon: "twitter", label: "twitter" },
@@ -232,9 +233,6 @@ export default class JoblistCompany extends HTMLElement {
 			{ key: "facebook_url", icon: "facebook", label: "facebook" },
 			{ key: "instagram_url", icon: "instagram", label: "instagram" },
 		];
-
-		// Favorite button as separate menu in full mode
-		const favoriteButton = this.full ? this.createFavoriteMenu(company) : null;
 
 		// Edit options as separate third menu if in full mode
 		const editOptions = this.full
@@ -272,16 +270,12 @@ export default class JoblistCompany extends HTMLElement {
 
 		const $wrapper = document.createElement("joblist-company-links");
 
-		// Create three separate menus
+		// Create separate menus
 		const menus = [
 			this.createLinksMenu(companyLinks, company),
 			this.createLinksMenu(socialLinks, company),
 		];
 
-		// Add favorite button if in full mode
-		if (favoriteButton) {
-			menus.push(favoriteButton);
-		}
 
 		// Add edit menu as third menu if in full mode
 		if (this.full && editOptions.length > 0) {
@@ -293,9 +287,10 @@ export default class JoblistCompany extends HTMLElement {
 			menus.push(this.createHighlightMenu(company));
 		}
 
-		$wrapper.append(...menus.filter(Boolean));
+		$wrapper.append(...menus.filter(menu => menu !== null && menu !== ""));
 		return $wrapper;
 	}
+
 	/**
 	 * Creates a menu of links from link configuration
 	 * @param {Array} links - Array of link objects or strings
@@ -315,6 +310,8 @@ export default class JoblistCompany extends HTMLElement {
 					: company[linkKey];
 			const title =
 				typeof linkInfo === "object" && linkInfo.title ? linkInfo.title : label;
+
+			// Component handling is now done in createStorageMenu method
 
 			// Skip if no URL (for company properties) or if it's an edit option with href
 			if (!href) return acc;
@@ -353,7 +350,7 @@ export default class JoblistCompany extends HTMLElement {
 			$menu.append(...$listItems);
 			return $menu;
 		} else {
-			return "";
+			return null;
 		}
 	}
 
@@ -479,38 +476,7 @@ export default class JoblistCompany extends HTMLElement {
 		return highlighted;
 	}
 
-	/**
-	 * Creates favorite button menu
-	 * @param {Object} company - Company data object
-	 * @returns {HTMLElement} Favorite menu element
-	 */
-	createFavoriteMenu(company) {
-		const $menu = document.createElement("joblist-company-menu");
-		const $favoriteBtn = document.createElement("joblist-favorite-button");
-		$favoriteBtn.setAttribute("item-id", company.id);
-		$favoriteBtn.setAttribute("item-type", "company");
-		$menu.appendChild($favoriteBtn);
-		return $menu;
-	}
 
-	/**
-	 * Creates notes editor section
-	 * @param {Object} company - Company data object
-	 * @returns {HTMLElement} Notes section element
-	 */
-	createNotesSection(company) {
-		const $section = document.createElement("section");
-		const $header = document.createElement("h3");
-		$header.textContent = "Notes";
-		
-		const $notesEditor = document.createElement("joblist-notes-editor");
-		$notesEditor.setAttribute("item-id", company.id);
-		$notesEditor.setAttribute("item-type", "company");
-		
-		$section.appendChild($header);
-		$section.appendChild($notesEditor);
-		return $section;
-	}
 
 	/**
 	 * Creates highlight purchase menu
