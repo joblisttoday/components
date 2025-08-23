@@ -57,8 +57,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build website
-        run: npm run build-website
+      - name: Build site, Storybook, and Typedoc
+        run: npm run build
 
       - name: Prepare public folder
         run: |
