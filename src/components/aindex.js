@@ -19,7 +19,7 @@ export default class JoblistAindex extends HTMLElement {
 	 * @returns {Array} Parsed index array
 	 */
 	get index() {
-		return JSON.parse(this.getAttribute("index"));
+		return JSON.parse(this.getAttribute("index") || "[]");
 	}
 	
 	/**
@@ -180,12 +180,12 @@ export class JoblistAindexList extends HTMLElement {
 	 * Renders the alphabetical index list with sections for each letter
 	 * @param {Object} index - The index object with letters as keys and arrays of items as values
 	 */
-	render(index) {
-		const sections = Object.keys(index)
-			.sort(sortIndex)
-			.map((indexLetter) => {
-				const section = document.createElement("section");
-				section.setAttribute("id", `aindex-${indexLetter}`);
+		render(index) {
+			const sections = Object.keys(index)
+				.sort(sortIndex)
+				.map((indexLetter) => {
+					const section = document.createElement("section");
+					section.setAttribute("id", `aindex-${indexLetter}`);
 
 				const anchor = document.createElement("a");
 				anchor.setAttribute("href", `#aindex-${indexLetter}`);
@@ -195,18 +195,33 @@ export class JoblistAindexList extends HTMLElement {
 				section.appendChild(h2);
 
 				const ul = document.createElement("ul");
-				const templateKey = this.templateKey;
-
 				const template = this.template;
+				const templateKey = this.templateKey || 'item';
 
 				index[indexLetter].forEach((item) => {
 					const li = document.createElement("li");
-					const clonedTemplate = template.content.cloneNode(true);
-					clonedTemplate.firstChild.setAttribute(
-						templateKey,
-						JSON.stringify(item),
-					);
-					li.appendChild(clonedTemplate);
+					if (template && template.content && template.content.firstChild) {
+						const cloned = template.content.cloneNode(true);
+						const target = cloned.firstChild;
+						try {
+							target.setAttribute(templateKey, JSON.stringify(item));
+						} catch (_) {
+							/* ignore template attribute set issues */
+						}
+						// Also support [data-item] text injection for simple templates
+						const dataNode = cloned.querySelector?.('[data-item]');
+						if (dataNode) {
+							dataNode.textContent = typeof item === 'string'
+								? item
+								: (item.title || item.name || String(item));
+						}
+
+						li.appendChild(cloned);
+					} else {
+						li.textContent = typeof item === 'string'
+							? item
+							: (item.title || item.name || String(item));
+					}
 					ul.appendChild(li);
 				});
 
