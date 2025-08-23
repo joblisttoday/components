@@ -3,13 +3,7 @@
   "private": false,
   "version": "0.2.18",
   "homepage": "https://github.com/joblisttoday/components",
-  "keywords": [
-    "web-components",
-    "leaflet",
-    "duckdb",
-    "wasm",
-    "joblist"
-  ],
+  "keywords": ["web-components", "leaflet", "duckdb", "wasm", "joblist"],
   "author": "joblist",
   "license": "GPL-3.0-or-later",
   "type": "module",
@@ -22,15 +16,12 @@
     "./style": "./dist-lib/index.css"
   },
   "main": "./dist-lib/index.js",
-  "files": [
-    "**/*",
-    "dist-lib/*"
-  ],
+  "files": ["**/*", "dist-lib/*"],
   "scripts": {
     "dev": "concurrently 'npm run dev:website' 'npm run storybook'",
     "dev:website": "vite",
     "dev:storybook": "storybook dev -p 7007",
-    "build": "npm run build-website && npm run build-lib && npm run build-storybook && npm run typecheck && npm run typedoc",
+    "build": "npm run typecheck && npm run build-website && npm run build-lib && npm run typedoc && npm run build-storybook",
     "build-lib": "vite build --config ./src/vite/lib.js",
     "build-website": "vite build --config ./src/vite/website.js",
     "build-storybook": "storybook build --output-dir dist-website/storybook",
