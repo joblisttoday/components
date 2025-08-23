@@ -24,8 +24,6 @@ export default class JoblistStorageWidget extends HTMLElement {
 	/**
 	 * Lifecycle callback when component is added to DOM.
 	 * Initializes storage service and sets up connection event listeners.
-	 * 
-	 * @async
 	 */
 	async connectedCallback() {
 		this.storage = getJoblistStorage();

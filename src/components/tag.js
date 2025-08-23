@@ -29,7 +29,7 @@ export default class JoblistTag extends HTMLElement {
 	 * Lifecycle callback when component is added to DOM.
 	 * Renders the tag element with current tag and origin values.
 	 * 
-	 * @async
+	 *
 	 */
 	async connectedCallback() {
 		this.render(this.tag, this.origin);

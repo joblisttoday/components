@@ -1,0 +1,9 @@
+{
+	"entryPoints": ["src/**/*.js"],
+	"out": "dist-website/typedoc",
+	"plugin": [],
+	
+	"includeVersion": true,
+	"excludePrivate": true,
+	"excludeProtected": true
+}

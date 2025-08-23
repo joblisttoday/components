@@ -1,6 +1,6 @@
 /**
  * SVG content for the Joblist favicon
- * @const {string}
+ *
  */
 export const JOBLIST_FAVICON_SVG = `
 	<svg version="1.0" xmlns="http://www.w3.org/2000/svg"

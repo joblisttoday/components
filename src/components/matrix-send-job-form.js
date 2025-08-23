@@ -1,6 +1,6 @@
 /**
  * HTML template for job posting form
- * @const {HTMLTemplateElement}
+ *
  */
 export const formTemplate = document.createElement("template");
 formTemplate.innerHTML = `
@@ -46,7 +46,7 @@ formTemplate.innerHTML = `
 
 /**
  * Supported OEmbed providers
- * @const {Object}
+ *
  */
 export const PROVIDERS = {
 	"www.youtube.com": "youtube",
@@ -58,7 +58,7 @@ export const PROVIDERS = {
 
 /**
  * OEmbed API endpoints for each provider
- * @const {Object}
+ *
  */
 const OEMBED_PROVIDERS = {
 	soundcloud: "https://soundcloud.com/oembed?format=json&url=",

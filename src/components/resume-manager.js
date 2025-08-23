@@ -7,8 +7,8 @@ import { getJoblistStorage } from '../services/storage.js';
  * 
  * @class JoblistResumeManager
  * @extends HTMLElement
- * @fires JoblistResumeManager#cover-letter-saved - Emitted when a cover letter is successfully saved
- * @fires JoblistResumeManager#cover-letter-deleted - Emitted when a cover letter is successfully deleted
+ * @event JoblistResumeManager#cover-letter-saved - Emitted when a cover letter is successfully saved
+ * @event JoblistResumeManager#cover-letter-deleted - Emitted when a cover letter is successfully deleted
  */
 export default class JoblistResumeManager extends HTMLElement {
 	/**
@@ -31,7 +31,7 @@ export default class JoblistResumeManager extends HTMLElement {
 	 * Lifecycle callback when component is added to DOM.
 	 * Initializes storage connection and loads existing cover letters.
 	 * 
-	 * @async
+	 *
 	 */
 	async connectedCallback() {
 		this.storage = getJoblistStorage();
@@ -54,7 +54,7 @@ export default class JoblistResumeManager extends HTMLElement {
 	 * Loads all cover letters from storage.
 	 * If storage is not available, initializes with default empty cover letter.
 	 * 
-	 * @async
+	 *
 	 */
 	async loadCoverLetters() {
 		try {
@@ -72,7 +72,7 @@ export default class JoblistResumeManager extends HTMLElement {
 	 * Saves a cover letter to storage and updates local state.
 	 * Emits a 'cover-letter-saved' event on successful save.
 	 * 
-	 * @async
+	 *
 	 * @param {string} name - The name/identifier for the cover letter
 	 * @param {string} content - The cover letter content
 	 */
@@ -91,7 +91,7 @@ export default class JoblistResumeManager extends HTMLElement {
 	 * Deletes a cover letter from storage and local state.
 	 * Cannot delete the 'default' cover letter. Emits a 'cover-letter-deleted' event on success.
 	 * 
-	 * @async
+	 *
 	 * @param {string} name - The name of the cover letter to delete
 	 * @returns {void} Returns early if attempting to delete 'default'
 	 */

@@ -1,6 +1,15 @@
+/**
+ * DuckDB WASM SDK for querying remote parquet data
+ * @module sdk-duckdb
+ */
+
 import * as duckdb from "@duckdb/duckdb-wasm";
 import { generateMissingDates } from "../utils/heatmap.js";
 
+/**
+ * SDK for querying DuckDB parquet data via WASM
+ * @class JoblistDuckDBSDK
+ */
 export class JoblistDuckDBSDK {
 	constructor(baseParquetUrl = "https://workers.joblist.today", options = {}) {
 		this.baseParquetUrl = baseParquetUrl.replace(/\/$/, "");

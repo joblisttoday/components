@@ -20,7 +20,7 @@ export default class JoblistFavoritesManager extends HTMLElement {
 		/** @type {string} Display type - 'companies', 'jobs', or 'both' */
 		this.type = 'both';
 	}
-	
+
 	/**
 	 * Gets the view type from attribute
 	 * @returns {string} The view type (companies, jobs, or both)
@@ -28,26 +28,26 @@ export default class JoblistFavoritesManager extends HTMLElement {
 	get viewType() {
 		return this.getAttribute('type') || 'both';
 	}
-	
+
 	/**
 	 * Lifecycle method called when element is connected to DOM
 	 */
 	async connectedCallback() {
 		this.storage = getJoblistStorage();
 		await this.storage.initialize();
-		
+
 		// Listen for storage changes (less frequent)
 		this.storage.on('sync-done', () => {
 			this.loadFavorites().then(() => {
 				this.render();
 			});
 		});
-		
+
 		this.type = this.viewType;
 		await this.loadFavorites();
 		this.render();
 	}
-	
+
 	/**
 	 * Loads favorites from storage
 	 */
@@ -55,7 +55,7 @@ export default class JoblistFavoritesManager extends HTMLElement {
 		// Prevent loading if already in progress
 		if (this.loadingFavorites) return;
 		this.loadingFavorites = true;
-		
+
 		try {
 			if (this.type === 'companies' || this.type === 'both') {
 				this.favoriteCompanies = await this.storage.getFavoriteCompanies();
@@ -69,7 +69,7 @@ export default class JoblistFavoritesManager extends HTMLElement {
 			this.loadingFavorites = false;
 		}
 	}
-	
+
 	/**
 	 * Adds an item to favorites
 	 * @param {string} id - Item ID
@@ -90,7 +90,7 @@ export default class JoblistFavoritesManager extends HTMLElement {
 			console.error('Error adding to favorites:', e);
 		}
 	}
-	
+
 	/**
 	 * Removes an item from favorites
 	 * @param {string} id - Item ID
@@ -111,7 +111,7 @@ export default class JoblistFavoritesManager extends HTMLElement {
 			console.error('Error removing from favorites:', e);
 		}
 	}
-	
+
 	/**
 	 * Checks if an item is favorited
 	 * @param {string} id - Item ID
@@ -126,16 +126,16 @@ export default class JoblistFavoritesManager extends HTMLElement {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Renders the favorites manager interface
 	 */
 	render() {
 		const showCompanies = this.type === 'companies' || this.type === 'both';
 		const showJobs = this.type === 'jobs' || this.type === 'both';
-		
+
 		let html = '<joblist-favorites-manager>';
-		
+
 		if (!this.storage.isConnected()) {
 			html += `
 				<div>
@@ -159,7 +159,7 @@ export default class JoblistFavoritesManager extends HTMLElement {
 					</section>
 				`;
 			}
-			
+
 			if (showJobs && this.favoriteJobs.length > 0) {
 				html += `
 					<section>
@@ -175,7 +175,7 @@ export default class JoblistFavoritesManager extends HTMLElement {
 					</section>
 				`;
 			}
-			
+
 			if (this.favoriteCompanies.length === 0 && this.favoriteJobs.length === 0) {
 				html += `
 					<div>
@@ -184,10 +184,10 @@ export default class JoblistFavoritesManager extends HTMLElement {
 				`;
 			}
 		}
-		
+
 		html += '</joblist-favorites-manager>';
 		this.innerHTML = html;
-		
+
 		// Add event listeners
 		this.querySelectorAll('button').forEach(btn => {
 			btn.addEventListener('click', (e) => {
@@ -197,9 +197,9 @@ export default class JoblistFavoritesManager extends HTMLElement {
 				this.removeFromFavorites(id, type);
 			});
 		});
-		
+
 	}
-	
+
 	/**
 	 * Emits custom events
 	 * @param {string} event - Event name

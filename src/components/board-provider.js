@@ -311,7 +311,7 @@ export default class JoblistBoardProvider extends HTMLElement {
  * @class JoblistBoardPersonio
  * @extends JoblistBoardProvider
  */
-class JoblistBoardPersonio extends JoblistBoardProvider {
+export class JoblistBoardPersonio extends JoblistBoardProvider {
 	id = personioApi.id;
 	getJobs = personioApi.getJobs;
 }
@@ -321,7 +321,7 @@ class JoblistBoardPersonio extends JoblistBoardProvider {
  * @class JoblistBoardRecruitee
  * @extends JoblistBoardProvider
  */
-class JoblistBoardRecruitee extends JoblistBoardProvider {
+export class JoblistBoardRecruitee extends JoblistBoardProvider {
 	id = recruiteeApi.id;
 	getJobs = recruiteeApi.getJobs;
 }
@@ -331,7 +331,7 @@ class JoblistBoardRecruitee extends JoblistBoardProvider {
  * @class JoblistBoardSmartrecruiters
  * @extends JoblistBoardProvider
  */
-class JoblistBoardSmartrecruiters extends JoblistBoardProvider {
+export class JoblistBoardSmartrecruiters extends JoblistBoardProvider {
 	id = smartrecruitersApi.id;
 	getJobs = smartrecruitersApi.getJobs;
 }
@@ -341,7 +341,7 @@ class JoblistBoardSmartrecruiters extends JoblistBoardProvider {
  * @class JoblistBoardGreenhouse
  * @extends JoblistBoardProvider
  */
-class JoblistBoardGreenhouse extends JoblistBoardProvider {
+export class JoblistBoardGreenhouse extends JoblistBoardProvider {
 	id = greenhouseApi.id;
 	getJobs = greenhouseApi.getJobs;
 }
@@ -351,7 +351,7 @@ class JoblistBoardGreenhouse extends JoblistBoardProvider {
  * @class JoblistBoardAshby
  * @extends JoblistBoardProvider
  */
-class JoblistBoardAshby extends JoblistBoardProvider {
+export class JoblistBoardAshby extends JoblistBoardProvider {
 	id = ashbyApi.id;
 	getJobs = ashbyApi.getJobs;
 }
@@ -361,7 +361,7 @@ class JoblistBoardAshby extends JoblistBoardProvider {
  * @class JoblistBoardLever
  * @extends JoblistBoardProvider
  */
-class JoblistBoardLever extends JoblistBoardProvider {
+export class JoblistBoardLever extends JoblistBoardProvider {
 	id = leverApi.id;
 	getJobs = leverApi.getJobs;
 }
@@ -371,7 +371,7 @@ class JoblistBoardLever extends JoblistBoardProvider {
  * @class JoblistBoardWorkable
  * @extends JoblistBoardProvider
  */
-class JoblistBoardWorkable extends JoblistBoardProvider {
+export class JoblistBoardWorkable extends JoblistBoardProvider {
 	id = workableApi.id;
 	getJobs = workableApi.getJobs;
 }
@@ -381,7 +381,7 @@ class JoblistBoardWorkable extends JoblistBoardProvider {
  * @class JoblistBoardMatrix
  * @extends JoblistBoardProvider
  */
-class JoblistBoardMatrix extends JoblistBoardProvider {
+export class JoblistBoardMatrix extends JoblistBoardProvider {
 	id = matrixApi.id;
 	getJobs = matrixApi.getJobs;
 }
@@ -391,7 +391,7 @@ class JoblistBoardMatrix extends JoblistBoardProvider {
  * @class JoblistBoardRippling
  * @extends JoblistBoardProvider
  */
-class JoblistBoardRippling extends JoblistBoardProvider {
+export class JoblistBoardRippling extends JoblistBoardProvider {
 	id = ripplingApi.id;
 	getJobs = ripplingApi.getJobs;
 }

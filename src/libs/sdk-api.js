@@ -1,6 +1,15 @@
+/**
+ * Joblist API SDK for interacting with the joblist.today REST API
+ * @module sdk-api
+ */
+
 import { generateMissingDates } from "../utils/heatmap.js";
 import { Company } from "../utils/models.js";
 
+/**
+ * SDK for interacting with the Joblist API
+ * @class JoblistApiSDK
+ */
 export class JoblistApiSDK {
 	constructor(url = "https://api.joblist.today") {
 		this.url = url;

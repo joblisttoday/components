@@ -2,7 +2,7 @@ import { sanitizeHtml } from "../utils/html-sanitizer.js";
 
 /**
  * Job content keys for validation
- * @const {string[]}
+ *
  */
 const JOB_KEYS = ["title", "description", "url"];
 

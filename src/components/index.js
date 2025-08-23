@@ -1,3 +1,8 @@
+/**
+ * Main component index module exporting all Joblist web components
+ * @module components
+ */
+
 import JoblistUmamiScript from "./umami-script.js";
 import JoblistFavicon from "./favicon.js";
 import JoblistMenu from "./menu.js";
@@ -91,7 +96,7 @@ const componentDefinitions = {
 
 /**
  * Export component and provider definitions for custom element registration
- * @exports componentDefinitions - Main component definitions
- * @exports providerDefinitions - Job board provider definitions
+ * @module componentDefinitions - Main component definitions
+ * @module providerDefinitions - Job board provider definitions
  */
 export { componentDefinitions, providerDefinitions };

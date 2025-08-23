@@ -1,3 +1,8 @@
+/**
+ * Leaflet map utilities and marker management
+ * @module map
+ */
+
 import "leaflet";
 
 const parsePosition = (position) => {

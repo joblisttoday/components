@@ -2,7 +2,7 @@ import { icons, createElement } from 'lucide';
 
 /**
  * Map of social providers and common terms to Lucide icon names (PascalCase)
- * @const {Object}
+ *
  */
 const SOCIAL_ICON_MAP = {
 	'twitter': 'Twitter',

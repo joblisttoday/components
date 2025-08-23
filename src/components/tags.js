@@ -13,7 +13,7 @@ export default class JoblistTags extends HTMLElement {
 	 * Lifecycle callback when component is added to DOM.
 	 * Initializes DuckDB SDK, fetches companies, extracts tags, and renders them.
 	 * 
-	 * @async
+	 *
 	 */
 	async connectedCallback() {
         const base = this.getAttribute("parquet-base") || undefined;

@@ -1,17 +1,17 @@
 /**
- * @fileoverview JSDoc Type definitions for Job Board Provider APIs
- * @description This file documents the API endpoints, request/response structures, 
+ * @packageDocumentation JSDoc Type definitions for Job Board Provider APIs
+ * This file documents the API endpoints, request/response structures, 
  * and data types for all supported job board providers in the joblist.today system.
  */
 
 /**
- * @typedef {Object} JobBoardProvider
+ * @typedef JobBoardProvider
  * @property {string} id - Unique identifier for the provider
  * @property {Function} getJobs - Async function to fetch jobs from the provider
  */
 
 /**
- * @typedef {Object} BaseJobData
+ * @typedef BaseJobData
  * @property {string} id - Unique job identifier within the provider
  * @property {string} name - Job title/name
  * @property {string} [description] - Job description content (HTML or plain text)
@@ -25,7 +25,7 @@
  */
 
 /**
- * @typedef {Object} GetJobsParams
+ * @typedef GetJobsParams
  * @property {string} hostname - Provider-specific company identifier
  * @property {string} [companyTitle] - Optional company display name override
  * @property {string} [companyId] - Optional company ID override
@@ -40,23 +40,23 @@
 
 /**
  * @namespace Greenhouse
- * @description Greenhouse job board API integration
+ * Greenhouse job board API integration
  * @see {@link https://developers.greenhouse.io/job-board.html}
  */
 
 /**
- * @typedef {Object} Greenhouse.JobLocation
+ * @typedef JobLocation
  * @property {string} name - Location name
  */
 
 /**
- * @typedef {Object} Greenhouse.JobOffice
+ * @typedef JobOffice
  * @property {string} name - Office name
  * @property {string} location - Office location
  */
 
 /**
- * @typedef {Object} Greenhouse.ApiJob
+ * @typedef ApiJob
  * @property {number} id - Greenhouse job ID
  * @property {string} title - Job title
  * @property {string} content - Job description (HTML format) - only when ?content=true
@@ -67,7 +67,7 @@
  */
 
 /**
- * @typedef {Object} Greenhouse.ApiResponse
+ * @typedef ApiResponse
  * @property {Greenhouse.ApiJob[]} jobs - Array of job postings
  */
 
@@ -77,7 +77,7 @@
  * @param {GetJobsParams} params - Parameters for fetching jobs
  * @returns {Promise<BaseJobData[]>} Array of standardized job objects
  * 
- * @description
+ *
  * **Endpoint:** `GET https://boards-api.greenhouse.io/v1/boards/{hostname}/jobs?content=true`
  * **Authentication:** None required
  * **Rate Limits:** Not specified in public docs
@@ -93,17 +93,17 @@
 
 /**
  * @namespace Ashby
- * @description Ashby job board API integration
+ * Ashby job board API integration
  * @see {@link https://developers.ashbyhq.com/}
  */
 
 /**
- * @typedef {Object} Ashby.JobSecondaryLocation
+ * @typedef JobSecondaryLocation
  * @property {string} locationName - Secondary location name
  */
 
 /**
- * @typedef {Object} Ashby.JobPosting
+ * @typedef JobPosting
  * @property {string} id - Ashby job ID
  * @property {string} title - Job title
  * @property {string} locationName - Primary location name
@@ -112,19 +112,19 @@
  */
 
 /**
- * @typedef {Object} Ashby.JobDetails
+ * @typedef JobDetails
  * @property {string} descriptionHtml - Job description in HTML format
  */
 
 /**
- * @typedef {Object} Ashby.BoardResponse
+ * @typedef BoardResponse
  * @property {Object} data - GraphQL response wrapper
  * @property {Object} data.jobBoard - Job board data
  * @property {Ashby.JobPosting[]} data.jobBoard.jobPostings - Array of job postings
  */
 
 /**
- * @typedef {Object} Ashby.JobDetailsResponse
+ * @typedef JobDetailsResponse
  * @property {Object} data - GraphQL response wrapper
  * @property {Ashby.JobDetails} data.jobPosting - Job details
  */
@@ -135,7 +135,7 @@
  * @param {GetJobsParams} params - Parameters for fetching jobs
  * @returns {Promise<BaseJobData[]>} Array of standardized job objects
  * 
- * @description
+ *
  * **Endpoints:** 
  * 1. `POST https://jobs.ashbyhq.com/api/non-user-graphql?op=ApiBoardWithTeams` (job list)
  * 2. `POST https://jobs.ashbyhq.com/api/non-user-graphql` (individual job details)
@@ -157,12 +157,12 @@
 
 /**
  * @namespace Lever
- * @description Lever job board API integration
+ * Lever job board API integration
  * @see {@link https://partnerexperience.lever.co/hc/en-us/articles/5136514106253}
  */
 
 /**
- * @typedef {Object} Lever.JobCategories
+ * @typedef JobCategories
  * @property {string} location - Job location
  * @property {string} [commitment] - Employment type (Full Time, Part Time, etc.)
  * @property {string} [department] - Department name
@@ -170,7 +170,7 @@
  */
 
 /**
- * @typedef {Object} Lever.ApiJob
+ * @typedef ApiJob
  * @property {string} id - Lever job ID
  * @property {string} text - Job title
  * @property {string} description - Job description (HTML format)
@@ -189,7 +189,7 @@
  * @param {GetJobsParams} params - Parameters for fetching jobs
  * @returns {Promise<BaseJobData[]>} Array of standardized job objects
  * 
- * @description
+ *
  * **Endpoint:** `GET https://api.lever.co/v0/postings/{hostname}`
  * **Authentication:** None required for public postings
  * **Rate Limits:** Not specified in public docs
@@ -206,18 +206,18 @@
 
 /**
  * @namespace SmartRecruiters
- * @description SmartRecruiters API integration
+ * SmartRecruiters API integration
  * @see {@link https://dev.smartrecruiters.com/customer-api/posting-api/endpoints/postings/}
  */
 
 /**
- * @typedef {Object} SmartRecruiters.JobLocation
+ * @typedef JobLocation
  * @property {string} city - City name
  * @property {string} country - Country name
  */
 
 /**
- * @typedef {Object} SmartRecruiters.JobAd
+ * @typedef JobAd
  * @property {Object} sections - Job ad content sections
  * @property {Object} sections.jobDescription - Main job description
  * @property {string} sections.jobDescription.text - Job description HTML content
@@ -228,7 +228,7 @@
  */
 
 /**
- * @typedef {Object} SmartRecruiters.ApiJob
+ * @typedef ApiJob
  * @property {string} uuid - SmartRecruiters job UUID
  * @property {string} id - SmartRecruiters job ID (different from UUID)
  * @property {string} name - Job title
@@ -237,12 +237,12 @@
  */
 
 /**
- * @typedef {Object} SmartRecruiters.JobDetails
+ * @typedef JobDetails
  * @property {SmartRecruiters.JobAd} jobAd - Detailed job advertisement content
  */
 
 /**
- * @typedef {Object} SmartRecruiters.ListResponse
+ * @typedef ListResponse
  * @property {SmartRecruiters.ApiJob[]} content - Array of job postings
  */
 
@@ -252,7 +252,7 @@
  * @param {GetJobsParams} params - Parameters for fetching jobs
  * @returns {Promise<BaseJobData[]>} Array of standardized job objects
  * 
- * @description
+ *
  * **Endpoints:**
  * 1. `GET https://api.smartrecruiters.com/v1/companies/{hostname}/postings` (job list)
  * 2. `GET https://api.smartrecruiters.com/v1/companies/{hostname}/postings/{postingId}` (job details)
@@ -271,18 +271,18 @@
 
 /**
  * @namespace Personio
- * @description Personio job board API integration
+ * Personio job board API integration
  * @see {@link https://developer.personio.de/docs/retrieving-open-job-positions}
  */
 
 /**
- * @typedef {Object} Personio.JobDescription
+ * @typedef JobDescription
  * @property {string} n - Field name/title
  * @property {string} value - CDATA content with HTML description
  */
 
 /**
- * @typedef {Object} Personio.XmlJob
+ * @typedef XmlJob
  * @property {string} id - Personio job ID
  * @property {string} name - Job title  
  * @property {string} office - Office/location
@@ -298,7 +298,7 @@
  * @param {GetJobsParams} params - Parameters for fetching jobs
  * @returns {Promise<BaseJobData[]>} Array of standardized job objects
  * 
- * @description
+ *
  * **Endpoint:** `GET https://{hostname}.jobs.personio.de/xml?language={language}`
  * **Authentication:** None required
  * **Rate Limits:** Not specified
@@ -316,12 +316,12 @@
 
 /**
  * @namespace Workable
- * @description Workable job board API integration
+ * Workable job board API integration
  * @see {@link https://workable.readme.io/reference/jobs-1}
  */
 
 /**
- * @typedef {Object} Workable.ApiJob
+ * @typedef ApiJob
  * @property {string} id - Workable job ID
  * @property {string} title - Job title
  * @property {string} city - Job city
@@ -331,7 +331,7 @@
  */
 
 /**
- * @typedef {Object} Workable.WidgetResponse
+ * @typedef WidgetResponse
  * @property {Workable.ApiJob[]} jobs - Array of job postings
  */
 
@@ -341,7 +341,7 @@
  * @param {GetJobsParams} params - Parameters for fetching jobs
  * @returns {Promise<BaseJobData[]>} Array of standardized job objects
  * 
- * @description
+ *
  * **Endpoint:** `GET https://apply.workable.com/api/v1/widget/accounts/{hostname}`
  * **Authentication:** None required for widget endpoint
  * **Rate Limits:** Not specified
@@ -360,12 +360,12 @@
 
 /**
  * @namespace Recruitee
- * @description Recruitee job board API integration
+ * Recruitee job board API integration
  * @see {@link https://docs.recruitee.com/reference/offers}
  */
 
 /**
- * @typedef {Object} Recruitee.ApiJob
+ * @typedef ApiJob
  * @property {number} id - Recruitee job ID
  * @property {string} title - Job title
  * @property {string} careers_url - URL to job posting
@@ -376,7 +376,7 @@
  */
 
 /**
- * @typedef {Object} Recruitee.ApiResponse
+ * @typedef ApiResponse
  * @property {Recruitee.ApiJob[]} offers - Array of job offers
  */
 
@@ -386,7 +386,7 @@
  * @param {GetJobsParams} params - Parameters for fetching jobs
  * @returns {Promise<BaseJobData[]>} Array of standardized job objects
  * 
- * @description
+ *
  * **Endpoint:** `GET https://{hostname}.recruitee.com/api/offers`
  * **Authentication:** None required for public endpoint
  * **Rate Limits:** Not specified
@@ -404,19 +404,19 @@
 
 /**
  * @namespace Rippling
- * @description Rippling job board API integration
+ * Rippling job board API integration
  * @see {@link https://developer.rippling.com/documentation/job-board-api-v2/reference/get-board-slug-jobs}
  */
 
 /**
- * @typedef {Object} Rippling.JobLocation
+ * @typedef JobLocation
  * @property {string} [city] - City name
  * @property {string} [country] - Country name
  * @property {string} [name] - Location name (fallback)
  */
 
 /**
- * @typedef {Object} Rippling.ApiJob
+ * @typedef ApiJob
  * @property {string} id - Rippling job ID
  * @property {string} name - Job title
  * @property {string} url - Direct URL to job posting
@@ -424,7 +424,7 @@
  */
 
 /**
- * @typedef {Object} Rippling.ApiResponse
+ * @typedef ApiResponse
  * @property {Rippling.ApiJob[]} items - Array of job postings
  * @property {number} totalPages - Total number of pages
  * @property {number} page - Current page number
@@ -436,7 +436,7 @@
  * @param {GetJobsParams} params - Parameters for fetching jobs
  * @returns {Promise<BaseJobData[]>} Array of standardized job objects
  * 
- * @description
+ *
  * **Endpoint:** `GET https://api.rippling.com/platform/api/ats/v2/board/{hostname}/jobs?page={page}`
  * **Authentication:** OAuth 2.0 JWT Bearer token required
  * **Rate Limits:** 100 requests per second per project
@@ -453,12 +453,12 @@
 
 /**
  * @namespace Matrix
- * @description Matrix protocol job board integration
+ * Matrix protocol job board integration
  * @see {@link https://spec.matrix.org/latest/}
  */
 
 /**
- * @typedef {Object} Matrix.JobContent
+ * @typedef JobContent
  * @property {string} title - Job title
  * @property {string} url - Job application URL
  * @property {string} description - Job description
@@ -466,14 +466,14 @@
  */
 
 /**
- * @typedef {Object} Matrix.RoomEvent
+ * @typedef RoomEvent
  * @property {string} event_id - Matrix event ID
  * @property {Matrix.JobContent} content - Event content
  * @property {number} origin_server_ts - Unix timestamp
  */
 
 /**
- * @typedef {Object} Matrix.MessagesResponse
+ * @typedef MessagesResponse
  * @property {Matrix.RoomEvent[]} chunk - Array of room events
  * @property {string} [error] - Error message if request failed
  */
@@ -484,7 +484,7 @@
  * @param {GetJobsParams} params - Parameters for fetching jobs (hostname = roomId)
  * @returns {Promise<BaseJobData[]>} Array of standardized job objects
  * 
- * @description
+ *
  * **Endpoint:** Matrix homeserver API (room messages)
  * **Authentication:** Matrix access token required
  * **Rate Limits:** Per homeserver configuration
@@ -504,7 +504,7 @@
 // =============================================================================
 
 /**
- * @typedef {Object} ProviderApiCapabilities
+ * @typedef ProviderApiCapabilities
  * @property {boolean} hasDescriptions - Whether provider supports job descriptions
  * @property {boolean} requiresAuth - Whether authentication is required
  * @property {boolean} requiresMultipleRequests - Whether multiple API calls needed for full data
@@ -603,7 +603,7 @@ export const PROVIDER_CAPABILITIES = {
 };
 
 /**
- * @typedef {Object} ApiError
+ * @typedef ApiError
  * @property {string} error - Error message
  * @property {string} errcode - Error code identifier
  * @property {number} [status] - HTTP status code

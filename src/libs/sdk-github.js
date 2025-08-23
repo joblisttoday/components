@@ -1,9 +1,18 @@
+/**
+ * GitHub API SDK for accessing repository data via jsDelivr CDN
+ * @module sdk-github
+ */
+
 const KNOWN_HOSTS = ["cdn.jsdelivr.net", "github.com"];
 const HOSTS = KNOWN_HOSTS.reduce((acc, host) => {
 	acc[host] = host;
 	return acc;
 }, {});
 
+/**
+ * SDK for accessing GitHub repositories via jsDelivr CDN
+ * @class JoblistGithubSDK
+ */
 export class JoblistGithubSDK {
 	constructor({
 		host = HOSTS["cdn.jsdelivr.net"],

@@ -39,7 +39,7 @@ export default class JoblistSocialLink extends HTMLElement {
    * Lifecycle callback when component is added to DOM.
    * Fetches social media metadata and renders the link.
    * 
-   * @async
+   *
    */
   async connectedCallback() {
     if (this.url) {

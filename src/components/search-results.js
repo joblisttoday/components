@@ -10,7 +10,7 @@ export default class JoblistSearchResults extends HTMLElement {
 	/**
 	 * Specifies which attributes to observe for changes.
 	 * 
-	 * @static
+	 *
 	 * @returns {string[]} Array of attribute names to observe
 	 */
 	static get observedAttributes() {

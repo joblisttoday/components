@@ -12,7 +12,7 @@ export default class JoblistStats extends HTMLElement {
 	 * Lifecycle callback when component is added to DOM.
 	 * Initializes the DuckDB SDK and fetches statistics data.
 	 * 
-	 * @async
+	 *
 	 */
 	async connectedCallback() {
 		const baseParquetUrl = this.getAttribute("parquet-base") || undefined;

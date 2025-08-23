@@ -7,7 +7,7 @@ import { JoblistDuckDBSDK } from "../libs/sdk-duckdb.js";
  * 
  * @class JoblistSearch
  * @extends HTMLElement
- * @fires JoblistSearch#search - Emitted when search results are available
+ * @event JoblistSearch#search - Emitted when search results are available
  */
 export default class JoblistSearch extends HTMLElement {
 	/**
@@ -61,7 +61,7 @@ export default class JoblistSearch extends HTMLElement {
 	 * Performs a search operation for companies and/or jobs.
 	 * Handles both regular searches and highlighted content loading.
 	 * 
-	 * @async
+	 *
 	 * @param {string} [query=""] - The search query string
 	 * @param {string|null} [searchType=null] - Override search type ("companies", "jobs", "both")
 	 * @returns {Promise<Object>} Search result object with jobs, companies, and metadata
@@ -131,7 +131,7 @@ export default class JoblistSearch extends HTMLElement {
 	 * Lifecycle callback when component is added to DOM.
 	 * Initializes the DuckDB SDK, loads column metadata, and performs initial search.
 	 * 
-	 * @async
+	 *
 	 */
 	async connectedCallback() {
 		this.joblistSDK = new JoblistDuckDBSDK(this.databaseUrl);
@@ -274,7 +274,7 @@ export default class JoblistSearch extends HTMLElement {
 	 * Handles debounced input events and triggers search.
 	 * 
 	 * @private
-	 * @async
+	 *
 	 * @param {Event} event - The input event
 	 */
 	async _onInput(event) {
@@ -287,7 +287,7 @@ export default class JoblistSearch extends HTMLElement {
 	 * Performs search with current attribute values.
 	 * 
 	 * @private
-	 * @async
+	 *
 	 * @param {CustomEvent} event - The search trigger event
 	 */
 	async _onSearchTrigger(event) {
@@ -302,7 +302,7 @@ export default class JoblistSearch extends HTMLElement {
 	 * Updates the search-type attribute and triggers a new search.
 	 * 
 	 * @private
-	 * @async
+	 *
 	 * @param {Event} event - The filter change event
 	 */
 	async _onFilterChange(event) {
@@ -321,7 +321,7 @@ export default class JoblistSearch extends HTMLElement {
 	 * Searches for companies within a geographic radius.
 	 * 
 	 * @private
-	 * @async
+	 *
 	 * @param {Event} [event={ target: { value: {} } }] - Event containing coordinate data
 	 * @param {Object} event.target.value - Coordinate search parameters
 	 * @param {number} [event.target.value.lat=52.52] - Latitude coordinate
