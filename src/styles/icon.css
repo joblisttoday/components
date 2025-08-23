@@ -9,7 +9,7 @@ joblist-icon {
 			:is(svg) {
 				width: 1em;
 				height: 1em;
-				stoke: currentColor;
+				stoke: inherit;
 				flex-shrink: 0;
 			}
 		}

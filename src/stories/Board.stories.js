@@ -9,13 +9,7 @@ import '../providers/smartrecruiters.js';
 export default {
   title: 'Components/Board',
   component: 'joblist-board',
-  parameters: {
-    docs: {
-      description: {
-        component: 'Job board component that dynamically loads and renders provider-specific job boards. Supports multiple ATS providers including Greenhouse, Personio, Lever, Workable, SmartRecruiters, and more. Acts as a factory pattern, instantiating the appropriate provider component based on the provider-name attribute.',
-      },
-    },
-  },
+  parameters: { layout: "padded" },
   argTypes: {
     'provider-url': { 
       control: 'text',
@@ -49,13 +43,7 @@ export const AutoDetectFromUrl = Template.bind({});
 AutoDetectFromUrl.args = {
   'provider-url': 'https://boards.greenhouse.io/greenhouse',
 };
-AutoDetectFromUrl.parameters = {
-  docs: {
-    description: {
-      story: 'Automatically detects provider type from URL. Most common usage pattern when you have a full job board URL.',
-    },
-  },
-};
+
 
 // Personio job board (as used in production)
 export const PersonioBoard = Template.bind({});
@@ -63,13 +51,7 @@ PersonioBoard.args = {
   'provider-name': 'personio',
   'provider-hostname': 'abletonag',
 };
-PersonioBoard.parameters = {
-  docs: {
-    description: {
-      story: 'Personio ATS integration, commonly used by European companies. Shows Ableton\'s job board as example.',
-    },
-  },
-};
+
 
 // Greenhouse job board
 export const GreenhouseBoard = Template.bind({});
@@ -77,13 +59,7 @@ GreenhouseBoard.args = {
   'provider-name': 'greenhouse',
   'provider-hostname': 'greenhouse',
 };
-GreenhouseBoard.parameters = {
-  docs: {
-    description: {
-      story: 'Greenhouse ATS integration, popular with tech companies and startups.',
-    },
-  },
-};
+
 
 // Lever job board
 export const LeverBoard = Template.bind({});
@@ -91,13 +67,7 @@ LeverBoard.args = {
   'provider-name': 'lever',
   'provider-hostname': 'netflix',
 };
-LeverBoard.parameters = {
-  docs: {
-    description: {
-      story: 'Lever ATS integration, used by many high-growth companies.',
-    },
-  },
-};
+
 
 // Workable job board
 export const WorkableBoard = Template.bind({});
@@ -105,13 +75,7 @@ WorkableBoard.args = {
   'provider-name': 'workable',
   'provider-hostname': 'shopify',
 };
-WorkableBoard.parameters = {
-  docs: {
-    description: {
-      story: 'Workable ATS integration, popular among mid-size companies.',
-    },
-  },
-};
+
 
 // SmartRecruiters job board
 export const SmartRecruitersBoard = Template.bind({});
@@ -119,26 +83,14 @@ SmartRecruitersBoard.args = {
   'provider-name': 'smartrecruiters',
   'provider-hostname': 'microsoft',
 };
-SmartRecruitersBoard.parameters = {
-  docs: {
-    description: {
-      story: 'SmartRecruiters ATS integration, used by large enterprises.',
-    },
-  },
-};
+
 
 // Large tech company example
 export const LargeTechCompany = Template.bind({});
 LargeTechCompany.args = {
   'provider-url': 'https://jobs.lever.co/github',
 };
-LargeTechCompany.parameters = {
-  docs: {
-    description: {
-      story: 'Example of a large tech company\'s job board, showing high-volume job listings.',
-    },
-  },
-};
+
 
 // Startup company example
 export const StartupCompany = Template.bind({});
@@ -146,13 +98,7 @@ StartupCompany.args = {
   'provider-name': 'greenhouse',
   'provider-hostname': 'airbnb',
 };
-StartupCompany.parameters = {
-  docs: {
-    description: {
-      story: 'Startup or scale-up company job board, typically with fewer but more diverse positions.',
-    },
-  },
-};
+
 
 // Error handling for invalid provider
 export const InvalidProvider = Template.bind({});
@@ -160,11 +106,5 @@ InvalidProvider.args = {
   'provider-name': 'nonexistent-ats',
   'provider-hostname': 'example-company',
 };
-InvalidProvider.parameters = {
-  docs: {
-    description: {
-      story: 'Error state when an unsupported or invalid provider is specified.',
-    },
-  },
-};
+
 

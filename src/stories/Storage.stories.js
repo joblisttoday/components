@@ -2,40 +2,20 @@ import { html } from "lit-html";
 
 export default {
 	title: "Components/Storage",
-	parameters: {
-		docs: {
-			description: {
-				component:
-					"Components for managing user data including favorites, notes, and cover letters with remoteStorage integration.",
-			},
-		},
-	},
+	parameters: { layout: "padded" },
 };
 
 // Storage Widget
 export const StorageWidget = () => html`
 	<joblist-storage-widget></joblist-storage-widget>
 `;
-StorageWidget.parameters = {
-	docs: {
-		description: {
-			story:
-				"Connection widget for remoteStorage providers. Shows connection status and allows users to connect/disconnect.",
-		},
-	},
-};
+
 
 // Favorites Manager
 export const FavoritesManager = () => html`
 	<joblist-favorites-manager type="both"></joblist-favorites-manager>
 `;
-FavoritesManager.parameters = {
-	docs: {
-		description: {
-			story: "Manage favorite companies and jobs. Supports filtering by type.",
-		},
-	},
-};
+
 
 export const FavoritesCompaniesOnly = () => html`
 	<joblist-favorites-manager type="companies"></joblist-favorites-manager>
@@ -62,13 +42,7 @@ export const FavoriteButton = () => html`
 		></joblist-favorite-button>
 	</div>
 `;
-FavoriteButton.parameters = {
-	docs: {
-		description: {
-			story: "Star button for adding/removing items from favorites.",
-		},
-	},
-};
+
 
 // Notes Editor
 export const NotesEditor = () => html`
@@ -86,23 +60,10 @@ export const NotesEditor = () => html`
 		></joblist-notes-editor>
 	</div>
 `;
-NotesEditor.parameters = {
-	docs: {
-		description: {
-			story: "Rich text editor for adding notes to companies and jobs.",
-		},
-	},
-};
+
 
 // Resume/Cover Letter Manager
 export const CoverLetterManager = () => html`
 	<joblist-resume-manager></joblist-resume-manager>
 `;
-CoverLetterManager.parameters = {
-	docs: {
-		description: {
-			story:
-				"Manage multiple cover letter variations for different job applications.",
-		},
-	},
-};
+

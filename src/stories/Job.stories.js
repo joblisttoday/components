@@ -4,13 +4,7 @@ import '../components/job.js';
 export default {
   title: 'Components/Job',
   component: 'joblist-job',
-  parameters: {
-    docs: {
-      description: {
-        component: 'Individual job listing component displaying job details including title, company, location, publication date, and interactive features. Supports various job types and data formats from different sources.',
-      },
-    },
-  },
+  parameters: { layout: "padded" },
   argTypes: {
     job: {
       control: 'object',
@@ -62,13 +56,7 @@ Default.args = {
   'show-date': true,
   'show-location': true,
 };
-Default.parameters = {
-  docs: {
-    description: {
-      story: 'Standard software engineering job listing with complete information including salary, tags, and description.',
-    },
-  },
-};
+
 
 // Remote-first position
 export const RemoteJob = Template.bind({});
@@ -87,13 +75,7 @@ RemoteJob.args = {
     remote: true,
   },
 };
-RemoteJob.parameters = {
-  docs: {
-    description: {
-      story: 'Remote-first position showing global location and remote work indicators.',
-    },
-  },
-};
+
 
 // Leadership/management role
 export const ManagementRole = Template.bind({});
@@ -112,13 +94,7 @@ ManagementRole.args = {
     seniority: 'Senior',
   },
 };
-ManagementRole.parameters = {
-  docs: {
-    description: {
-      story: 'Management position with higher salary range and leadership responsibilities.',
-    },
-  },
-};
+
 
 // Entry-level/junior position
 export const JuniorPosition = Template.bind({});
@@ -137,13 +113,7 @@ JuniorPosition.args = {
     seniority: 'Junior',
   },
 };
-JuniorPosition.parameters = {
-  docs: {
-    description: {
-      story: 'Entry-level position with lower salary range and mentorship opportunities.',
-    },
-  },
-};
+
 
 // Contract/freelance work
 export const ContractWork = Template.bind({});
@@ -162,13 +132,7 @@ ContractWork.args = {
     tags: ['React Native', 'iOS', 'Android', 'Contract'],
   },
 };
-ContractWork.parameters = {
-  docs: {
-    description: {
-      story: 'Contract position with daily rate instead of annual salary and specified duration.',
-    },
-  },
-};
+
 
 // Part-time position
 export const PartTimeJob = Template.bind({});
@@ -187,13 +151,7 @@ PartTimeJob.args = {
     tags: ['UX Design', 'Mobile', 'Part-time', 'Figma'],
   },
 };
-PartTimeJob.parameters = {
-  docs: {
-    description: {
-      story: 'Part-time position with reduced hours and pro-rata salary.',
-    },
-  },
-};
+
 
 // Internship opportunity
 export const InternshipRole = Template.bind({});
@@ -213,13 +171,7 @@ InternshipRole.args = {
     requirements: 'Currently enrolled in CS degree program',
   },
 };
-InternshipRole.parameters = {
-  docs: {
-    description: {
-      story: 'Internship position with stipend, housing, and student requirements.',
-    },
-  },
-};
+
 
 // Startup equity-heavy role
 export const StartupEquity = Template.bind({});
@@ -239,13 +191,7 @@ StartupEquity.args = {
     company_stage: 'Series A',
   },
 };
-StartupEquity.parameters = {
-  docs: {
-    description: {
-      story: 'Startup position emphasizing equity compensation and founding team opportunity.',
-    },
-  },
-};
+
 
 // Job without company display (for company-specific pages)
 export const NoCompanyDisplay = Template.bind({});
@@ -264,13 +210,7 @@ NoCompanyDisplay.args = {
   },
   'show-company': false,
 };
-NoCompanyDisplay.parameters = {
-  docs: {
-    description: {
-      story: 'Job listing without company information, as used on company-specific job boards.',
-    },
-  },
-};
+
 
 // Minimal job data (testing edge cases)
 export const MinimalData = Template.bind({});
@@ -284,11 +224,5 @@ MinimalData.args = {
   'show-date': false,
   'show-location': false,
 };
-MinimalData.parameters = {
-  docs: {
-    description: {
-      story: 'Minimal job data showing graceful handling of missing information.',
-    },
-  },
-};
+
 

@@ -42,13 +42,7 @@ const iconNames = Object.keys(iconMap);
 export default {
   title: 'Components/Icon',
   component: 'joblist-icon',
-  parameters: {
-    docs: {
-      description: {
-        component: 'Versatile icon component using Lucide icons with automatic mapping for social platforms, development tools, and UI elements. Supports custom titles and accessibility features.',
-      },
-    },
-  },
+  parameters: { layout: "padded" },
   argTypes: {
     icon: {
       control: { type: 'select' },
@@ -85,13 +79,7 @@ Default.args = {
   title: 'GitHub Icon',
   size: 24,
 };
-Default.parameters = {
-  docs: {
-    description: {
-      story: 'Default GitHub icon as commonly used throughout the application for repository links.',
-    },
-  },
-};
+
 
 // Social media icons collection
 export const SocialMediaIcons = () => html`
@@ -154,13 +142,7 @@ export const SocialMediaIcons = () => html`
     </div>
   </div>
 `;
-SocialMediaIcons.parameters = {
-  docs: {
-    description: {
-      story: 'Social media icons commonly used for company profiles and social links.',
-    },
-  },
-};
+
 
 // Development and tech icons
 export const DevelopmentIcons = () => html`
@@ -218,13 +200,7 @@ export const DevelopmentIcons = () => html`
     </div>
   </div>
 `;
-DevelopmentIcons.parameters = {
-  docs: {
-    description: {
-      story: 'Development and technical icons used in job listings and company profiles.',
-    },
-  },
-};
+
 
 // Business and office icons
 export const BusinessIcons = () => html`
@@ -282,13 +258,7 @@ export const BusinessIcons = () => html`
     </div>
   </div>
 `;
-BusinessIcons.parameters = {
-  docs: {
-    description: {
-      story: 'Business and office icons used for company information and job details.',
-    },
-  },
-};
+
 
 // UI and navigation icons
 export const UIIcons = () => html`
@@ -351,13 +321,7 @@ export const UIIcons = () => html`
     </div>
   </div>
 `;
-UIIcons.parameters = {
-  docs: {
-    description: {
-      story: 'User interface and navigation icons used throughout the application.',
-    },
-  },
-};
+
 
 // Different icon sizes
 export const IconSizes = () => html`
@@ -410,13 +374,7 @@ export const IconSizes = () => html`
     </div>
   </div>
 `;
-IconSizes.parameters = {
-  docs: {
-    description: {
-      story: 'Icon size variations demonstrating responsive scaling through CSS font-size.',
-    },
-  },
-};
+
 
 // Website and link icons
 export const WebsiteIcons = () => html`
@@ -464,13 +422,7 @@ export const WebsiteIcons = () => html`
     </div>
   </div>
 `;
-WebsiteIcons.parameters = {
-  docs: {
-    description: {
-      story: 'Website and communication icons used for external links and contact information.',
-    },
-  },
-};
+
 
 // Tags and categorization icons
 export const CategoryIcons = () => html`
@@ -508,13 +460,7 @@ export const CategoryIcons = () => html`
     </div>
   </div>
 `;
-CategoryIcons.parameters = {
-  docs: {
-    description: {
-      story: 'Categorization and tagging icons used for organizing content.',
-    },
-  },
-};
+
 
 export const AllIcons = () => html`
   <style>

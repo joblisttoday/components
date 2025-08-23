@@ -8,7 +8,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Powerful search component with DuckDB integration, supporting companies, jobs, and combined search with real-time suggestions and filtering. Features debounced input, geographic search, and event-driven architecture.',
+        component: 'Powerful search component with DuckDB integration for querying companies and jobs. Supports field-specific searches, boolean operators, and real-time results with fuzzy matching.',
       },
     },
   },
@@ -82,13 +82,7 @@ Default.args = {
   'search-type': 'both',
   limit: 1000,
 };
-Default.parameters = {
-  docs: {
-    description: {
-      story: 'Default search interface with both companies and jobs enabled. Shows highlighted companies when no query is entered.',
-    },
-  },
-};
+
 
 // Search with initial query (URL query parameter scenario)
 export const WithInitialQuery = Template.bind({});
@@ -99,13 +93,7 @@ WithInitialQuery.args = {
   'search-type': 'both',
   limit: 1000,
 };
-WithInitialQuery.parameters = {
-  docs: {
-    description: {
-      story: 'Search initialized with a query, as would happen from URL parameters or bookmarked searches.',
-    },
-  },
-};
+
 
 // Companies-only search (as used in /companies page)
 export const CompaniesOnly = Template.bind({});
@@ -116,13 +104,7 @@ CompaniesOnly.args = {
   'search-type': 'companies',
   limit: 500,
 };
-CompaniesOnly.parameters = {
-  docs: {
-    description: {
-      story: 'Companies-only search mode, useful for company directory pages or specialized company searches.',
-    },
-  },
-};
+
 
 // Jobs-only search (as used in jobs-focused pages)
 export const JobsOnly = Template.bind({});
@@ -133,13 +115,7 @@ JobsOnly.args = {
   'search-type': 'jobs',
   limit: 1000,
 };
-JobsOnly.parameters = {
-  docs: {
-    description: {
-      story: 'Jobs-only search mode, focused on job position searching with higher limits for comprehensive results.',
-    },
-  },
-};
+
 
 // Full search experience with results display
 export const SearchWithResults = SearchWithResultsTemplate.bind({});
@@ -150,13 +126,7 @@ SearchWithResults.args = {
   'search-type': 'both',
   limit: 1000,
 };
-SearchWithResults.parameters = {
-  docs: {
-    description: {
-      story: 'Complete search experience showing both the search input and results display, demonstrating the full user flow.',
-    },
-  },
-};
+
 
 // Specialized search queries demonstrating advanced features
 export const TechnicalSearch = Template.bind({});
@@ -167,13 +137,7 @@ TechnicalSearch.args = {
   'search-type': 'jobs',
   limit: 500,
 };
-TechnicalSearch.parameters = {
-  docs: {
-    description: {
-      story: 'Technical job search with specific keywords, demonstrating multi-term search capabilities.',
-    },
-  },
-};
+
 
 // Geographic/location-based search
 export const LocationSearch = Template.bind({});
@@ -184,13 +148,7 @@ LocationSearch.args = {
   'search-type': 'both',
   limit: 1000,
 };
-LocationSearch.parameters = {
-  docs: {
-    description: {
-      story: 'Location-based search with boolean operators, showing geographic search capabilities.',
-    },
-  },
-};
+
 
 // Company-specific search
 export const CompanySearch = Template.bind({});
@@ -201,13 +159,7 @@ CompanySearch.args = {
   'search-type': 'companies',
   limit: 200,
 };
-CompanySearch.parameters = {
-  docs: {
-    description: {
-      story: 'Industry-focused company search using boolean operators to find companies in specific sectors.',
-    },
-  },
-};
+
 
 // High-volume search for performance testing
 export const HighVolumeSearch = Template.bind({});
@@ -218,10 +170,4 @@ HighVolumeSearch.args = {
   'search-type': 'both',
   limit: 2000,
 };
-HighVolumeSearch.parameters = {
-  docs: {
-    description: {
-      story: 'High-volume search with increased limits, useful for comprehensive analysis or export scenarios.',
-    },
-  },
-};
+

@@ -8,13 +8,7 @@ loadLeaflet().catch(err => console.warn('Failed to load Leaflet:', err));
 export default {
   title: 'Components/MapList',
   component: 'joblist-map-list',
-  parameters: {
-    docs: {
-      description: {
-        component: 'Interactive map component using Leaflet for displaying company locations and job data. Features marker clustering, job filtering, search integration, and real-time data visualization with DuckDB backend.',
-      },
-    },
-  },
+  parameters: { layout: "padded" },
   argTypes: {
     longitude: {
       control: { type: 'range', min: -180, max: 180, step: 0.1 },
@@ -121,13 +115,7 @@ EuropeanTechHubs.args = {
     { company_id: 'london', title: 'Backend Engineer', location: 'London, UK', published_date: '2024-01-25' },
   ],
 };
-EuropeanTechHubs.parameters = {
-  docs: {
-    description: {
-      story: 'European tech hubs overview showing major cities with company concentrations and job opportunities.',
-    },
-  },
-};
+
 
 // Global overview with major tech centers
 export const GlobalTechCenters = Template.bind({});
@@ -195,13 +183,7 @@ GlobalTechCenters.args = {
   ],
   jobs: [],
 };
-GlobalTechCenters.parameters = {
-  docs: {
-    description: {
-      story: 'Global overview of major tech centers worldwide, showing job market distribution across continents.',
-    },
-  },
-};
+
 
 // Specific company locations (Ableton offices)
 export const CompanyOffices = Template.bind({});
@@ -247,13 +229,7 @@ CompanyOffices.args = {
     { company_id: 'ableton-tokyo', title: 'Marketing Specialist', location: 'Tokyo, JP', published_date: '2024-01-22' },
   ],
 };
-CompanyOffices.parameters = {
-  docs: {
-    description: {
-      story: 'Company-specific view showing Ableton office locations worldwide with local job opportunities.',
-    },
-  },
-};
+
 
 // Remote-first companies (no specific locations)
 export const RemoteCompanies = Template.bind({});
@@ -297,13 +273,7 @@ RemoteCompanies.args = {
     { company_id: 'zapier-remote', title: 'Product Engineer (Remote)', location: 'Remote', published_date: '2024-01-18' },
   ],
 };
-RemoteCompanies.parameters = {
-  docs: {
-    description: {
-      story: 'Remote-first companies showing distributed teams and location-independent opportunities.',
-    },
-  },
-};
+
 
 // Startup ecosystem in a specific city (Berlin)
 export const BerlinStartupScene = Template.bind({});
@@ -358,13 +328,7 @@ BerlinStartupScene.args = {
     { company_id: 'soundcloud', title: 'Audio Engineer', location: 'Berlin, DE', published_date: '2024-01-22' },
   ],
 };
-BerlinStartupScene.parameters = {
-  docs: {
-    description: {
-      story: 'Berlin startup ecosystem showing major players and their job opportunities in the city.',
-    },
-  },
-};
+
 
 // High-density Silicon Valley view
 export const SiliconValleyDetail = Template.bind({});
@@ -423,13 +387,7 @@ SiliconValleyDetail.args = {
   ],
   jobs: [],
 };
-SiliconValleyDetail.parameters = {
-  docs: {
-    description: {
-      story: 'Detailed Silicon Valley view showing major tech companies and their campuses with high job concentration.',
-    },
-  },
-};
+
 
 // Empty map for loading states
 export const EmptyMap = Template.bind({});
@@ -441,13 +399,7 @@ EmptyMap.args = {
   markers: [],
   jobs: [],
 };
-EmptyMap.parameters = {
-  docs: {
-    description: {
-      story: 'Empty map state showing loading or no-data scenarios.',
-    },
-  },
-};
+
 
 // Search results view (filtered data)
 export const SearchResults = Template.bind({});
@@ -482,11 +434,5 @@ SearchResults.args = {
     { company_id: 'london-react', title: 'React Native Developer', location: 'London, UK', published_date: '2024-01-18' },
   ],
 };
-SearchResults.parameters = {
-  docs: {
-    description: {
-      story: 'Search results view showing filtered markers and jobs based on user search query (e.g., "React").',
-    },
-  },
-};
+
 

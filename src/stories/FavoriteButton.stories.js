@@ -54,13 +54,7 @@ CompanyFavorite.args = {
   'item-type': 'company',
   size: 'medium',
 };
-CompanyFavorite.parameters = {
-  docs: {
-    description: {
-      story: 'Standard company favorite button as used in company listings and profiles.',
-    },
-  },
-};
+
 
 // Job favorite button
 export const JobFavorite = Template.bind({});
@@ -69,13 +63,7 @@ JobFavorite.args = {
   'item-type': 'job',
   size: 'medium',
 };
-JobFavorite.parameters = {
-  docs: {
-    description: {
-      story: 'Job favorite button as used in job listings and search results.',
-    },
-  },
-};
+
 
 // Tech company examples
 export const TechCompanies = () => html`
@@ -138,13 +126,7 @@ export const TechCompanies = () => html`
     </div>
   </div>
 `;
-TechCompanies.parameters = {
-  docs: {
-    description: {
-      story: 'Tech company favorite buttons in a realistic company listing layout.',
-    },
-  },
-};
+
 
 // Job listings with favorites
 export const JobListings = () => html`
@@ -252,13 +234,7 @@ export const JobListings = () => html`
     </div>
   </div>
 `;
-JobListings.parameters = {
-  docs: {
-    description: {
-      story: 'Job favorite buttons in realistic job listing cards with complete job information.',
-    },
-  },
-};
+
 
 // Different button sizes
 export const ButtonSizes = () => html`
@@ -298,13 +274,7 @@ export const ButtonSizes = () => html`
     </div>
   </div>
 `;
-ButtonSizes.parameters = {
-  docs: {
-    description: {
-      story: 'Different favorite button sizes for various layout contexts.',
-    },
-  },
-};
+
 
 // Disabled state (for guest users)
 export const DisabledState = Template.bind({});
@@ -313,13 +283,7 @@ DisabledState.args = {
   'item-type': 'company',
   disabled: true,
 };
-DisabledState.parameters = {
-  docs: {
-    description: {
-      story: 'Disabled favorite button state, typically shown to guest users who need to sign in.',
-    },
-  },
-};
+
 
 // Mixed content types
 export const MixedFavorites = () => html`
@@ -389,13 +353,7 @@ export const MixedFavorites = () => html`
     </div>
   </div>
 `;
-MixedFavorites.parameters = {
-  docs: {
-    description: {
-      story: 'Mixed content showing both company and job favorites with visual distinction.',
-    },
-  },
-};
+
 
 // Favorites manager integration preview
 export const FavoritesManagerPreview = () => html`
@@ -448,10 +406,3 @@ export const FavoritesManagerPreview = () => html`
     </div>
   </div>
 `;
-FavoritesManagerPreview.parameters = {
-  docs: {
-    description: {
-      story: 'Preview of how favorite buttons integrate with the favorites manager component.',
-    },
-  },
-};
