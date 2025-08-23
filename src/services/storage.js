@@ -1,4 +1,6 @@
-import RemoteStorage from 'remotestoragejs';
+// NOTE: Avoid static import to prevent bare-specifier resolution errors
+// when this file is loaded directly in the browser (without a bundler).
+// We lazily load RemoteStorage in initialize() with fallbacks.
 
 /**
  * JoblistStorage - Clean remoteStorage integration for joblist.today
@@ -24,11 +26,51 @@ export class JoblistStorage {
 	 */
 	async initialize() {
 		if (this.rs) return this.rs;
-		
-		this.rs = new RemoteStorage({
+
+		// Try to dynamically import remotestoragejs.
+		// 1) First attempt local dependency (works with bundlers like Vite)
+		// 2) Fallback to global window.RemoteStorage if already present
+		// 3) Fallback to CDN ESM build so direct browser usage works
+		let RemoteStorageCtor = null;
+		try {
+			const mod = await import('remotestoragejs');
+			RemoteStorageCtor = mod && (mod.default || mod.RemoteStorage || mod);
+		} catch (_) {
+			// no-op
+		}
+		if (!RemoteStorageCtor && typeof window !== 'undefined' && window.RemoteStorage) {
+			RemoteStorageCtor = window.RemoteStorage;
+		}
+		if (!RemoteStorageCtor && typeof window !== 'undefined') {
+			try {
+				const mod = await import(
+					'https://unpkg.com/remotestoragejs@1.2.3/dist/remotestoragejs.esm.js'
+				);
+				RemoteStorageCtor = mod && (mod.default || mod.RemoteStorage || mod);
+			} catch (e) {
+				console.warn('remoteStorage could not be loaded; using local-only mode', e);
+			}
+		}
+
+		// If still unavailable, operate in local-only mode with a minimal shim
+		if (!RemoteStorageCtor) {
+			this.rs = {
+				caching: { enable: () => {} },
+				on: () => {},
+				off: () => {},
+				access: { claim: () => {} },
+				scope: () => this._createLocalClient(),
+				remote: { connected: false, userAddress: null },
+				connect: async () => {},
+				disconnect: async () => {},
+				backend: 'local',
+			};
+		} else {
+			this.rs = new RemoteStorageCtor({
 			logging: false,
 			cache: true
-		});
+			});
+		}
 		
 		// Define our joblist module for v1.x
 		this.rs.access.claim('joblist', 'rw');
@@ -39,27 +81,27 @@ export class JoblistStorage {
 		this.connected = true; // Consider local storage as "connected"
 		
 		// Set up event listeners
-		this.rs.on('connected', () => {
+		this.rs.on && this.rs.on('connected', () => {
 			this.connected = true;
 			this._emit('connected');
 		});
 		
-		this.rs.on('disconnected', () => {
+		this.rs.on && this.rs.on('disconnected', () => {
 			this.connected = false;
 			this._emit('disconnected');
 		});
 		
-		this.rs.on('sync-done', () => {
+		this.rs.on && this.rs.on('sync-done', () => {
 			this._emit('sync-done');
 		});
 		
 		// Listen for changes to our data
-		this.client.on('change', (event) => {
+		this.client.on && this.client.on('change', (event) => {
 			console.log('Storage change detected:', event.path);
 			this._emit('data-changed', event);
 		});
 		
-		this.rs.on('error', (error) => {
+		this.rs.on && this.rs.on('error', (error) => {
 			this._emit('error', error);
 		});
 		
@@ -71,7 +113,13 @@ export class JoblistStorage {
 	 */
 	async connect(userAddress) {
 		if (!this.rs) await this.initialize();
-		await this.rs.connect(userAddress);
+		if (this.rs.connect) {
+			await this.rs.connect(userAddress);
+			return;
+		}
+		// local-only shim: mark as connected locally
+		this.connected = true;
+		this._emit('connected');
 	}
 	
 	/**
@@ -79,7 +127,7 @@ export class JoblistStorage {
 	 */
 	async disconnect() {
 		if (this.rs) {
-			await this.rs.disconnect();
+			if (this.rs.disconnect) await this.rs.disconnect();
 			// Reset to local storage only
 			this.connected = true; // Still connected to local storage
 			this._emit('disconnected');
@@ -97,8 +145,9 @@ export class JoblistStorage {
 	 * Get the remoteStorage widget for UI
 	 */
 	getWidget() {
-		if (!this.rs) return null;
-		return this.rs.caching.enable('/joblist/');
+		if (!this.rs || !this.rs.caching) return null;
+		this.rs.caching.enable('/joblist/');
+		return null;
 	}
 	
 	/**
@@ -161,6 +210,34 @@ export class JoblistStorage {
 	_clearCache(path) {
 		const key = this._getCacheKey(path);
 		this.cache.delete(key);
+	}
+
+	// Minimal local client shim backed by localStorage for non-bundled environments
+	_createLocalClient() {
+		const prefix = 'joblist/';
+		const toKey = (path) => `${prefix}${path}`;
+		return {
+			async getFile(path) {
+				const v = localStorage.getItem(toKey(path));
+				return v ?? '';
+			},
+			async storeFile(_mime, path, content) {
+				localStorage.setItem(toKey(path), String(content ?? ''));
+			},
+			async getListing(pathPrefix) {
+				const keys = Object.keys(localStorage).filter(k => k.startsWith(toKey(pathPrefix)));
+				const res = {};
+				for (const k of keys) {
+					res[k.substring(prefix.length)] = true;
+				}
+				return res;
+			},
+			async remove(path) {
+				localStorage.removeItem(toKey(path));
+			},
+			on() {},
+			off() {},
+		};
 	}
 
 	/**
