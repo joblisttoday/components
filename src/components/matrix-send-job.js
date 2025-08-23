@@ -1,3 +1,9 @@
+/**
+ * Matrix send-job helper component.
+ * Shows login/join actions and a send form once user is ready in the target room.
+ * @class MatrixSendJob
+ * @extends HTMLElement
+ */
 import { MATRIX_ROOM_MAP, MATRIX_TYPE_JOB } from "../libs/sdk.js";
 import mwc from "../libs/mwc.js";
 
@@ -5,30 +11,39 @@ const { general: generalRoom } = MATRIX_ROOM_MAP;
 
 export default class MatrixSendJob extends HTMLElement {
 	/* props */
+	/** @returns {string} Matrix event type to send */
 	get eventType() {
 		return this.getAttribute("event-type") || MATRIX_TYPE_JOB;
 	}
+	/** @returns {string} Target profile/room alias or id */
 	get profileId() {
 		return this.getAttribute("profile-id") || generalRoom;
 	}
+	/** @returns {string} Base origin for matrix.to links */
 	get origin() {
 		return this.getAttribute("origin") || "https://matrix.to/#";
 	}
 	/* helpers */
+	/** @returns {string} Fully qualified matrix.to link for the target profile */
 	get roomOrigin() {
 		return `${this.origin}/${this.profileId}`;
 	}
 	/* state */
 	roomId = null;
 	joinedRoom = false;
+	/** @returns {any} Matrix Web Client API */
 	get api() {
 		return mwc.api;
 	}
 
 	/* events */
+	/** Refresh UI when auth state changes */
 	onAuth(event) {
 		this.render();
 	}
+	/**
+	 * @param {{detail:{room_id?:string}}} param0
+	 */
 	async onJoin({ detail }) {
 		const { room_id } = detail;
 		if (room_id) {
@@ -73,6 +88,7 @@ export default class MatrixSendJob extends HTMLElement {
 	disconnectedCallback() {
 		this.api.removeEventListener("auth", this.onAuth);
 	}
+	/** Render depending on auth/room state */
 	render() {
 		const $doms = [];
 		if (this.api.auth && this.roomId) {
@@ -97,6 +113,10 @@ export default class MatrixSendJob extends HTMLElement {
 		}
 		this.replaceChildren(...$doms);
 	}
+	/**
+	 * @param {{eventType:string,profileId:string}} param0
+	 * @returns {HTMLElement}
+	 */
 	createSend({ eventType, profileId }) {
 		const $send = document.createElement("matrix-send-event");
 		$send.setAttribute("event-type", eventType);
@@ -107,11 +127,19 @@ export default class MatrixSendJob extends HTMLElement {
 		const $auth = document.createElement("matrix-auth");
 		return $auth;
 	}
+	/**
+	 * @param {string} profileId
+	 * @returns {HTMLParagraphElement}
+	 */
 	createAuthMessage(profileId) {
 		const $authMessage = document.createElement("p");
 		$authMessage.textContent = `Log in a matrix user, and join the room ${profileId} to be able to publish a new job there.`;
 		return $authMessage;
 	}
+	/**
+	 * @param {{roomId:string,profileId:string,roomOrigin:string}} param0
+	 * @returns {HTMLElement}
+	 */
 	createJoin({ roomId, profileId, roomOrigin }) {
 		const $joinRoom = document.createElement("matrix-join-room");
 		$joinRoom.setAttribute("room-id", roomId);

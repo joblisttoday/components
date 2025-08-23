@@ -1,11 +1,19 @@
+/**
+ * Social links preview widget for companies.
+ * Fetches basic info for known providers and renders a harmonized list.
+ * @class JoblistSocialWidget
+ * @extends HTMLElement
+ */
 import socialSDK from "../libs/sdk-social.js";
 import "./icon.js";
 
 export default class JoblistSocialWidget extends HTMLElement {
+	/** @returns {Record<string, string>} Parsed company object from attribute */
 	get company() {
 		return JSON.parse(this.getAttribute("company") || "{}");
 	}
 
+	/** Lifecycle: render on connect */
 	connectedCallback() {
 		this.render();
 	}

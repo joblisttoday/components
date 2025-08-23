@@ -1,3 +1,7 @@
+/**
+ * Base provider component with search/filter utilities and provider wiring.
+ * @module components/board-provider
+ */
 import personioApi from "../providers/personio.js";
 import recruiteeApi from "../providers/recruitee.js";
 import greenhouseApi from "../providers/greenhouse.js";

@@ -1,3 +1,8 @@
+/**
+ * Joblist navigation menu web component
+ * Provides a responsive sidebar menu with optional favicon and default links.
+ * @module components/menu
+ */
 import "./icon.js";
 
 const MENUS = [
@@ -95,50 +100,69 @@ const MENUS = [
 	],
 ];
 
+/**
+ * Custom web component that renders the Joblist navigation menu.
+ * Handles open/pin state and responsive behavior on resize.
+ * @class JoblistMenu
+ * @extends HTMLElement
+ */
 export default class JoblistMenu extends HTMLElement {
 	static get observedAttributes() {
 		return ["open"];
 	}
 	/* props */
+	/** @returns {boolean} Whether to render the default menu items */
 	get showDefault() {
 		return this.getAttribute("show-default") === "true";
 	}
+	/** @returns {boolean} Whether to render the favicon */
 	get showFavicon() {
 		return this.getAttribute("show-favicon") === "true";
 	}
+	/** @returns {string} The href used when rendering the favicon */
 	get href() {
 		return this.getAttribute("href") || this.menus[0][0].href;
 	}
+	/** @returns {boolean} Open state of the menu */
 	get open() {
 		return this.getAttribute("open") === "true";
 	}
+	/** @param {boolean} bool - Set the open state */
 	set open(bool) {
 		this.setAttribute("open", bool);
 	}
+	/** @returns {boolean} Whether the menu is pinned open */
 	get pin() {
 		return this.getAttribute("pin") === "true";
 	}
+	/** @param {boolean} bool - Pin the menu open or closed */
 	set pin(bool) {
 		this.setAttribute("pin", bool);
 	}
 	/* helpers */
+	/** @returns {string} Menu element id */
 	get id() {
 		return "joblist-menu";
 	}
+	/** @returns {Array<Array<{href:string,textContent:string,icon?:string}>>} Menu definition */
 	get menus() {
 		return MENUS;
 	}
+	/** @returns {number} Minimum width at which the menu auto-opens */
 	get minWidth() {
 		return 1000;
 	}
+	/** @returns {boolean} True if viewport is wide enough to auto-open */
 	get minWidthPredicate() {
 		return window.innerWidth > this.minWidth;
 	}
 	/* events */
+	/** Toggle open state and pin the menu */
 	onToggle() {
 		this.open = !this.open;
 		this.pin = true;
 	}
+	/** Auto-open/close based on viewport width when not pinned */
 	onResize() {
 		if (!this.pin) {
 			if (this.minWidthPredicate) {
@@ -149,12 +173,15 @@ export default class JoblistMenu extends HTMLElement {
 		}
 	}
 	/* lifecycle */
+	/** React to attribute changes */
 	attributeChangedCallback() {
 		this.render();
 	}
+	/** Cleanup listeners */
 	disconnectedCallback() {
 		window.removeEventListener("resize", this.onResize);
 	}
+	/** Initialize listeners and first render */
 	connectedCallback() {
 		/* first, save the initial markup */
 		if (this.innerHTML) {
@@ -170,7 +197,7 @@ export default class JoblistMenu extends HTMLElement {
 		}
 		this.render();
 	}
-
+	/** Render the menu content */
 	render() {
 		this.replaceChildren("");
 		const doms = [];
@@ -191,6 +218,7 @@ export default class JoblistMenu extends HTMLElement {
 
 		this.append(...doms);
 	}
+	/** @returns {HTMLButtonElement} Toggle button */
 	createToggle() {
 		const button = document.createElement("button");
 		button.setAttribute("title", "Menu");
@@ -203,6 +231,10 @@ export default class JoblistMenu extends HTMLElement {
 
 		return button;
 	}
+	/**
+	 * @param {string} href
+	 * @returns {HTMLElement} Favicon element
+	 */
 	createFavicon(href) {
 		const favicon = document.createElement("joblist-favicon");
 		if (href) {
@@ -211,9 +243,17 @@ export default class JoblistMenu extends HTMLElement {
 		favicon.setAttribute("color", "var(--c-link)");
 		return favicon;
 	}
+	/**
+	 * @param {Array} menus
+	 * @returns {HTMLElement[]} Rendered menus
+	 */
 	createMenus(menus = []) {
 		return menus.map(this.createMenuItems.bind(this));
 	}
+	/**
+	 * @param {Array} menu
+	 * @returns {HTMLElement} Menu element
+	 */
 	createMenuItems(menu = []) {
 		const $items = menu.map(this.createMenuItem.bind(this)).map(($link) => {
 			const $li = document.createElement("li");
@@ -224,6 +264,10 @@ export default class JoblistMenu extends HTMLElement {
 		$menu.append(...$items);
 		return $menu;
 	}
+	/**
+	 * @param {{href:string,textContent:string,icon?:string}} param0
+	 * @returns {HTMLAnchorElement}
+	 */
 	createMenuItem({ href, textContent, icon } = {}) {
 		const link = document.createElement("a");
 		link.setAttribute("href", href);
