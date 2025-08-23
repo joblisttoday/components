@@ -26,7 +26,7 @@ if (!mwc.componentDefinitions['matrix-room']) {
 }
 
 export default {
-  title: 'Components/Matrix/MatrixJobs',
+  title: 'Matrix/MatrixJobs',
   component: 'joblist-matrix-jobs',
   argTypes: {
     filter: { control: 'object' },
@@ -55,4 +55,3 @@ Default.args = {
   origin: '',
   profileId: '',
 };
-

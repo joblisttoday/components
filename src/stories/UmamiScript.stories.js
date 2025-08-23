@@ -3,7 +3,7 @@ import '../components/umami-script.js';
 
 
 export default {
-  title: 'Components/UmamiScript',
+  title: 'Site/Umami Script',
   component: 'joblist-umami-script',
   argTypes: {
     websiteId: { control: 'text' },
@@ -26,4 +26,3 @@ Default.args = {
   zone: 'eu',
   src: 'https://eu.umami.is/script.js',
 };
-

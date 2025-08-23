@@ -3,7 +3,7 @@ import '../components/board-job.js';
 
 
 export default {
-  title: 'Components/BoardJob',
+  title: 'Board Providers/Board Job',
   component: 'joblist-board-job',
   argTypes: {
     title: { control: 'text' },
@@ -32,4 +32,3 @@ FullJob.args = {
   description: 'This is a long description of the job... '.repeat(10),
   jobId: '12345',
 };
-

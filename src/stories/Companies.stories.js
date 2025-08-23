@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 import '../components/companies.js';
 
 export default {
-  title: 'Components/Companies',
+  title: 'DuckDB/Companies',
   component: 'joblist-companies',
 };
 

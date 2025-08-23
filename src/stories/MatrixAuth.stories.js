@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 
 
 export default {
-  title: 'Components/Matrix/MatrixAuth',
+  title: 'Matrix/MatrixAuth',
   component: 'joblist-matrix-auth',
   argTypes: {
     showUser: { control: 'boolean', description: 'Whether to show user information' },
@@ -15,4 +15,3 @@ export const Default = Template.bind({});
 Default.args = {
   showUser: false,
 };
-

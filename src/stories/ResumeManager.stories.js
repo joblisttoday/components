@@ -1,7 +1,7 @@
 import { html } from 'lit-html';
 
 export default {
-  title: 'Components/ResumeManager',
+  title: 'RemoteStorage/Resume Manager',
   component: 'joblist-resume-manager',
 };
 

@@ -2,7 +2,7 @@ import { html } from "lit-html";
 import "../components/company.js";
 
 export default {
-	title: "Components/Company",
+	title: "DuckDB/Company",
 	component: "joblist-company",
 	parameters: {
 		docs: {
@@ -118,4 +118,3 @@ CustomDataSource.args = {
 	"parquet-base": "https://custom-workers.example.com",
 	"parquet-mode": "buffer",
 };
-

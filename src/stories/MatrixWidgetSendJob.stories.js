@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 
 
 export default {
-  title: 'Components/Matrix/MatrixWidgetSendJob',
+  title: 'Matrix/MatrixWidgetSendJob',
   component: 'joblist-matrix-widget-send-job',
   argTypes: {
     eventType: { control: 'text' },
@@ -25,4 +25,3 @@ Default.args = {
   isWidget: false,
   profileId: '',
 };
-

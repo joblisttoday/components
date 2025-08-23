@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 import '../components/notes-editor.js';
 
 export default {
-  title: 'Components/NotesEditor',
+  title: 'RemoteStorage/Notes Editor',
   component: 'joblist-notes-editor',
   argTypes: {
     itemId: { control: 'text' },

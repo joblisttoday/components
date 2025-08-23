@@ -2,9 +2,16 @@ import { html } from 'lit-html';
 import '../components/job.js';
 
 export default {
-  title: 'Components/Job',
+  title: 'DuckDB/Job',
   component: 'joblist-job',
-  parameters: { layout: "padded" },
+  parameters: { 
+    layout: "padded",
+    docs: {
+      description: {
+        component: 'Job listing component for displaying individual job postings with company information, location, salary, and metadata. Supports various job types including full-time, contract, internships, and remote positions.',
+      },
+    },
+  },
   argTypes: {
     job: {
       control: 'object',
@@ -28,14 +35,22 @@ export default {
   },
 };
 
-const Template = (args) => html`
-  <joblist-job 
-    .job=${args.job}
-    ?show-company=${args['show-company'] !== false}
-    ?show-date=${args['show-date'] !== false}
-    ?show-location=${args['show-location'] !== false}
-  ></joblist-job>
-`;
+const Template = (args) => {
+  const jobElement = document.createElement('joblist-job');
+  if (args.job) {
+    jobElement.job = args.job;
+  }
+  if (args['show-company'] !== false) {
+    jobElement.setAttribute('show-company', '');
+  }
+  if (args['show-date'] !== false) {
+    jobElement.setAttribute('show-date', '');
+  }
+  if (args['show-location'] !== false) {
+    jobElement.setAttribute('show-location', '');
+  }
+  return jobElement;
+};
 
 // Default software engineering job (most common type)
 export const Default = Template.bind({});
@@ -224,5 +239,4 @@ MinimalData.args = {
   'show-date': false,
   'show-location': false,
 };
-
 

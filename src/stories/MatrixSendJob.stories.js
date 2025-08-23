@@ -2,8 +2,8 @@ import { html } from 'lit-html';
 import '../components/matrix-send-job.js';
 
 export default {
-  title: 'Components/Matrix/MatrixSendJob',
-  component: 'matrix-send-job',
+  title: 'Matrix/MatrixSendJob',
+  component: 'joblist-matrix-send-job',
   argTypes: {
     eventType: { control: 'text' },
     profileId: { control: 'text' },
@@ -12,17 +12,17 @@ export default {
 };
 
 const Template = ({ eventType, profileId, origin }) => html`
-  <matrix-send-job
+  <joblist-matrix-send-job
     event-type=${eventType}
     profile-id=${profileId}
     origin=${origin}
-  ></matrix-send-job>
+  ></joblist-matrix-send-job>
 `;
 
 export const AuthenticatedAndJoined = Template.bind({});
 AuthenticatedAndJoined.args = {
   eventType: 'm.room.message',
-  profileId: '!room:matrix.org',
+  profileId: '#general.boards.joblist.today:matrix.org',
   origin: 'https://matrix.to/#',
 };
 

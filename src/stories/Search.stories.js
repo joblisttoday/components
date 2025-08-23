@@ -3,7 +3,7 @@ import '../components/search.js';
 import '../components/search-results.js';
 
 export default {
-  title: 'Components/Search',
+  title: 'DuckDB/Search',
   component: 'joblist-search',
   parameters: {
     docs: {
@@ -170,4 +170,3 @@ HighVolumeSearch.args = {
   'search-type': 'both',
   limit: 2000,
 };
-

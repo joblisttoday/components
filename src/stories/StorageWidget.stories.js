@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 import '../components/storage-widget.js';
 
 export default {
-  title: 'Components/StorageWidget',
+  title: 'RemoteStorage/Storage Widget',
   component: 'joblist-storage-widget',
 };
 

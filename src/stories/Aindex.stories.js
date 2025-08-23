@@ -1,29 +1,40 @@
 import { html } from 'lit-html';
 import '../components/aindex.js';
 
-
 export default {
-  title: 'Components/Aindex',
-  component: 'joblist-aindex',
+  title: 'Site/Aindex',
+  component: 'joblist-aindex-list',
   subcomponents: { 'JoblistAindexToc': 'joblist-aindex-toc', 'JoblistAindexList': 'joblist-aindex-list' },
   argTypes: {
-    list: { control: 'object' },
-    key: { control: 'text' },
+    index: { control: 'object' },
   },
 };
 
-const Template = ({ list, key }) => {
-  return html`
-    <joblist-aindex list=${JSON.stringify(list)} key=${key}>
-      <template key="item">
-        <p><strong data-item></strong></p>
-      </template>
-    </joblist-aindex>
-  `;
+// Simple usage matching apps/aindex-list example (strings per letter)
+const ListTemplate = ({ index }) => html`
+  <joblist-aindex-list index='${JSON.stringify(index)}'></joblist-aindex-list>
+`;
+
+export const SimpleIndex = ListTemplate.bind({});
+SimpleIndex.args = {
+  index: {
+    A: ['Apple', 'Alphabet'],
+    B: ['Banana', 'Book'],
+    C: ['Cherry'],
+  },
 };
 
-export const Default = Template.bind({});
-Default.args = {
+// Optional: show wrapper that builds the index from a list+key
+const WrapperTemplate = ({ list, key }) => html`
+  <joblist-aindex index='${JSON.stringify(list)}' key='${key}'>
+    <template key="item">
+      <p><strong data-item></strong></p>
+    </template>
+  </joblist-aindex>
+`;
+
+export const FromList = WrapperTemplate.bind({});
+FromList.args = {
   list: [
     { title: 'Apple' },
     { title: 'Banana' },
@@ -36,7 +47,7 @@ Default.args = {
 
 
 export const TocOnly = ({ toc }) => html`
-  <joblist-aindex-toc index=${JSON.stringify(toc)}></joblist-aindex-toc>
+  <joblist-aindex-toc index="${JSON.stringify(toc)}"></joblist-aindex-toc>
 `;
 TocOnly.args = {
     toc: {
@@ -47,7 +58,7 @@ TocOnly.args = {
 
 
 export const ListOnly = ({ list }) => html`
-  <joblist-aindex-list index=${JSON.stringify(list)}>
+  <joblist-aindex-list index="${JSON.stringify(list)}">
     <template key="item">
       <p><strong data-item></strong></p>
     </template>
@@ -59,4 +70,3 @@ ListOnly.args = {
         B: [{ title: 'Banana' }, { title: 'Book' }],
     }
 };
-

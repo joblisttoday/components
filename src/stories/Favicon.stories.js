@@ -3,7 +3,7 @@ import '../components/favicon.js';
 
 
 export default {
-  title: 'Components/Favicon',
+  title: 'Site/Favicon',
   component: 'joblist-favicon',
   argTypes: {
     color: { control: 'color' },
@@ -19,4 +19,3 @@ export const Default = Template.bind({});
 Default.args = {
   // Uses default color and no href
 };
-

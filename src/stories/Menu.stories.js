@@ -5,10 +5,15 @@ import '../components/icon.js';
 
 
 export default {
-  title: 'Components/Menu',
+  title: 'Site/Menu',
   component: 'joblist-menu',
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      description: {
+        component: 'Navigation menu component with collapsible sidebar, support for custom menu items, favicon display, and responsive behavior. Used for main site navigation and contextual menus.',
+      },
+    },
   },
   argTypes: {
     open: {
@@ -49,18 +54,35 @@ export default {
   },
 };
 
-const Template = (args) => html`
-  <joblist-menu
-    ?open=${args.open !== false}
-    ?pin=${args.pin === true}
-    ?show-default=${args['show-default'] !== false}
-    ?show-favicon=${args['show-favicon'] === true}
-    href="${args.href || 'https://joblist.today'}"
-    ${args['menu-title'] ? `menu-title="${args['menu-title']}"` : ''}
-  >
-    ${args.slotContent ? unsafeHTML(args.slotContent) : ''}
-  </joblist-menu>
-`;
+const Template = (args) => {
+  const menuElement = document.createElement('joblist-menu');
+
+  // Component expects explicit "true" string for booleans
+  if (typeof args.open !== 'undefined') {
+    menuElement.setAttribute('open', String(!!args.open));
+  }
+  if (typeof args.pin !== 'undefined') {
+    menuElement.setAttribute('pin', String(!!args.pin));
+  }
+  if (typeof args['show-default'] !== 'undefined') {
+    menuElement.setAttribute('show-default', String(!!args['show-default']));
+  }
+  if (typeof args['show-favicon'] !== 'undefined') {
+    menuElement.setAttribute('show-favicon', String(!!args['show-favicon']));
+  }
+
+  menuElement.setAttribute('href', args.href || 'https://joblist.today');
+
+  if (args['menu-title']) {
+    menuElement.setAttribute('menu-title', args['menu-title']);
+  }
+
+  if (args.slotContent) {
+    menuElement.innerHTML = args.slotContent;
+  }
+
+  return menuElement;
+};
 
 // Default menu with standard navigation
 export const Default = Template.bind({});
@@ -68,8 +90,15 @@ Default.args = {
   open: true,
   pin: false,
   'show-default': true,
-  'show-favicon': false,
+  'show-favicon': true,
   href: 'https://joblist.today',
+  slotContent: `
+    <menu>
+      <li>
+        <a href="../../">Components home</a>
+      </li>
+    </menu>
+  `,
 };
 
 
@@ -267,5 +296,3 @@ JobBoardMenu.args = {
     </menu>
   `,
 };
-
-

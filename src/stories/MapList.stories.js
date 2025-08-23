@@ -6,9 +6,16 @@ import { loadLeaflet } from '../libs/leaflet.js';
 loadLeaflet().catch(err => console.warn('Failed to load Leaflet:', err));
 
 export default {
-  title: 'Components/MapList',
+  title: 'DuckDB/Map',
   component: 'joblist-map-list',
-  parameters: { layout: "padded" },
+  parameters: { 
+    layout: "padded",
+    docs: {
+      description: {
+        component: 'Interactive map component for displaying company locations and job opportunities using Leaflet. Supports markers, clustering, job filtering, and global/regional views of tech hubs.',
+      },
+    },
+  },
   argTypes: {
     longitude: {
       control: { type: 'range', min: -180, max: 180, step: 0.1 },
@@ -41,16 +48,20 @@ export default {
   },
 };
 
-const Template = (args) => html`
-  <joblist-map-list
-    longitude="${args.longitude || 13.40}"
-    latitude="${args.latitude || 52.52}"
-    zoom="${args.zoom || 3}"
-    origin="${args.origin || 'https://joblist.today/companies/{}'}"
-    .markers=${args.markers || []}
-    .jobs=${args.jobs || []}
-  ></joblist-map-list>
-`;
+const Template = (args) => {
+  const mapElement = document.createElement('joblist-map-list');
+  mapElement.setAttribute('longitude', args.longitude || 13.40);
+  mapElement.setAttribute('latitude', args.latitude || 52.52);
+  mapElement.setAttribute('zoom', args.zoom || 3);
+  mapElement.setAttribute('origin', args.origin || 'https://joblist.today/companies/{}');
+  if (args.markers) {
+    mapElement.markers = args.markers;
+  }
+  if (args.jobs) {
+    mapElement.jobs = args.jobs;
+  }
+  return mapElement;
+};
 
 // Default European tech hubs view
 export const EuropeanTechHubs = Template.bind({});
@@ -434,5 +445,4 @@ SearchResults.args = {
     { company_id: 'london-react', title: 'React Native Developer', location: 'London, UK', published_date: '2024-01-18' },
   ],
 };
-
 

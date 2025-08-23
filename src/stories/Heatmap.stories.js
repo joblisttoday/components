@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 import '../components/heatmap.js';
 
 export default {
-  title: 'Components/Heatmap',
+  title: 'Site/Heatmap',
   component: 'joblist-heatmap',
   parameters: { layout: "padded" },
   argTypes: {
@@ -118,4 +118,3 @@ ExtendedAggregate.args = {
   'database-url': 'https://workers.joblist.today',
   'api-url': 'https://api.joblist.today',
 };
-

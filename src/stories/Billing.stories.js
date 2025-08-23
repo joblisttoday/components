@@ -3,7 +3,7 @@ import '../components/billing.js';
 
 
 export default {
-  title: 'Components/Billing',
+  title: 'Stripe/Billing',
   component: 'joblist-billing',
   argTypes: {
     url: { control: 'text' },
@@ -18,4 +18,3 @@ export const Default = Template.bind({});
 Default.args = {
   url: 'https://billing.stripe.com/p/login/test_bIY9Co87Cdl17okaEE',
 };
-

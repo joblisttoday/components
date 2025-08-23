@@ -40,7 +40,7 @@ const iconMap = {
 const iconNames = Object.keys(iconMap);
 
 export default {
-  title: 'Components/Icon',
+  title: 'Site/Icon',
   component: 'joblist-icon',
   parameters: { layout: "padded" },
   argTypes: {

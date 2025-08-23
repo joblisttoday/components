@@ -1,7 +1,7 @@
 import { html } from "lit-html";
 
 export default {
-	title: "Components/Storage",
+	title: "RemoteStorage/Storage",
 	parameters: { layout: "padded" },
 };
 
@@ -66,4 +66,3 @@ export const NotesEditor = () => html`
 export const CoverLetterManager = () => html`
 	<joblist-resume-manager></joblist-resume-manager>
 `;
-

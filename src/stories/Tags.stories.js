@@ -1,7 +1,7 @@
 import { html } from 'lit-html';
 
 export default {
-  title: 'Components/Tags',
+  title: 'DuckDB/Tags',
   component: 'joblist-tags',
   argTypes: {
     origin: { control: 'text' },

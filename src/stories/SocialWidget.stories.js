@@ -1,7 +1,7 @@
 import { html } from 'lit-html';
 
 export default {
-  title: 'Components/SocialWidget',
+  title: 'Site/Social Widget',
   component: 'joblist-social-widget',
   argTypes: {
     company: { control: 'object' },

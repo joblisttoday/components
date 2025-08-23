@@ -2,9 +2,16 @@ import { html } from 'lit-html';
 import '../components/pricing-table.js';
 
 export default {
-  title: 'Components/PricingTable',
+  title: 'Stripe/Pricing Table',
   component: 'joblist-pricing-table',
-  parameters: { layout: "padded" },
+  parameters: { 
+    layout: "padded",
+    docs: {
+      description: {
+        component: 'Stripe-powered pricing table component for subscription management. Embeds Stripe pricing tables with support for pre-filled customer information and company-specific tracking.',
+      },
+    },
+  },
   argTypes: {
     'pricing-table-id': {
       control: 'select',
@@ -38,12 +45,18 @@ export default {
   },
 };
 
+// Ensure Stripe Pricing Table script is present for the embedded element
+if (typeof document !== 'undefined' && !document.querySelector('script[src*="pricing-table.js"]')) {
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://js.stripe.com/v3/pricing-table.js';
+  document.head.appendChild(s);
+}
+
 const Template = (args) => html`
   <joblist-pricing-table
     pricing-table-id="${args['pricing-table-id'] || 'prctbl_1Oq2s5HpRVVklMd0UOPfssyl'}"
     publishable-key="${args['publishable-key'] || 'pk_test_51OhniyHpRVVklMd0xCFlxDwymrxDHaM8irs7sxT8SrA9EpWgqKWcCChaMksqWpsFYkR6JAZMwAa7p8NzkGORCb9H00SunE0zg1'}"
-    ${args['customer-email'] ? `customer-email="${args['customer-email']}"` : ''}
-    ${args['client-reference-id'] ? `client-reference-id="${args['client-reference-id']}"` : ''}
   ></joblist-pricing-table>
 `;
 
@@ -121,5 +134,3 @@ TechConsulting.args = {
   'client-reference-id': 'github',
   'customer-email': 'recruiting@github.com',
 };
-
-

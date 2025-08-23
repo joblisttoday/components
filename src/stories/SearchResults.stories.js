@@ -5,7 +5,7 @@ import '../components/job.js';
 
 
 export default {
-  title: 'Components/SearchResults',
+  title: 'DuckDB/Search Results',
   component: 'joblist-search-results',
   argTypes: {
     results: { control: 'object' },
@@ -44,4 +44,3 @@ Default.args = {
     isHighlightedQuery: false,
   },
 };
-

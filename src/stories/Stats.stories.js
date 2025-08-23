@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 import '../components/stats.js';
 
 export default {
-  title: 'Components/Stats',
+  title: 'DuckDB/Stats',
   component: 'joblist-stats',
   argTypes: {
     parquetBase: { control: 'text' },

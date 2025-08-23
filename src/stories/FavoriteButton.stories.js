@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 import '../components/favorite-button.js';
 
 export default {
-  title: 'Components/FavoriteButton',
+  title: 'RemoteStorage/Favorite Button',
   component: 'joblist-favorite-button',
   parameters: {
     docs: {

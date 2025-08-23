@@ -7,7 +7,7 @@ import "../providers/lever.js";
 import "../providers/workable.js";
 
 export default {
-	title: "Components/Job Boards",
+	title: "Board Providers/Providers",
 	parameters: { layout: "padded" },
 };
 
@@ -15,4 +15,3 @@ export default {
 export const Greenhouse = () => html`
 	<joblist-board-greenhouse hostname="neuralink"></joblist-board-greenhouse>
 `;
-

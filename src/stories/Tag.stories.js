@@ -4,7 +4,7 @@ import '../components/icon.js'; // Tag depends on Icon
 
 
 export default {
-  title: 'Components/Tag',
+  title: 'DuckDB/Tag',
   component: 'joblist-tag',
   argTypes: {
     tag: { control: 'text' },
@@ -24,4 +24,3 @@ Default.args = {
   tag: 'web-components',
   origin: '#/search?q=',
 };
-

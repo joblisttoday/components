@@ -6,7 +6,7 @@ import '../providers/lever.js';
 
 
 export default {
-  title: 'Components/Boards',
+  title: 'Board Providers/Boards',
   component: 'joblist-boards',
 };
 
@@ -14,4 +14,3 @@ const Template = () => html`<joblist-boards></joblist-boards>`;
 
 export const Default = Template.bind({});
 Default.args = {};
-

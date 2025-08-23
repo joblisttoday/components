@@ -1,7 +1,7 @@
 import { html } from 'lit-html';
 
 export default {
-  title: 'Components/SocialLink',
+  title: 'Site/Social Link',
   component: 'joblist-social-link',
   argTypes: {
     url: { control: 'text' },

@@ -2,7 +2,7 @@ import { html } from 'lit-html';
 import '../components/favorites-manager.js';
 
 export default {
-  title: 'Components/FavoritesManager',
+  title: 'RemoteStorage/Favorites Manager',
   component: 'joblist-favorites-manager',
   argTypes: {
     type: { control: { type: 'radio' }, options: ['both', 'companies', 'jobs'] },

@@ -3,7 +3,7 @@ import '../components/matrix-job.js';
 
 
 export default {
-  title: 'Components/Matrix/MatrixJob',
+  title: 'Matrix/MatrixJob',
   component: 'joblist-matrix-job',
   argTypes: {
     event: { control: 'object' },
@@ -24,4 +24,3 @@ Default.args = {
     },
   },
 };
-
