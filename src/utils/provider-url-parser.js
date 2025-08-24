@@ -1,3 +1,18 @@
+/**
+ * @fileoverview URL parser for job board provider URLs
+ */
+
+/**
+ * @typedef {Object} ParseResult
+ * @property {string} url - Normalized URL
+ * @property {string} [provider] - Detected provider ID
+ * @property {string} [id] - Extracted company hostname/ID
+ */
+
+/**
+ * @typedef {function(string): string} ExtractMethod
+ */
+
 /* the list of providers we know how to parse */
 const providersList =  {
 	'recruitee.com': 'recruitee',
@@ -94,6 +109,11 @@ const normalizeUrl = (url) => {
 	return url
 }
 
+/**
+ * Parse a provider URL to extract provider and company information
+ * @param {string} inputUrl - URL to parse
+ * @returns {ParseResult} Parsed result with provider and ID
+ */
 const find = (inputUrl) => {
 	// 0. normalize url, so it can be parsed homogenously
 	const url = normalizeUrl(inputUrl)

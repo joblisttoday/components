@@ -20,9 +20,9 @@
 
 				// Update hash with search query for privacy-preserving URL sharing
 				if (detail.query && detail.query.trim()) {
-					hashRouter.setParams({ 
-						query: detail.query, 
-						view: detail.searchType 
+					hashRouter.setParams({
+						query: detail.query,
+						view: detail.searchType,
 					});
 				} else {
 					// Clear hash when no query
@@ -33,36 +33,39 @@
 			// Handle hash changes (browser back/forward, direct URL changes)
 			const handleRouteChange = (newParams, oldParams) => {
 				console.log("🔄 Hash route changed:", newParams, "from:", oldParams);
-				
+
 				const { query = "", view = "", type = "" } = newParams;
 				const currentQuery = $search.getAttribute("query") || "";
 				const currentView = $search.getAttribute("search-type") || "";
-				
+
 				// Support new 'view' param; fallback to legacy 'type'
 				const newView = view || type;
-				
+
 				// Only update if values actually changed to avoid infinite loops
 				if (query !== currentQuery) {
 					$search.setAttribute("query", query);
 				}
-				
+
 				if (newView && newView !== currentView) {
 					$search.setAttribute("search-type", newView);
 				}
-				
+
 				// Trigger search if we have a query
 				if (query && query.trim()) {
 					// Let the search component handle the search
-					$search.dispatchEvent(new CustomEvent('search-trigger'));
+					$search.dispatchEvent(new CustomEvent("search-trigger"));
 				} else if (!query) {
 					// Clear results when no query
-					$results.setAttribute("results", JSON.stringify({
-						companies: [],
-						jobs: [],
-						query: "",
-						searchType: newView || "both",
-						stats: { totalCompanies: 0, totalJobs: 0, total: 0 }
-					}));
+					$results.setAttribute(
+						"results",
+						JSON.stringify({
+							companies: [],
+							jobs: [],
+							query: "",
+							searchType: newView || "both",
+							stats: { totalCompanies: 0, totalJobs: 0, total: 0 },
+						}),
+					);
 				}
 			};
 
@@ -72,20 +75,18 @@
 			// Initialize with current hash params
 			const initialParams = hashRouter.getParams();
 			const { query = "", view = "", type = "" } = initialParams;
-			
+
 			if (query) {
 				$search.setAttribute("query", query);
 			}
-			
+
 			// Support new 'view' param; fallback to legacy 'type'
 			const initialView = view || type;
 			if (initialView) {
 				$search.setAttribute("search-type", initialView);
 			}
 
-			document
-				.querySelector("joblist-page-main")
-				.append($search, document.createElement("hr"), $results);
+			document.querySelector("joblist-page-main").append($search, $results);
 		</script>
 	</head>
 	<body>

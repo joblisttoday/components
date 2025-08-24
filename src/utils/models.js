@@ -1,4 +1,45 @@
+/**
+ * @fileoverview Core data models for joblist.today system
+ */
+
+/**
+ * @typedef {Object} CompanyData
+ * @property {string} [created_at] - Creation timestamp
+ * @property {string} [updated_at] - Last update timestamp
+ * @property {string} [id] - Company unique identifier
+ * @property {string} [title] - Company name
+ * @property {string} [description] - Company description
+ * @property {string[]|string} [tags] - Company tags (JSON string or array)
+ * @property {Object[]|string} [positions] - Job positions (JSON string or array)
+ * @property {string} [job_board_provider] - Job board provider (greenhouse, lever, etc.)
+ * @property {string} [job_board_hostname] - Provider-specific hostname
+ * @property {string} [company_url] - Company website URL
+ * @property {string} [job_board_url] - Job board URL
+ * @property {string} [twitter_url] - Twitter profile URL
+ * @property {string} [linkedin_url] - LinkedIn profile URL
+ * @property {string} [youtube_url] - YouTube channel URL
+ * @property {string} [instagram_url] - Instagram profile URL
+ * @property {string} [facebook_url] - Facebook page URL
+ * @property {string} [github_url] - GitHub organization URL
+ * @property {string} [wikipedia_url] - Wikipedia page URL
+ * @property {boolean} [is_highlighted] - Whether company is highlighted
+ * @property {number} [total_jobs] - Total number of jobs (computed)
+ */
+
+/**
+ * @typedef {Object} CompanyOptions
+ * @property {boolean} [serializePositions=true] - Whether to parse positions JSON
+ * @property {boolean} [serializeTags=true] - Whether to parse tags JSON
+ */
+
+/**
+ * Company model representing a company in the joblist.today system
+ */
 class Company {
+	/**
+	 * Get list of all company attributes
+	 * @returns {string[]} Array of attribute names
+	 */
 	get attributes() {
 		return [
 			// could delete the dates and get info from git-repo/github
@@ -28,6 +69,11 @@ class Company {
 			"total_jobs",
 		];
 	}
+	/**
+	 * Create a new Company instance
+	 * @param {CompanyData} data - Company data object
+	 * @param {CompanyOptions} [options] - Configuration options
+	 */
 	constructor(data, { serializePositions = true, serializeTags = true } = {}) {
 		this.create(data);
 		if (
@@ -45,6 +91,10 @@ class Company {
 			} catch (e) {}
 		}
 	}
+	/**
+	 * Initialize company properties from data
+	 * @param {CompanyData} data - Company data object
+	 */
 	create(data) {
 		this.attributes.forEach((attr) => {
 			const attrVal = data[attr];
@@ -64,8 +114,28 @@ class Company {
 	}
 }
 
-/* a job, used in joblist.today systems */
+/**
+ * @typedef {Object} JobData
+ * @property {string} id - Original job ID from provider
+ * @property {string} name - Job title
+ * @property {string} [description] - Job description (HTML or plain text)
+ * @property {string} url - URL to job posting
+ * @property {string|Date} [publishedDate] - Job publication date
+ * @property {string} [location] - Job location
+ * @property {string} companyTitle - Company name
+ * @property {string} companyId - Company identifier
+ * @property {string} providerId - Job board provider identifier
+ * @property {string} providerHostname - Provider-specific hostname
+ */
+
+/**
+ * Job model representing a job posting in the joblist.today system
+ */
 class Job {
+	/**
+	 * Get list of all job attributes
+	 * @returns {string[]} Array of attribute names
+	 */
 	get attributes() {
 		return [
 			/* job data */
@@ -83,6 +153,10 @@ class Job {
 			"providerHostname",
 		];
 	}
+	/**
+	 * Create a new Job instance
+	 * @param {JobData} data - Job data object
+	 */
 	constructor(data) {
 		/* if not company title, use providerHostname */
 		data.companyTitle = data.companyTitle || data.providerHostname;
@@ -96,12 +170,22 @@ class Job {
 		}
 	}
 
+	/**
+	 * Get missing required attributes from job data
+	 * @param {string[]} attributes - List of all attributes
+	 * @param {JobData} jobData - Job data to validate
+	 * @returns {string[]} Array of missing required attributes
+	 */
 	getMissingAttributes(attributes, jobData) {
 		// Description is optional, so don't require it
 		const requiredAttributes = attributes.filter(attr => attr !== 'description');
 		return requiredAttributes.filter((attr) => !jobData[attr]);
 	}
 
+	/**
+	 * Initialize job properties from validated data
+	 * @param {JobData} data - Job data object
+	 */
 	createJob(data) {
 		const id = `${data.providerId}-${data.providerHostname}-${data.id}`;
 		this.id = id;
@@ -115,8 +199,36 @@ class Job {
 	}
 }
 
-/* a job-board provider API */
+/**
+ * @typedef {Object} GetJobsParams
+ * @property {string} hostname - Company hostname for the provider
+ * @property {string} [companyTitle] - Optional company title
+ * @property {string} [companyId] - Optional company ID
+ * @property {string} [city] - Optional city filter
+ * @property {string} [country] - Optional country filter
+ * @property {string} [language] - Optional language parameter
+ */
+
+/**
+ * @callback GetJobsFunction
+ * @param {GetJobsParams} params - Parameters for fetching jobs
+ * @returns {Promise<Job[]>} Promise that resolves to array of Job instances
+ */
+
+/**
+ * @typedef {Object} ProviderConfig
+ * @property {string} id - Unique provider identifier
+ * @property {GetJobsFunction} getJobs - Function to fetch jobs from provider
+ */
+
+/**
+ * Job board provider API wrapper
+ */
 class Provider {
+	/**
+	 * Create a new Provider instance
+	 * @param {ProviderConfig} config - Provider configuration
+	 */
 	constructor({ id, getJobs }) {
 		if (!id) {
 			return console.log("Provider.id missing");
@@ -128,8 +240,11 @@ class Provider {
 		this.id = id;
 		this.getJobs = getJobs;
 	}
-	/* should return an array of all Job(s)
-		 for a `hostname` of a company's job-board hosted by this provider */
+	/**
+	 * Fetch jobs from the provider for a given company hostname
+	 * @param {GetJobsParams} params - Parameters for fetching jobs
+	 * @returns {Promise<Job[]>} Array of Job instances
+	 */
 	async getJobs() {}
 }
 
