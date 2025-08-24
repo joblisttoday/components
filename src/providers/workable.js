@@ -35,7 +35,7 @@ const providerId = "workable";
 
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
-		const { id, city, country, url, title, published_on } = job;
+		const { id, city, country, url, title, published_on, employment_type, department } = job;
     // Build location from city/country, or mark as remote when applicable
     let locationStr = `${city}, ${country}`;
     if (!city && job.telecommuting) {
@@ -49,6 +49,8 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
         url: url,
         publishedDate: published_on,
         location: locationStr,
+        employmentType: employment_type,
+        department: department,
         companyTitle: companyTitle || hostname,
         companyId: companyId || hostname,
         providerHostname: hostname,

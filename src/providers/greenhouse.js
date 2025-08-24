@@ -83,6 +83,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
         // Prefer first published date if available, else fall back to last update
         publishedDate: job.first_published || job.updated_at,
         location: getLocation(job),
+        department: job.departments?.[0]?.name,
         companyTitle: companyTitle || hostname,
         companyId: companyId || hostname,
         providerHostname: hostname,

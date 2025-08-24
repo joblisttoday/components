@@ -42,7 +42,7 @@ const providerId = "ashby";
 
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
-		const { id, title, locationName, secondaryLocations, publishedDate, description } = job;
+		const { id, title, locationName, secondaryLocations, publishedDate, description, employmentType } = job;
 		const jobUrl = `https://jobs.ashbyhq.com/${hostname}/${id}`;
 		return new Job({
 			providerId,
@@ -51,6 +51,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 			description: description ? sanitizeHtml(description) : undefined,
 			url: jobUrl,
 			publishedDate: publishedDate,
+			employmentType: employmentType,
 			companyTitle: companyTitle || hostname,
 			companyId: companyId || hostname,
 			providerHostname: hostname,

@@ -25,7 +25,7 @@
  */
 
 import { Provider, Job } from "../utils/models.js";
-import mwc from "../libs/mwc.js";
+// import mwc from "../libs/mwc.js"; // Commented out - mwc deprecated
 import { MATRIX_ROOM_FILTER_JOB } from "../libs/sdk.js";
 import { sanitizeHtml } from "../utils/html-sanitizer.js";
 
@@ -53,13 +53,14 @@ const serializeJobs = ({ jobs = [], hostname, companyTitle, companyId }) => {
 
 const getJobs = async ({ hostname, companyId = "", companyTitle = "" }) => {
 	try {
-		const res = await mwc.api.getRoomMessages({
-			roomId: hostname,
-			params: [
-				["filter", MATRIX_ROOM_FILTER_JOB],
-				["limit", EVENTS_LIMIT],
-			],
-		});
+		// const res = await mwc.api.getRoomMessages({
+		// 	roomId: hostname,
+		// 	params: [
+		// 		["filter", MATRIX_ROOM_FILTER_JOB],
+		// 		["limit", EVENTS_LIMIT],
+		// 	],
+		// }); // Commented out - mwc deprecated
+		throw new Error("Matrix provider temporarily disabled - mwc deprecated");
 		if (res.error) {
 			throw res;
 		} else {

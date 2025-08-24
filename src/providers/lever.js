@@ -79,6 +79,8 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 			url: hostedUrl,
 			publishedDate: createdAt,
 			location: fullLocation,
+			employmentType: categories?.commitment,
+			department: categories?.department,
 			companyTitle: companyTitle || hostname,
 			companyId: companyId || hostname,
 			providerHostname: hostname,

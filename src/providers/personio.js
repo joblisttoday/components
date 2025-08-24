@@ -36,7 +36,7 @@ const providerId = "personio";
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	const baseUrl = `https://${hostname}.jobs.personio.de`;
 	return jobs.map((job) => {
-		const { name, id, office, createdAt, description } = job;
+		const { name, id, office, createdAt, description, employmentType, department } = job;
 		const newJob = new Job({
 			id: `${providerId}-${hostname}-${id}`,
 			name,
@@ -44,6 +44,8 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 			url: `${baseUrl}/job/${id}`,
 			publishedDate: createdAt,
 			location: office,
+			employmentType: employmentType,
+			department: department,
 			providerId,
 			providerHostname: hostname,
 			companyTitle: companyTitle || hostname,
@@ -63,6 +65,7 @@ const parseResXml = (textRes) => {
 		"name",
 		"occupationCategory",
 		"employmentType",
+		"department",
 		"office",
 		"createdAt",
 	];

@@ -54,17 +54,22 @@ test("board component loads jobs from provider", async () => {
     getJobs: vi.fn().mockResolvedValue([
       {
         id: "job1",
-        title: "Software Engineer",
+        name: "Software Engineer",
         location: "San Francisco",
         description: "Great job",
-        url: "https://example.com/job1"
+        url: "https://example.com/job1",
+        publishedDate: "2024-01-01T10:00:00Z",
+        employmentType: "Full-time",
+        department: "Engineering"
       },
       {
         id: "job2", 
-        title: "Product Manager",
+        name: "Product Manager",
         location: "Remote",
         description: "Another great job",
-        url: "https://example.com/job2"
+        url: "https://example.com/job2",
+        employmentType: "Full-time",
+        department: "Product"
       }
     ])
   };
@@ -81,6 +86,15 @@ test("board component loads jobs from provider", async () => {
   
   expect(getProvider).toHaveBeenCalledWith("greenhouse");
   expect(mockProvider.getJobs).toHaveBeenCalled();
+  
+  // Check that job elements were created with new attributes
+  const jobElements = board.querySelectorAll("joblist-board-job");
+  expect(jobElements.length).toBe(2);
+  
+  const firstJob = jobElements[0];
+  expect(firstJob.getAttribute("employment-type")).toBe("Full-time");
+  expect(firstJob.getAttribute("department")).toBe("Engineering");
+  expect(firstJob.getAttribute("published-date")).toBe("2024-01-01T10:00:00.000Z");
 });
 
 test("board component handles provider loading error", async () => {
@@ -161,4 +175,37 @@ test("board component shows loading state initially", () => {
   
   // Should show some indication of loading (implementation dependent)
   expect(board.innerHTML).toBeTruthy();
+});
+
+test("board component handles jobs without employmentType and department", async () => {
+  const { getProvider } = await import("../../src/providers/index.js");
+  
+  const mockProvider = {
+    getJobs: vi.fn().mockResolvedValue([
+      {
+        id: "basic-job",
+        name: "Basic Job",
+        location: "Remote",
+        url: "https://example.com/basic-job"
+        // No employmentType, department, or publishedDate
+      }
+    ])
+  };
+  
+  getProvider.mockReturnValue(mockProvider);
+  
+  const board = document.createElement("joblist-board");
+  board.setAttribute("provider-name", "rippling");
+  board.setAttribute("provider-hostname", "test-company");
+  document.body.appendChild(board);
+  
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  const jobElement = board.querySelector("joblist-board-job");
+  expect(jobElement).toBeTruthy();
+  
+  // Should not have these attributes when not provided
+  expect(jobElement.getAttribute("employment-type")).toBeNull();
+  expect(jobElement.getAttribute("department")).toBeNull();
+  expect(jobElement.getAttribute("published-date")).toBeNull();
 });

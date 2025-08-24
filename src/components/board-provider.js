@@ -200,14 +200,27 @@ export default class JoblistBoardProvider extends HTMLElement {
 	 * @param {string} param0.url - Job URL
 	 * @param {string} param0.location - Job location
 	 * @param {string} param0.description - Job description
+	 * @param {string} param0.publishedDate - Job published date
+	 * @param {string} param0.employmentType - Job employment type
+	 * @param {string} param0.department - Job department
 	 * @returns {HTMLElement} Job element
 	 */
-	createJob({ name, url, location, description }) {
+	createJob({ name, url, location, description, publishedDate, employmentType, department }) {
 		if (name && url) {
 			const $newJobItem = document.createElement("joblist-board-job");
 			$newJobItem.setAttribute("title", name);
 			$newJobItem.setAttribute("url", url);
 			$newJobItem.setAttribute("location", location);
+			if (employmentType) $newJobItem.setAttribute("employment-type", employmentType);
+			if (department) $newJobItem.setAttribute("department", department);
+			if (publishedDate) {
+				try {
+					const d = new Date(publishedDate);
+					if (!Number.isNaN(d.getTime())) {
+						$newJobItem.setAttribute("published-date", d.toISOString());
+					}
+				} catch {}
+			}
 			
 			// Create unique job ID based on URL and title
 			const jobId = this.createJobId(url, name);

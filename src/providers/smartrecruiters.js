@@ -103,6 +103,8 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
         location: job.location?.fullLocation
           ? job.location.fullLocation
           : `${job.location.city}, ${job.location.country}`,
+        employmentType: job.typeOfEmployment?.label,
+        department: job.department?.name || (typeof job.department === 'string' ? job.department : undefined),
         providerId,
         providerHostname: hostname,
         companyTitle: companyTitle || hostname,
