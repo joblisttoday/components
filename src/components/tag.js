@@ -1,14 +1,14 @@
 /**
  * Tag display component for rendering searchable tag links.
  * Creates clickable tag elements with hashtag icons that link to search results.
- * 
+ *
  * @class JoblistTag
  * @extends HTMLElement
  */
 export default class JoblistTag extends HTMLElement {
 	/**
 	 * Gets the tag value from the tag attribute.
-	 * 
+	 *
 	 * @returns {*} Parsed tag value from JSON attribute
 	 */
 	get tag() {
@@ -16,7 +16,7 @@ export default class JoblistTag extends HTMLElement {
 	}
 	/**
 	 * Gets the base URL for tag search links.
-	 * 
+	 *
 	 * @returns {string} Base URL for tag searches
 	 */
 	get origin() {
@@ -28,7 +28,7 @@ export default class JoblistTag extends HTMLElement {
 	/**
 	 * Lifecycle callback when component is added to DOM.
 	 * Renders the tag element with current tag and origin values.
-	 * 
+	 *
 	 *
 	 */
 	async connectedCallback() {
@@ -37,7 +37,7 @@ export default class JoblistTag extends HTMLElement {
 	/**
 	 * Renders the tag component.
 	 * Replaces content with a clickable tag anchor element.
-	 * 
+	 *
 	 * @param {*} tag - The tag value to display
 	 * @param {string} origin - Base URL for tag link
 	 */
@@ -47,14 +47,17 @@ export default class JoblistTag extends HTMLElement {
 	/**
 	 * Creates a clickable anchor element for the tag.
 	 * Includes hashtag icon and tag text.
-	 * 
+	 *
 	 * @param {*} tag - The tag value to display
 	 * @param {string} origin - Base URL for tag link
 	 * @returns {HTMLAnchorElement} Anchor element with icon and text
 	 */
 	createAnchor(tag, origin) {
+		const tagName = typeof tag === "object" && tag.name ? tag.name : tag;
+		const tagCount = typeof tag === "object" && tag.count ? tag.count : null;
+
 		const anchor = document.createElement("a");
-		anchor.setAttribute("href", `${origin}${tag}`);
+		anchor.setAttribute("href", `${origin}${tagName}`);
 
 		// Add hashtag icon
 		const icon = document.createElement("joblist-icon");
@@ -64,8 +67,14 @@ export default class JoblistTag extends HTMLElement {
 
 		// Add tag text
 		const textSpan = document.createElement("span");
-		textSpan.textContent = tag;
+		textSpan.textContent = tagName;
 		anchor.appendChild(textSpan);
+
+		if (tagCount !== null) {
+			const countElement = document.createElement("joblist-tag-count");
+			countElement.textContent = `(${tagCount})`;
+			anchor.appendChild(countElement);
+		}
 
 		return anchor;
 	}

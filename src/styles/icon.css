@@ -1,9 +1,7 @@
 joblist-icon {
 	:is(.icon) {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: calc(var(--s) / 4);
+		/* display: inline; */
+		/* padding: calc(var(--s) / 5); */
 
 		:is(.icon-svg) {
 			:is(svg) {
@@ -13,21 +11,5 @@ joblist-icon {
 				flex-shrink: 0;
 			}
 		}
-		:is(slot) {
-			color: red;
-		}
-	}
-
-	/* Size variants */
-	&:is([size="small"]) {
-		font-size: 16px;
-	}
-
-	&:is([size="medium"]) {
-		font-size: 24px;
-	}
-
-	&:is([size="large"]) {
-		font-size: 32px;
 	}
 }

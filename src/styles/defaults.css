@@ -114,6 +114,9 @@ joblist-layout {
 		border-right: 0;
 		border-color: var(--c-hr);
 	}
+	:is(h1, h2. h3, h4) {
+		line-height: 1.3;
+	}
 	:is(h1) {
 		font-size: var(--s-h1);
 	}

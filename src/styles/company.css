@@ -48,7 +48,7 @@ joblist-company {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			gap: var(--s);
+			/* gap: var(--s); */
 		}
 	}
 
@@ -132,7 +132,7 @@ joblist-company {
 	}
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--s) / 4);
+	/* gap: calc(var(--s) / 4); */
 }
 joblist-company {
 	&:is([is-highlighted="true"]) {
@@ -223,13 +223,14 @@ joblist-company-edit {
 }
 
 joblist-company-favicon {
-	background-color: var(--c-fg);
-	padding: calc(var(--s) / 3);
+	padding: calc(var(--s) / 5);
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	/* border: 1px solid var(--c-link); */
+	border-radius: 50%;
+	background-color: var(--c-bg-alt);
 	img {
-		width: var(--s);
-		height: var(--s);
+		width: calc(var(--s) / 1.5);
 	}
 }

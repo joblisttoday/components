@@ -10,4 +10,39 @@ joblist-aindex-toc {
 	max-height: 100vh;
 	overflow-x: scroll;
 	flex-shrink: 0;
+	:is(a) {
+		display: inline-flex;
+		padding: calc(var(--s) / 4);
+		transition:
+			font-weight 222ms ease-in-out,
+			text-decoration-color 222ms ease-in-out;
+		text-decoration: underline;
+		text-decoration-color: transparent;
+		:is(&:hover, &[aria-current="true"]) {
+			color: var(--c-bg);
+			font-weight: bold;
+			text-decoration-color: var(--c-link);
+		}
+	}
+}
+joblist-aindex-list {
+	:is(ul) {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s);
+	}
+	:is(section h2) {
+		background-color: var(--c-bg);
+		border-bottom: 1px solid var(--c-hr);
+		position: sticky;
+		top: 0;
+		padding: calc(var(--s) / 3) 0;
+		margin-top: 0;
+	}
+}
+
+joblist-aindex-count {
+	margin-left: calc(var(--s) / 6);
+	opacity: 0.7;
+	font-weight: normal;
 }

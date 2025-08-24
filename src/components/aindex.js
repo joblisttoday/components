@@ -21,7 +21,7 @@ export default class JoblistAindex extends HTMLElement {
 	get index() {
 		return JSON.parse(this.getAttribute("index") || "[]");
 	}
-	
+
 	/**
 	 * Gets the key attribute to determine which property to index by
 	 * @returns {string} The key to use for indexing
@@ -29,7 +29,7 @@ export default class JoblistAindex extends HTMLElement {
 	get key() {
 		return this.getAttribute("key");
 	}
-	
+
 	/**
 	 * Gets the template element for rendering list items
 	 * @returns {HTMLTemplateElement} The template element
@@ -37,14 +37,55 @@ export default class JoblistAindex extends HTMLElement {
 	get template() {
 		return this.querySelector("template");
 	}
-	
+
 	/**
 	 * Lifecycle method called when element is connected to DOM
 	 */
 	connectedCallback() {
 		this.render(this.index, this.key);
+
+		this.onScroll = this.onScroll.bind(this);
+
+		Promise.all([
+			customElements.whenDefined("joblist-aindex-toc"),
+			customElements.whenDefined("joblist-aindex-list"),
+		]).then(() => {
+			this.toc = this.querySelector("joblist-aindex-toc");
+			this.list = this.querySelector("joblist-aindex-list");
+			this.sections = this.list.querySelectorAll("section");
+			this.links = this.toc.querySelectorAll("a");
+			window.addEventListener("scroll", this.onScroll, { passive: true });
+			this.onScroll();
+		});
 	}
-	
+
+	disconnectedCallback() {
+		window.removeEventListener("scroll", this.onScroll);
+	}
+
+	onScroll() {
+		window.requestAnimationFrame(() => {
+			if (!this.sections || !this.links) {
+				return;
+			}
+
+			this.sections.forEach((section) => {
+				const rect = section.getBoundingClientRect();
+				const isInView =
+					rect.top < window.innerHeight * 0.1 && rect.bottom >= 0;
+
+				const link = this.toc.querySelector(`a[href="#${section.id}"]`);
+				if (link) {
+					if (isInView) {
+						link.setAttribute("aria-current", "true");
+					} else {
+						link.removeAttribute("aria-current");
+					}
+				}
+			});
+		});
+	}
+
 	/**
 	 * Renders the alphabetical index with table of contents and list
 	 * @param {Array} list - The list of items to index
@@ -109,14 +150,14 @@ export class JoblistAindexToc extends HTMLElement {
 	get index() {
 		return JSON.parse(this.getAttribute("index")) || {};
 	}
-	
+
 	/**
 	 * Lifecycle method called when element is connected to DOM
 	 */
 	connectedCallback() {
 		this.render(this.index);
 	}
-	
+
 	/**
 	 * Renders the table of contents with navigation links
 	 * @param {Object} index - The index object with letters as keys
@@ -129,6 +170,11 @@ export class JoblistAindexToc extends HTMLElement {
 				const anchor = document.createElement("a");
 				anchor.setAttribute("href", `#aindex-${indexLetter}`);
 				anchor.textContent = indexLetter;
+
+				const countElement = document.createElement("joblist-aindex-count");
+				countElement.textContent = `(${index[indexLetter].length})`;
+				anchor.append(countElement);
+
 				li.append(anchor);
 				return li;
 			});
@@ -152,7 +198,7 @@ export class JoblistAindexList extends HTMLElement {
 	get index() {
 		return JSON.parse(this.getAttribute("index")) || {};
 	}
-	
+
 	/**
 	 * Gets the template element for rendering list items
 	 * @returns {HTMLTemplateElement} The template element
@@ -160,7 +206,7 @@ export class JoblistAindexList extends HTMLElement {
 	get template() {
 		return this.querySelector("template");
 	}
-	
+
 	/**
 	 * Gets the key attribute from the template
 	 * @returns {string} The template key attribute value
@@ -168,7 +214,7 @@ export class JoblistAindexList extends HTMLElement {
 	get templateKey() {
 		return this.template?.getAttribute("key");
 	}
-	
+
 	/**
 	 * Lifecycle method called when element is connected to DOM
 	 */
@@ -180,23 +226,27 @@ export class JoblistAindexList extends HTMLElement {
 	 * Renders the alphabetical index list with sections for each letter
 	 * @param {Object} index - The index object with letters as keys and arrays of items as values
 	 */
-		render(index) {
-			const sections = Object.keys(index)
-				.sort(sortIndex)
-				.map((indexLetter) => {
-					const section = document.createElement("section");
-					section.setAttribute("id", `aindex-${indexLetter}`);
+	render(index) {
+		const sections = Object.keys(index)
+			.sort(sortIndex)
+			.map((indexLetter) => {
+				const section = document.createElement("section");
+				section.setAttribute("id", `aindex-${indexLetter}`);
 
 				const anchor = document.createElement("a");
 				anchor.setAttribute("href", `#aindex-${indexLetter}`);
 				anchor.textContent = indexLetter;
+
+				const countElement = document.createElement("joblist-aindex-count");
+				countElement.textContent = `(${index[indexLetter].length})`;
+
 				const h2 = document.createElement("h2");
-				h2.append(anchor);
+				h2.append(anchor, countElement);
 				section.appendChild(h2);
 
 				const ul = document.createElement("ul");
 				const template = this.template;
-				const templateKey = this.templateKey || 'item';
+				const templateKey = this.templateKey || "item";
 
 				index[indexLetter].forEach((item) => {
 					const li = document.createElement("li");
@@ -209,18 +259,20 @@ export class JoblistAindexList extends HTMLElement {
 							/* ignore template attribute set issues */
 						}
 						// Also support [data-item] text injection for simple templates
-						const dataNode = cloned.querySelector?.('[data-item]');
+						const dataNode = cloned.querySelector?.("[data-item]");
 						if (dataNode) {
-							dataNode.textContent = typeof item === 'string'
-								? item
-								: (item.title || item.name || String(item));
+							dataNode.textContent =
+								typeof item === "string"
+									? item
+									: item.title || item.name || String(item);
 						}
 
 						li.appendChild(cloned);
 					} else {
-						li.textContent = typeof item === 'string'
-							? item
-							: (item.title || item.name || String(item));
+						li.textContent =
+							typeof item === "string"
+								? item
+								: item.title || item.name || String(item);
 					}
 					ul.appendChild(li);
 				});

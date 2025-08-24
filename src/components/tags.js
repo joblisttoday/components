@@ -22,8 +22,26 @@ export default class JoblistTags extends HTMLElement {
 		await this.sdk.initialize();
 		try {
 			const companies = await this.sdk.getCompanies();
-			const tags = getAllCompaniesTags(companies);
-			this.render(tags);
+			
+            const tagsMap = {};
+            companies.forEach(company => {
+                if (company.tags) {
+                    company.tags.forEach(tag => {
+                        if (!tagsMap[tag]) {
+                            tagsMap[tag] = { count: 0, companies: [] };
+                        }
+                        tagsMap[tag].count++;
+                        tagsMap[tag].companies.push(company.title);
+                    });
+                }
+            });
+
+            const tagsWithStats = Object.keys(tagsMap).map(tag => ({
+                name: tag,
+                count: tagsMap[tag].count
+            }));
+
+			this.render(tagsWithStats);
 		} catch (error) {
 			this.textContent = "Error loading tags";
 		}
@@ -36,6 +54,7 @@ export default class JoblistTags extends HTMLElement {
 	 */
 	render(tags) {
 		const index = this.createIndex(tags);
+        index.setAttribute('key', 'name');
 		index.append(this.createTemplate());
 		this.replaceChildren(index);
 	}

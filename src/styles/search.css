@@ -2,6 +2,7 @@ joblist-search {
 	display: flex;
 	align-items: center;
 	background-color: var(--c-bg);
+	border-bottom: 1px solid var(--c-hr);
 	:is(.search-container) {
 		flex-grow: 1;
 	}
