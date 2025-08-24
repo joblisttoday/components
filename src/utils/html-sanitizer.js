@@ -10,6 +10,7 @@ import DOMPurify from "isomorphic-dompurify";
  * @returns {string} Sanitized HTML string
  */
 export default function sanitizeHtml(htmlContent) {
+	if (!htmlContent) return "";
 	const clean = DOMPurify.sanitize(htmlContent);
 	return clean;
 }
@@ -20,7 +21,7 @@ export default function sanitizeHtml(htmlContent) {
  * @returns {DocumentFragment} Sanitized DOM fragment
  */
 function sanitizeHtmlToDom(htmlContent) {
-	const clean = DOMPurify.sanitize(htmlContent, {
+	const clean = DOMPurify.sanitize(htmlContent || "", {
 		RETURN_DOM: true,
 	});
 	return clean;
