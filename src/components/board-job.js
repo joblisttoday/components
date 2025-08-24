@@ -102,33 +102,7 @@ export default class JoblistBoardJob extends HTMLElement {
 	 * @returns {HTMLElement[]} Array of job DOM elements
 	 */
 	createJobDoms({ title, url, location, description, jobId }) {
-		const $doms = [];
-
 		const $jobHeader = document.createElement("joblist-board-job-header");
-
-		const $jobName = document.createElement("joblist-board-job-name");
-		const $jobNameAnchor = document.createElement("a");
-		$jobNameAnchor.setAttribute("href", url);
-		$jobNameAnchor.setAttribute("target", "_blank");
-		$jobNameAnchor.setAttribute("rel", "noreferrer noopener");
-		$jobNameAnchor.textContent = title;
-		$jobName.append($jobNameAnchor);
-
-		$jobHeader.append($jobName);
-		$doms.push($jobHeader);
-
-		// Employment type
-		if (this.employmentType) {
-			const $employmentType = document.createElement(
-				"joblist-board-job-employment-type",
-			);
-			$employmentType.textContent = this.employmentType;
-			$doms.push($employmentType);
-		}
-
-		const $jobLocation = document.createElement("joblist-board-job-location");
-		$jobLocation.textContent = location;
-		$doms.push($jobLocation);
 
 		// Department
 		if (this.department) {
@@ -136,8 +110,31 @@ export default class JoblistBoardJob extends HTMLElement {
 				"joblist-board-job-department",
 			);
 			$department.textContent = this.department;
-			$doms.push($department);
+			$jobHeader.append($department);
 		}
+
+		// Name
+		const $jobName = document.createElement("joblist-board-job-name");
+		const $jobNameAnchor = document.createElement("a");
+		$jobNameAnchor.setAttribute("href", url);
+		$jobNameAnchor.setAttribute("target", "_blank");
+		$jobNameAnchor.setAttribute("rel", "noreferrer noopener");
+		$jobNameAnchor.textContent = title;
+		$jobName.append($jobNameAnchor);
+		$jobHeader.append($jobName);
+
+		// Employment type
+		if (this.employmentType) {
+			const $employmentType = document.createElement(
+				"joblist-board-job-employment-type",
+			);
+			$employmentType.textContent = this.employmentType;
+			$jobHeader.append($employmentType);
+		}
+
+		const $jobLocation = document.createElement("joblist-board-job-location");
+		$jobLocation.textContent = location;
+		$jobHeader.append($jobLocation);
 
 		// Relative published date
 		if (this.publishedDate) {
@@ -149,11 +146,13 @@ export default class JoblistBoardJob extends HTMLElement {
 					);
 					$published.textContent = formatDistanceToNow(d, { addSuffix: true });
 					$published.title = d.toString();
-					$doms.push($published);
+					$jobHeader.append($published);
 				}
 			} catch {}
 		}
 
+		// Final DOM structure
+		const $doms = [$jobHeader];
 		if (description) {
 			const $jobDescription = document.createElement(
 				"joblist-board-job-description",

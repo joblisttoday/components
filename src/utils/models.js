@@ -145,6 +145,8 @@ class Job {
 			"url",
 			"publishedDate",
 			"location",
+			"employmentType",
+			"department",
 
 			/* company data */
 			"companyTitle",
@@ -158,16 +160,7 @@ class Job {
 	 * @param {JobData} data - Job data object
 	 */
 	constructor(data) {
-		/* if not company title, use providerHostname */
-		data.companyTitle = data.companyTitle || data.providerHostname;
-		data.location = data.location || "Not specified";
-
-		const missingAttr = this.getMissingAttributes(this.attributes, data);
-		if (missingAttr && missingAttr.length) {
-			console.log("Error creating job", missingAttr, data);
-		} else {
-			this.createJob(data);
-		}
+		this.createJob(data);
 	}
 
 	/**
@@ -177,9 +170,8 @@ class Job {
 	 * @returns {string[]} Array of missing required attributes
 	 */
 	getMissingAttributes(attributes, jobData) {
-		// Description is optional, so don't require it
-		const requiredAttributes = attributes.filter(attr => attr !== 'description');
-		return requiredAttributes.filter((attr) => !jobData[attr]);
+		// Not used anymore; kept for compatibility
+		return [];
 	}
 
 	/**
@@ -187,15 +179,22 @@ class Job {
 	 * @param {JobData} data - Job data object
 	 */
 	createJob(data) {
-		const id = `${data.providerId}-${data.providerHostname}-${data.id}`;
-		this.id = id;
+		if (data.providerId && data.providerHostname) {
+			this.id = `${data.providerId}-${data.providerHostname}-${data.id}`;
+		} else {
+			this.id = data.id;
+		}
 		this.name = data.name;
 		this.description = data.description;
 		this.url = data.url;
 		this.publishedDate = data.publishedDate;
 		this.location = data.location;
-		this.companyTitle = data.companyTitle;
+		this.employmentType = data.employmentType;
+		this.department = data.department;
+		this.companyTitle = data.companyTitle || data.providerHostname;
 		this.companyId = data.companyId;
+		this.providerId = data.providerId;
+		this.providerHostname = data.providerHostname;
 	}
 }
 
@@ -229,16 +228,9 @@ class Provider {
 	 * Create a new Provider instance
 	 * @param {ProviderConfig} config - Provider configuration
 	 */
-	constructor({ id, getJobs }) {
-		if (!id) {
-			return console.log("Provider.id missing");
-		}
-		if (!getJobs || typeof getJobs !== "function") {
-			return console.log("Provider.getJobs needs to be an async function");
-		}
-
-		this.id = id;
-		this.getJobs = getJobs;
+	constructor(config = {}) {
+		// Assign all provided config as properties
+		Object.assign(this, config);
 	}
 	/**
 	 * Fetch jobs from the provider for a given company hostname
