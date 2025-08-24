@@ -3,13 +3,7 @@
   "private": false,
   "version": "0.2.18",
   "homepage": "https://github.com/joblisttoday/components",
-  "keywords": [
-    "web-components",
-    "leaflet",
-    "duckdb",
-    "wasm",
-    "joblist"
-  ],
+  "keywords": ["web-components", "leaflet", "duckdb", "wasm", "joblist"],
   "author": "joblist",
   "license": "GPL-3.0-or-later",
   "type": "module",
@@ -22,10 +16,7 @@
     "./style": "./dist-lib/index.css"
   },
   "main": "./dist-lib/index.js",
-  "files": [
-    "**/*",
-    "dist-lib/*"
-  ],
+  "files": ["**/*", "dist-lib/*"],
   "scripts": {
     "dev": "concurrently 'npm run dev:website' 'npm run storybook'",
     "dev:website": "vite",
@@ -36,6 +27,7 @@
     "build-storybook": "storybook build --output-dir dist-website/storybook",
     "preview": "npx serve ./dist-website/",
     "test": "vitest",
+    "test:coverage": "vitest --coverage",
     "lint": "biome lint",
     "typecheck": "tsc --noEmit",
     "storybook": "storybook dev -p 7007",
@@ -62,7 +54,9 @@
     "@types/emscripten": "^1.39.6",
     "@types/mdx": "^2.0.13",
     "@types/sinon": "^17.0.0",
+    "@vitest/coverage-v8": "^3.2.4",
     "concurrently": "^9.2.0",
+    "happy-dom": "^18.0.1",
     "lit": "^3.3.1",
     "recursive-readdir": "^2.2.3",
     "storybook": "^8.6.14",
