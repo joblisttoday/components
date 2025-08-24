@@ -94,18 +94,20 @@ const jobPostingBaseUrl = `https://jobs.smartrecruiters.com`;
 
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
-		return new Job({
-			id: `${providerId}-${hostname}-${job.uuid}`,
-			name: job.name,
-			description: job.description ? sanitizeHtml(job.description) : undefined,
-			url: `${jobPostingBaseUrl}/${hostname}/${job.id}`,
-			publishedDate: job.releasedDate,
-			location: `${job.location.city}, ${job.location.country}`,
-			providerId,
-			providerHostname: hostname,
-			companyTitle: companyTitle || hostname,
-			companyId: companyId || hostname,
-		});
+    return new Job({
+        id: `${providerId}-${hostname}-${job.uuid}`,
+        name: job.name,
+        description: job.description ? sanitizeHtml(job.description) : undefined,
+        url: `${jobPostingBaseUrl}/${hostname}/${job.id}`,
+        publishedDate: job.releasedDate,
+        location: job.location?.fullLocation
+          ? job.location.fullLocation
+          : `${job.location.city}, ${job.location.country}`,
+        providerId,
+        providerHostname: hostname,
+        companyTitle: companyTitle || hostname,
+        companyId: companyId || hostname,
+    });
 	});
 };
 
@@ -156,6 +158,7 @@ const getJobs = async ({
 			});
 	} catch (error) {
 		console.log(`error fetching company jobs: ${hostname}`, error);
+		return;
 	}
 
 	if (jobs) {

@@ -54,15 +54,23 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 			createdAt,
 			country,
 			hostedUrl,
-			categories: { location },
+			categories = {},
 		} = job;
+		const { location } = categories || {};
 
-		let fullLocation = "";
-		if (country && location) {
-			fullLocation = `${location}, ${country}`;
-		} else if (location) {
-			fullLocation = location;
-		}
+        let fullLocation = "";
+        const allLocations = Array.isArray(categories?.allLocations)
+            ? categories.allLocations.filter(Boolean)
+            : [];
+        if (allLocations.length > 0) {
+            fullLocation = Array.from(new Set(allLocations)).join(', ');
+        } else if (country && location) {
+            fullLocation = `${location}, ${country}`;
+        } else if (location) {
+            fullLocation = location;
+        } else if (country) {
+            fullLocation = country;
+        }
 
 		return new Job({
 			id: `${providerId}-${hostname}-${id}`,
@@ -79,18 +87,29 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	});
 };
 
-const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
+const getJobs = async ({ hostname, companyTitle = "", companyId = "", city }) => {
 	const url = `https://api.lever.co/v0/postings/${hostname}`;
 	let allJobs = [];
 	try {
 		const response = await fetch(url);
 		const data = await response.json();
-		if (!Array.isArray(data)) {
-			throw Error(`Company ${companyId} not found`);
+		if (Array.isArray(data)) {
+			allJobs = data;
+		} else {
+			allJobs = [];
 		}
-		allJobs = data;
 	} catch (error) {
 		console.log(`error fetching ${hostname} jobs`, url, error);
+		return;
+	}
+
+	// Optional city filter (case-insensitive substring match)
+	if (city) {
+		const search = String(city).toLowerCase();
+		allJobs = allJobs.filter((job) => {
+			const loc = (job?.categories?.location || "").toLowerCase();
+			return loc.includes(search);
+		});
 	}
 
 	const s = serializeJobs(allJobs, hostname, companyTitle, companyId);

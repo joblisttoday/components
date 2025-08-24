@@ -67,25 +67,26 @@ import { sanitizeHtml, sanitizeHtmlToDom } from "../utils/html-sanitizer.js";
 
 const providerId = "greenhouse";
 
-const getLocation = ({ location, offices }) => {
-	const { name: locationName } = location;
+const getLocation = ({ location } = {}) => {
+	const locationName = location?.name || "";
 	return locationName || "";
 };
 
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
 		const description = sanitizeHtmlToDom(job.content).textContent;
-		return new Job({
-			id: `${providerId}-${hostname}-${job.id}`,
-			name: job.title,
-			description,
-			url: job.absolute_url,
-			publishedDate: job.updated_at,
-			location: getLocation(job),
-			companyTitle: companyTitle || hostname,
-			companyId: companyId || hostname,
-			providerHostname: hostname,
-			providerId,
+    return new Job({
+        id: `${providerId}-${hostname}-${job.id}`,
+        name: job.title,
+        description,
+        url: job.absolute_url,
+        // Prefer first published date if available, else fall back to last update
+        publishedDate: job.first_published || job.updated_at,
+        location: getLocation(job),
+        companyTitle: companyTitle || hostname,
+        companyId: companyId || hostname,
+        providerHostname: hostname,
+        providerId,
 		});
 	});
 };

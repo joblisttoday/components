@@ -50,7 +50,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 			name: title,
 			description: description ? sanitizeHtml(description) : undefined,
 			url: jobUrl,
-			publishedDate: publishedDate || Date.now(),
+			publishedDate: publishedDate,
 			companyTitle: companyTitle || hostname,
 			companyId: companyId || hostname,
 			providerHostname: hostname,
@@ -93,7 +93,7 @@ const getJobDetails = async (jobId, hostname) => {
 	}
 };
 
-const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
+const getJobs = async ({ hostname, companyTitle = "", companyId = "", city }) => {
 	const url =
 		"https://jobs.ashbyhq.com/api/non-user-graphql?op=ApiBoardWithTeams";
 
@@ -130,9 +130,11 @@ const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
 		});
 		const { data } = await response.json();
 		if (!data || !data.jobBoard) {
-			throw Error(`Company ${hostname} not found`);
+			// GraphQL error or missing board: treat as empty
+			allJobs = [];
+		} else {
+			allJobs = data.jobBoard.jobPostings || [];
 		}
-		allJobs = data.jobBoard.jobPostings || [];
 
 		// Fetch job descriptions for all jobs
 		const jobsWithDescriptions = await Promise.all(
@@ -144,6 +146,19 @@ const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
 		allJobs = jobsWithDescriptions;
 	} catch (error) {
 		console.log("error fetching jobs", error);
+		return;
+	}
+
+	// Optional city filter (match against primary and secondary locations)
+	if (city) {
+		const q = String(city).toLowerCase();
+		allJobs = allJobs.filter((job) => {
+			const primary = (job.locationName || "").toLowerCase();
+			const secondaries = (job.secondaryLocations || [])
+				.map((s) => (s.locationName || "").toLowerCase())
+				.join(" ");
+			return primary.includes(q) || secondaries.includes(q);
+		});
 	}
 
 	const s = serializeJobs(allJobs, hostname, companyTitle, companyId);

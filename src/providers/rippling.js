@@ -30,33 +30,30 @@ import { Provider, Job } from "../utils/models.js";
 const providerId = "rippling";
 
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
-	// Rippling jobs do not include a createdAt date – default to now
-	const now = Date.now();
+    return jobs.map((job) => {
+        // Determine location from all locations, concatenated
+        let fullLocation = "";
+        if (Array.isArray(job.locations) && job.locations.length > 0) {
+            const parts = job.locations.map((loc) => {
+                if (loc.city && loc.country) return `${loc.city}, ${loc.country}`;
+                if (loc.name) return loc.name;
+                return "";
+            }).filter(Boolean);
+            fullLocation = Array.from(new Set(parts)).join(', ');
+        }
 
-	return jobs.map((job) => {
-		// Determine location from the first location object
-		let fullLocation = "";
-		if (job.locations && job.locations.length > 0) {
-			const loc = job.locations[0];
-			if (loc.city && loc.country) {
-				fullLocation = `${loc.city}, ${loc.country}`;
-			} else if (loc.name) {
-				fullLocation = loc.name;
-			}
-		}
-
-		return new Job({
-			id: `${providerId}-${hostname}-${job.id}`,
-			name: job.name,
-			url: job.url,
-			publishedDate: now,
-			location: fullLocation,
-			companyTitle: companyTitle || hostname,
-			companyId: companyId || hostname,
-			providerHostname: hostname,
-			providerId,
-		});
-	});
+        return new Job({
+            id: `${providerId}-${hostname}-${job.id}`,
+            name: job.name,
+            url: job.url,
+            publishedDate: undefined, // Rippling API does not provide publication dates
+            location: fullLocation,
+            companyTitle: companyTitle || hostname,
+            companyId: companyId || hostname,
+            providerHostname: hostname,
+            providerId,
+        });
+    });
 };
 
 const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {

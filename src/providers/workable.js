@@ -36,22 +36,28 @@ const providerId = "workable";
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
 		const { id, city, country, url, title, published_on } = job;
-		return new Job({
-			id: `${providerId}-${hostname}-${id}`,
-			name: title,
-			// Workable widget API doesn't provide job descriptions (requires auth for enhanced API)
-			url: url,
-			publishedDate: published_on,
-			location: `${city}, ${country}`,
-			companyTitle: companyTitle || hostname,
-			companyId: companyId || hostname,
-			providerHostname: hostname,
-			providerId,
-		});
+    // Build location from city/country, or mark as remote when applicable
+    let locationStr = `${city}, ${country}`;
+    if (!city && job.telecommuting) {
+        locationStr = country ? `Remote, ${country}` : `Remote`;
+    }
+
+    return new Job({
+        id: `${providerId}-${hostname}-${id}`,
+        name: title,
+        // Workable widget API doesn't provide job descriptions (requires auth for enhanced API)
+        url: url,
+        publishedDate: published_on,
+        location: locationStr,
+        companyTitle: companyTitle || hostname,
+        companyId: companyId || hostname,
+        providerHostname: hostname,
+        providerId,
+    });
 	});
 };
 
-const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
+const getJobs = async ({ hostname, companyTitle = "", companyId = "", city }) => {
 	const url = `https://apply.workable.com/api/v1/widget/accounts/${hostname}`;
 	const options = {
 		method: "GET",
@@ -64,12 +70,22 @@ const getJobs = async ({ hostname, companyTitle = "", companyId = "" }) => {
 	let allJobs = [];
 	try {
 		const data = await fetch(url, options).then((res) => res.json());
-		if (!data || !data.jobs) {
-			throw Error(`Company ${hostname} not found`);
+		if (data && Array.isArray(data.jobs)) {
+			allJobs = data.jobs;
+		} else {
+			// Missing company data: treat as empty list (not a network error)
+			allJobs = [];
 		}
-		allJobs = data.jobs;
 	} catch (error) {
 		console.log(`error fetching company jobs: ${hostname}`, error);
+		// Network error: signal undefined to match tests
+		return;
+	}
+
+	// Optional city filter
+	if (city) {
+		const search = String(city).toLowerCase();
+		allJobs = allJobs.filter((job) => (job.city || "").toLowerCase().includes(search));
 	}
 
 	const s = serializeJobs(allJobs, hostname, companyTitle, companyId);

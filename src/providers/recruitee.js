@@ -68,18 +68,23 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 			description += (description ? ' ' : '') + job.requirements;
 		}
 		
-		return new Job({
-			id: `${providerId}-${hostname}-${job.id}`,
-			name: job.title,
-			description: description ? sanitizeHtml(description) : undefined,
-			url: job.careers_url,
-			publishedDate: job.created_at,
-			location: `${job.city}, ${job.country}`,
-			providerId,
-			providerHostname: hostname,
-			companyTitle: companyTitle || hostname,
-			companyId: companyId || hostname,
-		});
+    // Prefer explicit locations array if available, otherwise fallback to city/country
+    const locationsList = Array.isArray(job.locations) && job.locations.length
+      ? Array.from(new Set(job.locations.map(l => l?.name).filter(Boolean))).join(', ')
+      : `${job.city}, ${job.country}`;
+
+    return new Job({
+        id: `${providerId}-${hostname}-${job.id}`,
+        name: job.title,
+        description: description ? sanitizeHtml(description) : undefined,
+        url: job.careers_url,
+        publishedDate: job.created_at,
+        location: locationsList,
+        providerId,
+        providerHostname: hostname,
+        companyTitle: companyTitle || hostname,
+        companyId: companyId || hostname,
+    });
 	});
 };
 

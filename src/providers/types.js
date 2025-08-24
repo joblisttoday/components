@@ -16,7 +16,7 @@
  * @property {string} name - Job title/name
  * @property {string} [description] - Job description content (HTML or plain text)
  * @property {string} url - Direct URL to the job posting
- * @property {string|Date} publishedDate - When the job was published
+ * @property {string} publishedDate - When the job was published (ISO 8601 format: YYYY-MM-DDTHH:mm:ss.sssZ or YYYY-MM-DD)
  * @property {string} location - Job location (city, country format)
  * @property {string} companyTitle - Company display name
  * @property {string} companyId - Company identifier
@@ -86,7 +86,7 @@
  * @property {string} title - Job title
  * @property {string} content - Job description (HTML format) - only when ?content=true
  * @property {string} absolute_url - Full URL to job posting
- * @property {string} updated_at - ISO timestamp of last update
+ * @property {string} updated_at - ISO 8601 timestamp of last update (YYYY-MM-DDTHH:mm:ss-HH:mm)
  * @property {Greenhouse.JobLocation} location - Primary job location
  * @property {Greenhouse.JobOffice[]} [offices] - List of office locations
  * @property {Greenhouse.DataCompliance[]} data_compliance - Array of compliance requirements
@@ -94,7 +94,7 @@
  * @property {Greenhouse.JobMetadata[]} metadata - Array of job metadata
  * @property {string} requisition_id - Job requisition ID
  * @property {string} company_name - Company name
- * @property {string} first_published - ISO timestamp when first published
+ * @property {string} first_published - ISO 8601 timestamp when first published (YYYY-MM-DDTHH:mm:ss-HH:mm)
  * @property {Greenhouse.Department[]} departments - Array of departments
  */
 
@@ -136,11 +136,13 @@
 
 /**
  * @typedef JobPosting
- * @property {string} id - Ashby job ID
+ * @property {string} id - Ashby job ID (UUID format)
  * @property {string} title - Job title
  * @property {string} locationName - Primary location name
  * @property {string} employmentType - Employment type (Full-time, Part-time, etc.)
  * @property {Ashby.JobSecondaryLocation[]} secondaryLocations - Additional locations
+ * @property {string} [publishedDate] - Publication date (added by implementation, not from API)
+ * @property {string} [description] - Job description HTML (fetched separately via ApiJobPosting query)
  */
 
 /**
@@ -216,7 +218,7 @@
  * @property {string} descriptionPlain - Job description (plain text)
  * @property {string} additional - Additional content (HTML)
  * @property {string} additionalPlain - Additional content (plain text)
- * @property {number} createdAt - Unix timestamp of creation
+ * @property {number} createdAt - Unix timestamp of creation (milliseconds since epoch)
  * @property {string|null} country - Job country
  * @property {string} hostedUrl - URL to job posting
  * @property {string} applyUrl - Direct application URL
@@ -321,13 +323,32 @@
  * @property {SmartRecruiters.JobLocation} location - Job location
  * @property {SmartRecruiters.Industry} industry - Industry classification
  * @property {SmartRecruiters.CustomField[]} customField - Array of custom fields
- * @property {string} releasedDate - ISO timestamp of publication
+ * @property {string} releasedDate - ISO 8601 timestamp of publication (YYYY-MM-DDTHH:mm:ss.sssZ)
  * @property {SmartRecruiters.Creator} creator - Job creator information
+ * @property {Object} [department] - Department information (usually empty object)
+ * @property {Object} function - Job function classification
+ * @property {string} function.id - Function ID
+ * @property {string} function.label - Function label
+ * @property {Object} typeOfEmployment - Employment type information
+ * @property {string} typeOfEmployment.id - Employment type ID
+ * @property {string} typeOfEmployment.label - Employment type label
+ * @property {Object} experienceLevel - Experience level information
+ * @property {string} experienceLevel.id - Experience level ID
+ * @property {string} experienceLevel.label - Experience level label
+ * @property {string} visibility - Job visibility status ("PUBLIC", "PRIVATE", etc.)
+ * @property {string} ref - API reference URL for this job
+ * @property {Object} language - Language information
+ * @property {string} language.code - Language code (e.g., "en")
+ * @property {string} language.label - Language label (e.g., "English")
+ * @property {string} language.labelNative - Native language label (e.g., "English (US)")
  */
 
 /**
  * @typedef JobDetails
  * @property {SmartRecruiters.JobAd} [jobAd] - Detailed job advertisement content
+ * @property {string} [postingUrl] - Public job posting URL
+ * @property {string} [applyUrl] - Direct application URL
+ * @property {string} [referralUrl] - Employee referral URL
  */
 
 /**
@@ -387,7 +408,7 @@
  * @property {string} [yearsOfExperience] - Required years of experience
  * @property {string} [occupation] - Occupation type
  * @property {string} occupationCategory - Job category
- * @property {string} createdAt - Creation timestamp
+ * @property {string} createdAt - Creation timestamp (XML date format)
  * @property {Personio.JobDescription[]} jobDescriptions - Array of description sections
  * @property {string} [description] - Parsed/concatenated description content
  */
@@ -509,9 +530,9 @@
  * @property {boolean} on_site - Whether job is on-site
  * @property {number} max_hours - Maximum working hours
  * @property {string} locations_question - Location preference question
- * @property {string|null} close_at - Job closing date
+ * @property {string|null} close_at - Job closing date (ISO 8601 format or null)
  * @property {Recruitee.Location[]} locations - Array of job locations
- * @property {string} created_at - ISO timestamp of creation
+ * @property {string} created_at - ISO 8601 timestamp of creation (YYYY-MM-DDTHH:mm:ss.sssZ)
  * @property {string} city - Job city
  * @property {string} country - Job country
  * @property {string} status - Job status ("published", "draft", etc.)
@@ -613,7 +634,7 @@
  * @typedef RoomEvent
  * @property {string} event_id - Matrix event ID
  * @property {Matrix.JobContent} content - Event content
- * @property {number} origin_server_ts - Unix timestamp
+ * @property {number} origin_server_ts - Unix timestamp (milliseconds since epoch)
  */
 
 /**
