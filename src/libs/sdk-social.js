@@ -84,7 +84,13 @@ export class JoblistSocialSDK {
 	getProviderFromUrl(url) {
 		if (!url) return null;
 
+		// Special handling for Twitter/X domains
+		if (url.includes("twitter.com") || url.includes("x.com")) {
+			return { key: "twitter", ...this.providers.twitter };
+		}
+
 		for (const [key, provider] of Object.entries(this.providers)) {
+			if (key === "twitter") continue; // Already handled above
 			if (url.includes(provider.baseUrl.replace("https://", ""))) {
 				return { key, ...provider };
 			}

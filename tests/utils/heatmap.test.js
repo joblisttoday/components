@@ -34,6 +34,7 @@ describe('Heatmap Utilities', () => {
     
     // Find the entry for today
     const todayEntry = result.find(entry => entry.date === data[0].date);
+    
     expect(todayEntry).toBeDefined();
     if (todayEntry) {
       expect(todayEntry.total).toBe(5);

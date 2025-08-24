@@ -32,12 +32,11 @@ export const getDatesBetween = (startDate, endDate) => {
 };
 
 // Function to serialize an item with date properties
-const serializeItem = (item, date) => ({
+const serializeItem = (item, dateObj) => ({
 	...item,
-	date,
-	year: getYear(date),
-	dow: Number(format(date, "i")),
-	woy: Number(format(date, "II")),
+	year: getYear(dateObj),
+	dow: Number(format(dateObj, "i")),
+	woy: Number(format(dateObj, "II")),
 });
 
 /**
