@@ -120,6 +120,8 @@ class Company {
  * @property {string} name - Job title
  * @property {string} [description] - Job description (HTML or plain text)
  * @property {string} url - URL to job posting
+ * @property {string} [employmentType] - The type of employment
+ * @property {string} [department] - the department
  * @property {string|Date} [publishedDate] - Job publication date
  * @property {string} [location] - Job location
  * @property {string} companyTitle - Company name
