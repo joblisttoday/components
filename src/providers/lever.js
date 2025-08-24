@@ -1,5 +1,42 @@
-/* lever
-	 - https://partnerexperience.lever.co/hc/en-us/articles/5136514106253
+/**
+ * @fileoverview Lever job board API integration
+ * @see {@link https://partnerexperience.lever.co/hc/en-us/articles/5136514106253}
+ */
+
+/**
+ * @typedef {Object} LeverJobCategories
+ * @property {string} location - Job location
+ * @property {string} [commitment] - Employment type (Full Time, Part Time, etc.)
+ * @property {string} [department] - Department name
+ * @property {string} [team] - Team name
+ * @property {string[]} [allLocations] - Array of all job locations
+ */
+
+/**
+ * @typedef {Object} LeverJobList
+ * @property {string} text - List section title
+ * @property {string} content - HTML list content
+ */
+
+/**
+ * @typedef {Object} LeverApiJob
+ * @property {string} id - Lever job ID
+ * @property {string} text - Job title
+ * @property {string} description - Job description (HTML format)
+ * @property {string} descriptionPlain - Job description (plain text)
+ * @property {string} additional - Additional content (HTML)
+ * @property {string} additionalPlain - Additional content (plain text)
+ * @property {number} createdAt - Unix timestamp of creation
+ * @property {string|null} country - Job country
+ * @property {string} hostedUrl - URL to job posting
+ * @property {string} applyUrl - Direct application URL
+ * @property {LeverJobCategories} categories - Job categorization
+ * @property {LeverJobList[]} [lists] - Array of structured list content
+ * @property {string} [workplaceType] - Workplace type (e.g., "hybrid", "remote", "onsite")
+ * @property {string} [opening] - Opening section HTML content
+ * @property {string} [openingPlain] - Opening section plain text
+ * @property {string} [descriptionBody] - Main description body HTML
+ * @property {string} [descriptionBodyPlain] - Main description body plain text
  */
 
 import { Provider, Job } from "../utils/models.js";

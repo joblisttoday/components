@@ -1,6 +1,27 @@
-/* matrix
-	 docs:
-	 - https://spec.matrix.org/latest/
+/**
+ * @fileoverview Matrix protocol job board integration
+ * @see {@link https://spec.matrix.org/latest/}
+ */
+
+/**
+ * @typedef {Object} MatrixJobContent
+ * @property {string} title - Job title
+ * @property {string} url - Job application URL
+ * @property {string} description - Job description
+ * @property {string} location - Job location
+ */
+
+/**
+ * @typedef {Object} MatrixRoomEvent
+ * @property {string} event_id - Matrix event ID
+ * @property {MatrixJobContent} content - Event content
+ * @property {number} origin_server_ts - Unix timestamp
+ */
+
+/**
+ * @typedef {Object} MatrixMessagesResponse
+ * @property {MatrixRoomEvent[]} chunk - Array of room events
+ * @property {string} [error] - Error message if request failed
  */
 
 import { Provider, Job } from "../utils/models.js";

@@ -50,9 +50,34 @@
  */
 
 /**
- * @typedef JobOffice
+ * @typedef JobOffice  
  * @property {string} name - Office name
  * @property {string} location - Office location
+ */
+
+/**
+ * @typedef DataCompliance
+ * @property {string} type - Compliance type (e.g., "gdpr")
+ * @property {boolean} requires_consent - Whether consent is required
+ * @property {boolean} requires_processing_consent - Whether processing consent is required
+ * @property {boolean} requires_retention_consent - Whether retention consent is required
+ * @property {string|null} retention_period - Data retention period
+ * @property {boolean} demographic_data_consent_applies - Whether demographic consent applies
+ */
+
+/**
+ * @typedef JobMetadata
+ * @property {number} id - Metadata field ID
+ * @property {string} name - Metadata field name
+ * @property {string} value - Metadata field value
+ * @property {string} value_type - Type of metadata value
+ */
+
+/**
+ * @typedef Department
+ * @property {number} id - Department ID
+ * @property {string} name - Department name
+ * @property {number[]} child_ids - Array of child department IDs
  */
 
 /**
@@ -63,7 +88,14 @@
  * @property {string} absolute_url - Full URL to job posting
  * @property {string} updated_at - ISO timestamp of last update
  * @property {Greenhouse.JobLocation} location - Primary job location
- * @property {Greenhouse.JobOffice[]} offices - List of office locations
+ * @property {Greenhouse.JobOffice[]} [offices] - List of office locations
+ * @property {Greenhouse.DataCompliance[]} data_compliance - Array of compliance requirements
+ * @property {number} internal_job_id - Internal Greenhouse job ID
+ * @property {Greenhouse.JobMetadata[]} metadata - Array of job metadata
+ * @property {string} requisition_id - Job requisition ID
+ * @property {string} company_name - Company name
+ * @property {string} first_published - ISO timestamp when first published
+ * @property {Greenhouse.Department[]} departments - Array of departments
  */
 
 /**
@@ -167,6 +199,13 @@
  * @property {string} [commitment] - Employment type (Full Time, Part Time, etc.)
  * @property {string} [department] - Department name
  * @property {string} [team] - Team name
+ * @property {string[]} [allLocations] - Array of all job locations
+ */
+
+/**
+ * @typedef JobList
+ * @property {string} text - List section title
+ * @property {string} content - HTML list content
  */
 
 /**
@@ -178,9 +217,16 @@
  * @property {string} additional - Additional content (HTML)
  * @property {string} additionalPlain - Additional content (plain text)
  * @property {number} createdAt - Unix timestamp of creation
- * @property {string} country - Job country
+ * @property {string|null} country - Job country
  * @property {string} hostedUrl - URL to job posting
+ * @property {string} applyUrl - Direct application URL
  * @property {Lever.JobCategories} categories - Job categorization
+ * @property {Lever.JobList[]} [lists] - Array of structured list content
+ * @property {string} [workplaceType] - Workplace type (e.g., "hybrid", "remote", "onsite")
+ * @property {string} [opening] - Opening section HTML content
+ * @property {string} [openingPlain] - Opening section plain text
+ * @property {string} [descriptionBody] - Main description body HTML
+ * @property {string} [descriptionBodyPlain] - Main description body plain text
  */
 
 /**
@@ -213,36 +259,82 @@
 /**
  * @typedef JobLocation
  * @property {string} city - City name
- * @property {string} country - Country name
+ * @property {string} region - Region code
+ * @property {string} country - Country code
+ * @property {boolean} remote - Whether job is remote
+ * @property {string} latitude - Location latitude
+ * @property {string} longitude - Location longitude
+ * @property {string} fullLocation - Full formatted location string
+ */
+
+/**
+ * @typedef Company
+ * @property {string} identifier - Company identifier
+ * @property {string} name - Company name
+ */
+
+/**
+ * @typedef Industry
+ * @property {string} id - Industry ID
+ * @property {string} label - Industry label
+ */
+
+/**
+ * @typedef CustomField
+ * @property {string} fieldId - Custom field ID
+ * @property {string} fieldLabel - Custom field label
+ * @property {string} valueId - Field value ID
+ * @property {string} valueLabel - Field value label
+ */
+
+/**
+ * @typedef Creator
+ * @property {string} name - Creator name
+ * @property {string} avatarUrl - Creator avatar URL
+ */
+
+/**
+ * @typedef JobAdSection
+ * @property {string} title - Section title
+ * @property {string} text - Section HTML content
  */
 
 /**
  * @typedef JobAd
  * @property {Object} sections - Job ad content sections
- * @property {Object} sections.jobDescription - Main job description
- * @property {string} sections.jobDescription.text - Job description HTML content
- * @property {Object} sections.qualifications - Job requirements
- * @property {string} sections.qualifications.text - Requirements HTML content
- * @property {Object} sections.additionalInformation - Additional details
- * @property {string} sections.additionalInformation.text - Additional info HTML content
+ * @property {SmartRecruiters.JobAdSection} [sections.companyDescription] - Company description section
+ * @property {SmartRecruiters.JobAdSection} [sections.jobDescription] - Main job description
+ * @property {SmartRecruiters.JobAdSection} [sections.qualifications] - Job requirements
+ * @property {SmartRecruiters.JobAdSection} [sections.additionalInformation] - Additional details
  */
 
 /**
  * @typedef ApiJob
- * @property {string} uuid - SmartRecruiters job UUID
- * @property {string} id - SmartRecruiters job ID (different from UUID)
+ * @property {string} id - SmartRecruiters job ID
  * @property {string} name - Job title
- * @property {string} releasedDate - ISO timestamp of publication
+ * @property {string} uuid - SmartRecruiters job UUID (different from ID)
+ * @property {string} [jobId] - Alternative job ID
+ * @property {string} jobAdId - Job advertisement ID
+ * @property {boolean} defaultJobAd - Whether this is the default job ad
+ * @property {string} refNumber - Reference number
+ * @property {SmartRecruiters.Company} company - Company information
  * @property {SmartRecruiters.JobLocation} location - Job location
+ * @property {SmartRecruiters.Industry} industry - Industry classification
+ * @property {SmartRecruiters.CustomField[]} customField - Array of custom fields
+ * @property {string} releasedDate - ISO timestamp of publication
+ * @property {SmartRecruiters.Creator} creator - Job creator information
  */
 
 /**
  * @typedef JobDetails
- * @property {SmartRecruiters.JobAd} jobAd - Detailed job advertisement content
+ * @property {SmartRecruiters.JobAd} [jobAd] - Detailed job advertisement content
  */
 
 /**
  * @typedef ListResponse
+ * @property {number} offset - Response offset
+ * @property {number} limit - Response limit
+ * @property {number} totalFound - Total number of jobs found
  * @property {SmartRecruiters.ApiJob[]} content - Array of job postings
  */
 
@@ -277,19 +369,27 @@
 
 /**
  * @typedef JobDescription
- * @property {string} n - Field name/title
+ * @property {string} name - Field name/title
  * @property {string} value - CDATA content with HTML description
  */
 
 /**
  * @typedef XmlJob
  * @property {string} id - Personio job ID
- * @property {string} name - Job title  
- * @property {string} office - Office/location
- * @property {string} createdAt - Creation timestamp
+ * @property {string} name - Job title
+ * @property {string} [subcompany] - Sub-company name
+ * @property {string} [office] - Office/location
+ * @property {string} [department] - Department name
+ * @property {string} [recruitingCategory] - Recruiting category
+ * @property {string} employmentType - Employment type (full-time, part-time, trainee, etc.)
+ * @property {string} [seniority] - Seniority level (student, junior, senior, etc.)
+ * @property {string} [schedule] - Work schedule (full-time, part-time, etc.)
+ * @property {string} [yearsOfExperience] - Required years of experience
+ * @property {string} [occupation] - Occupation type
  * @property {string} occupationCategory - Job category
- * @property {string} employmentType - Employment type
+ * @property {string} createdAt - Creation timestamp
  * @property {Personio.JobDescription[]} jobDescriptions - Array of description sections
+ * @property {string} [description] - Parsed/concatenated description content
  */
 
 /**
@@ -322,16 +422,27 @@
 
 /**
  * @typedef ApiJob
- * @property {string} id - Workable job ID
  * @property {string} title - Job title
- * @property {string} city - Job city
- * @property {string} country - Job country
+ * @property {string} shortcode - Job shortcode identifier
+ * @property {string} code - Job code (usually empty)
+ * @property {string} employment_type - Employment type (Full-time, Part-time, etc.)
+ * @property {boolean} telecommuting - Whether telecommuting is allowed
+ * @property {string} department - Department name
  * @property {string} url - Direct URL to job posting
- * @property {string} published_on - ISO timestamp of publication
+ * @property {string} shortlink - Short URL to job posting
+ * @property {string} application_url - URL for job application
+ * @property {string} published_on - Date of publication (YYYY-MM-DD format)
+ * @property {string} created_at - Date of creation (YYYY-MM-DD format)
+ * @property {string} country - Job country
+ * @property {string} city - Job city
+ * @property {string} state - Job state/region
+ * @property {string} education - Education requirements (usually empty)
  */
 
 /**
  * @typedef WidgetResponse
+ * @property {string} name - Company name
+ * @property {string|null} description - Company description
  * @property {Workable.ApiJob[]} jobs - Array of job postings
  */
 
@@ -365,14 +476,47 @@
  */
 
 /**
+ * @typedef Translation
+ * @property {Object} en - English translations
+ * @property {string} en.description - Job description in HTML
+ * @property {string} en.title - Job title
+ * @property {string|null} en.highlight - Job highlight
+ * @property {string|null} en.requirements - Job requirements
+ * @property {string} en.sharing_image - Social sharing image URL
+ * @property {string} en.sharing_title - Social sharing title
+ * @property {string} en.sharing_description - Social sharing description
+ * @property {string} en.locations_question - Location preference question
+ */
+
+/**
+ * @typedef Location
+ * @property {number} id - Location ID
+ * @property {string} name - Location name
+ * @property {string} state - State/region
+ * @property {string} country - Country name
+ * @property {string} postal_code - Postal code
+ */
+
+/**
  * @typedef ApiJob
  * @property {number} id - Recruitee job ID
- * @property {string} title - Job title
- * @property {string} careers_url - URL to job posting
+ * @property {string} options_photo - Photo options setting
+ * @property {Recruitee.Translation} translations - Job content in different languages
+ * @property {string} careers_apply_url - URL for job application
+ * @property {string|null} cover_image - Cover image URL
+ * @property {boolean} remote - Whether job is remote
+ * @property {string} postal_code - Job postal code
+ * @property {boolean} on_site - Whether job is on-site
+ * @property {number} max_hours - Maximum working hours
+ * @property {string} locations_question - Location preference question
+ * @property {string|null} close_at - Job closing date
+ * @property {Recruitee.Location[]} locations - Array of job locations
  * @property {string} created_at - ISO timestamp of creation
  * @property {string} city - Job city
  * @property {string} country - Job country
  * @property {string} status - Job status ("published", "draft", etc.)
+ * @property {string} title - Job title (derived from translations.en.title)
+ * @property {string} careers_url - URL to job posting (same as careers_apply_url)
  */
 
 /**

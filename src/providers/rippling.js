@@ -1,5 +1,28 @@
 /**
-	 Docs: https://developer.rippling.com/documentation/job-board-api-v2/reference/get-board-slug-jobs
+ * @fileoverview Rippling job board API integration
+ * @see {@link https://developer.rippling.com/documentation/job-board-api-v2/reference/get-board-slug-jobs}
+ */
+
+/**
+ * @typedef {Object} RipplingJobLocation
+ * @property {string} [city] - City name
+ * @property {string} [country] - Country name
+ * @property {string} [name] - Location name (fallback)
+ */
+
+/**
+ * @typedef {Object} RipplingApiJob
+ * @property {string} id - Rippling job ID
+ * @property {string} name - Job title
+ * @property {string} url - Direct URL to job posting
+ * @property {RipplingJobLocation[]} locations - Array of job locations
+ */
+
+/**
+ * @typedef {Object} RipplingApiResponse
+ * @property {RipplingApiJob[]} items - Array of job postings
+ * @property {number} totalPages - Total number of pages
+ * @property {number} page - Current page number
  */
 
 import { Provider, Job } from "../utils/models.js";

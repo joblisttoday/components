@@ -1,7 +1,31 @@
-/* personio
-	 docs:
-	 - https://developer.personio.de/docs/retrieving-open-job-positions
-	 - https://developer.personio.de/docs/integration-of-open-positions
+/**
+ * @fileoverview Personio job board API integration
+ * @see {@link https://developer.personio.de/docs/retrieving-open-job-positions}
+ */
+
+/**
+ * @typedef {Object} PersonioJobDescription
+ * @property {string} name - Field name/title
+ * @property {string} value - CDATA content with HTML description
+ */
+
+/**
+ * @typedef {Object} PersonioXmlJob
+ * @property {string} id - Personio job ID
+ * @property {string} name - Job title
+ * @property {string} [subcompany] - Sub-company name
+ * @property {string} [office] - Office/location
+ * @property {string} [department] - Department name
+ * @property {string} [recruitingCategory] - Recruiting category
+ * @property {string} employmentType - Employment type (full-time, part-time, trainee, etc.)
+ * @property {string} [seniority] - Seniority level (student, junior, senior, etc.)
+ * @property {string} [schedule] - Work schedule (full-time, part-time, etc.)
+ * @property {string} [yearsOfExperience] - Required years of experience
+ * @property {string} [occupation] - Occupation type
+ * @property {string} occupationCategory - Job category
+ * @property {string} createdAt - Creation timestamp
+ * @property {PersonioJobDescription[]} jobDescriptions - Array of description sections
+ * @property {string} [description] - Parsed/concatenated description content
  */
 
 import { Provider, Job } from "../utils/models.js";

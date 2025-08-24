@@ -1,8 +1,38 @@
-/* ashby
-	 - https://developers.ashbyhq.com/
-	 - https://developers.ashbyhq.com/reference/jobpostinginfo
-	 - https://jobs.ashbyhq.com/api/non-user-graphql
-	 - https://github.com/plibither8/jobber/blob/main/src/boards/ashby.ts
+/**
+ * @fileoverview Ashby job board API integration
+ * @see {@link https://developers.ashbyhq.com/}
+ */
+
+/**
+ * @typedef {Object} AshbyJobSecondaryLocation
+ * @property {string} locationName - Secondary location name
+ */
+
+/**
+ * @typedef {Object} AshbyJobPosting
+ * @property {string} id - Ashby job ID
+ * @property {string} title - Job title
+ * @property {string} locationName - Primary location name
+ * @property {string} employmentType - Employment type (Full-time, Part-time, etc.)
+ * @property {AshbyJobSecondaryLocation[]} secondaryLocations - Additional locations
+ */
+
+/**
+ * @typedef {Object} AshbyJobDetails
+ * @property {string} descriptionHtml - Job description in HTML format
+ */
+
+/**
+ * @typedef {Object} AshbyBoardResponse
+ * @property {Object} data - GraphQL response wrapper
+ * @property {Object} data.jobBoard - Job board data
+ * @property {AshbyJobPosting[]} data.jobBoard.jobPostings - Array of job postings
+ */
+
+/**
+ * @typedef {Object} AshbyJobDetailsResponse
+ * @property {Object} data - GraphQL response wrapper
+ * @property {AshbyJobDetails} data.jobPosting - Job details
  */
 
 import { Provider, Job } from "../utils/models.js";

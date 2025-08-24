@@ -1,7 +1,32 @@
-/* workable
-	 - https://workable.readme.io/reference/jobs-1
-	 - https://www.workable.com/api/accounts/workmotion
-	 - https://apply.workable.com/api/v1/widget/accounts/workmotion
+/**
+ * @fileoverview Workable job board API integration
+ * @see {@link https://workable.readme.io/reference/jobs-1}
+ */
+
+/**
+ * @typedef {Object} WorkableApiJob
+ * @property {string} title - Job title
+ * @property {string} shortcode - Job shortcode identifier
+ * @property {string} code - Job code (usually empty)
+ * @property {string} employment_type - Employment type (Full-time, Part-time, etc.)
+ * @property {boolean} telecommuting - Whether telecommuting is allowed
+ * @property {string} department - Department name
+ * @property {string} url - Direct URL to job posting
+ * @property {string} shortlink - Short URL to job posting
+ * @property {string} application_url - URL for job application
+ * @property {string} published_on - Date of publication (YYYY-MM-DD format)
+ * @property {string} created_at - Date of creation (YYYY-MM-DD format)
+ * @property {string} country - Job country
+ * @property {string} city - Job city
+ * @property {string} state - Job state/region
+ * @property {string} education - Education requirements (usually empty)
+ */
+
+/**
+ * @typedef {Object} WorkableWidgetResponse
+ * @property {string} name - Company name
+ * @property {string|null} description - Company description
+ * @property {WorkableApiJob[]} jobs - Array of job postings
  */
 
 import { Provider, Job } from "../utils/models.js";
