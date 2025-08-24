@@ -18,12 +18,12 @@ import JoblistAindex, {
 } from "./aindex.js";
 import JoblistJob from "./job.js";
 import JoblistMapList from "./map-list.js";
-import JoblistMatrixAuth from "./matrix-auth.js";
-import JoblistMatrixJobs from "./matrix-jobs.js";
-import JoblistMatrixJob from "./matrix-job.js";
-import JoblistMatrixSendJob from "./matrix-send-job.js";
-import JoblistMatrixSendJobForm from "./matrix-send-job-form.js";
-import JoblistMatrixWidetSendJob from "./matrix-widget-send-job.js";
+// import JoblistMatrixAuth from "./matrix-auth.js"; // Commented out - mwc deprecated
+// import JoblistMatrixJobs from "./matrix-jobs.js"; // Commented out - mwc deprecated
+// import JoblistMatrixJob from "./matrix-job.js"; // Commented out - mwc deprecated
+// import JoblistMatrixSendJob from "./matrix-send-job.js"; // Commented out - mwc deprecated
+// import JoblistMatrixSendJobForm from "./matrix-send-job-form.js"; // Commented out - mwc deprecated
+// import JoblistMatrixWidetSendJob from "./matrix-widget-send-job.js"; // Commented out - mwc deprecated
 import JoblistSearch from "./search.js";
 import JoblistSearchResults from "./search-results.js";
 import JoblistBoards from "./boards.js";
@@ -59,12 +59,12 @@ const componentDefinitions = {
 	"joblist-heatmap": JoblistHeatmap,
 
 	/* matrix */
-	"joblist-matrix-auth": JoblistMatrixAuth,
-	"joblist-matrix-jobs": JoblistMatrixJobs,
-	"joblist-matrix-job": JoblistMatrixJob,
-	"joblist-matrix-send-job": JoblistMatrixSendJob,
-	"joblist-matrix-send-job-form": JoblistMatrixSendJobForm,
-	"joblist-matrix-widget-send-job": JoblistMatrixWidetSendJob,
+	// "joblist-matrix-auth": JoblistMatrixAuth, // Commented out - mwc deprecated
+	// "joblist-matrix-jobs": JoblistMatrixJobs, // Commented out - mwc deprecated
+	// "joblist-matrix-job": JoblistMatrixJob, // Commented out - mwc deprecated
+	// "joblist-matrix-send-job": JoblistMatrixSendJob, // Commented out - mwc deprecated
+	// "joblist-matrix-send-job-form": JoblistMatrixSendJobForm, // Commented out - mwc deprecated
+	// "joblist-matrix-widget-send-job": JoblistMatrixWidetSendJob, // Commented out - mwc deprecated
 
 	/* boards */
 	"joblist-boards": JoblistBoards,

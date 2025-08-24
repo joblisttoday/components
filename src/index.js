@@ -2,7 +2,7 @@
 import "./styles/index.css";
 
 /* dependencies */
-import mwc from "./libs/mwc.js";
+// import mwc from "./libs/mwc.js"; // Commented out - mwc deprecated
 
 /* sdk */
 import * as SDK from "./libs/sdk.js";
