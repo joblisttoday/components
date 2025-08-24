@@ -19,7 +19,7 @@ export default class JoblistCompany extends HTMLElement {
 	get full() {
 		return this.getAttribute("full") === "true";
 	}
-	
+
 	/**
 	 * Gets the origin URL for building links
 	 * @returns {string} The origin URL
@@ -27,7 +27,7 @@ export default class JoblistCompany extends HTMLElement {
 	get origin() {
 		return this.getAttribute("origin") || "https://joblist.today";
 	}
-	
+
 	/**
 	 * Gets the company ID
 	 * @returns {string} The company ID
@@ -35,15 +35,24 @@ export default class JoblistCompany extends HTMLElement {
 	get companyId() {
 		return this.getAttribute("company-id");
 	}
-	
+
 	/**
 	 * Gets the company data object
 	 * @returns {Object} Parsed company data object
 	 */
 	get company() {
-		return JSON.parse(this.getAttribute("company") || {});
+		const attr = this.getAttribute("company");
+		if (!attr || attr === "null" || attr === "undefined") {
+			return {};
+		}
+		try {
+			return JSON.parse(attr);
+		} catch (e) {
+			console.warn("Company failed to parse JSON:", e);
+			return {};
+		}
 	}
-	
+
 	/**
 	 * Sets the company data object
 	 * @param {Object} obj - Company data object
@@ -59,17 +68,22 @@ export default class JoblistCompany extends HTMLElement {
 	buildProfileUrl(id) {
 		return `${this.origin}/${id}`;
 	}
-	
+
 	/**
 	 * Lifecycle method called when element is connected to DOM
 	 */
 	async connectedCallback() {
 		if (this.companyId) {
+			// Render a placeholder message immediately so tests see content synchronously
+			this.render();
 			try {
-				const base = this.getAttribute("parquet-base") || undefined;
-				const mode = this.getAttribute("parquet-mode") || "buffer";
-				this.sdk =
-					base || mode ? new JoblistDuckDBSDK(base, { mode }) : joblistDuckDBSDK;
+				const baseAttr = this.getAttribute("parquet-base");
+				const modeAttr = this.getAttribute("parquet-mode");
+				const base = baseAttr || undefined;
+				const mode = modeAttr || "buffer";
+
+				// Use global default SDK unless an override attribute is provided
+				this.sdk = baseAttr || modeAttr ? new JoblistDuckDBSDK(base, { mode }) : joblistDuckDBSDK;
 				await this.sdk.initialize();
 				this.company = await this.sdk.getCompany(this.companyId);
 			} catch (error) {
@@ -82,27 +96,33 @@ export default class JoblistCompany extends HTMLElement {
 	 * Renders the company component with appropriate level of detail
 	 */
 	render() {
+		// Clear previous content
+		this.replaceChildren();
+
 		const $doms = [];
-		if (!this.company) {
-			$doms.push(`No company ${this.companyId}`);
+		const companyData = this.company;
+		if (!companyData || Object.keys(companyData).length === 0) {
+			if (this.companyId) {
+				$doms.push(document.createTextNode(`No company ${this.companyId}`));
+			}
 		} else {
 			if (this.full) {
 				$doms.push(
-					...this.createCardDoms(this.company),
-					this.createDescription(this.company),
-					this.createLinks(this.company),
-					this.createWidgets(this.company),
+					...this.createCardDoms(companyData),
+					this.createDescription(companyData),
+					this.createLinks(companyData),
+					this.createWidgets(companyData),
 					// this.createGiscus(),
-					this.createBoard(this.company),
+					this.createBoard(companyData),
 				);
 			} else {
 				$doms.push(
-					...this.createCardDoms(this.company),
-					this.createDescription(this.company),
+					...this.createCardDoms(companyData),
+					this.createDescription(companyData),
 				);
 			}
 		}
-		
+
 		this.append(...$doms);
 	}
 	/**
@@ -111,10 +131,7 @@ export default class JoblistCompany extends HTMLElement {
 	 * @returns {HTMLElement[]} Array of card DOM elements
 	 */
 	createCardDoms(company) {
-		const doms = [
-			this.createTitle(this.company),
-			this.createTags(this.company),
-		];
+		const doms = [this.createTitle(company), this.createTags(company)];
 		return doms;
 	}
 	/**
@@ -140,11 +157,11 @@ export default class JoblistCompany extends HTMLElement {
 		$header.append($link);
 
 		const $wrapper = document.createElement("joblist-company-title");
-		$wrapper.append(this.createFavicon(this.company));
+		$wrapper.append(this.createFavicon(company));
 		$wrapper.append($header);
 
 		if (company?.is_highlighted) {
-			$wrapper.append(this.createHighlight(this.company));
+			$wrapper.append(this.createHighlight(company));
 		}
 		return $wrapper;
 	}
@@ -156,7 +173,7 @@ export default class JoblistCompany extends HTMLElement {
 	 */
 	createFavicon({ company_url }) {
 		const $favicon = document.createElement("joblist-company-favicon");
-		if (!company_url) return "";
+		if (!company_url) return $favicon;
 		try {
 			const url = new URL(company_url);
 			const $img = document.createElement("img");
@@ -164,7 +181,8 @@ export default class JoblistCompany extends HTMLElement {
 			$img.setAttribute("loading", "lazy");
 			$favicon.append($img);
 		} catch (err) {
-			console.warn(err);
+			console.warn("Invalid company URL for favicon:", err);
+			// Return empty favicon element instead of throwing
 		}
 		return $favicon;
 	}
@@ -276,7 +294,6 @@ export default class JoblistCompany extends HTMLElement {
 			this.createLinksMenu(socialLinks, company),
 		];
 
-
 		// Add edit menu as third menu if in full mode
 		if (this.full && editOptions.length > 0) {
 			menus.push(this.createLinksMenu(editOptions, company));
@@ -287,7 +304,7 @@ export default class JoblistCompany extends HTMLElement {
 			menus.push(this.createHighlightMenu(company));
 		}
 
-		$wrapper.append(...menus.filter(menu => menu !== null && menu !== ""));
+		$wrapper.append(...menus.filter((menu) => menu !== null && menu !== ""));
 		return $wrapper;
 	}
 
@@ -475,8 +492,6 @@ export default class JoblistCompany extends HTMLElement {
 		);
 		return highlighted;
 	}
-
-
 
 	/**
 	 * Creates highlight purchase menu
