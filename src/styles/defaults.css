@@ -21,10 +21,10 @@ joblist-layout {
 	:is(a) {
 		text-decoration: none;
 	}
-	:is(a, a:visited) {
+	:is(a) {
 		color: var(--c-fg);
 	}
-	:is(a:active, a:hover) {
+	:is(a:active, a:hover, a:visited:hover) {
 		color: var(--c-link--active);
 	}
 	:is(a[href^="http"]) {

@@ -3,6 +3,7 @@
 	--c-white: white;
 	--c-black: black;
 	--c-green: darkgreen;
+	--c-hotgreen: #19a519;
 	--c-gray: gray;
 	--c-purple: violet;
 	--c-whitesmoke: whitesmoke;
@@ -33,6 +34,7 @@
 		--c-fg--info: #9d9d9d;
 		--c-link: oklch(0.712564 0.257662 265.758);
 		--c-link--active: var(--c-purple);
+		--c-link--visited: var(--c-hotgreen);
 		--c-hr: slategray;
 		--c-position: gray;
 		--c-svg: white;
@@ -61,6 +63,7 @@
 		--c-fg--info: gray;
 		--c-link: var(--c-blue);
 		--c-link--active: var(--c-green);
+		--c-link--visited: var(--c-purple);
 		--c-hr: lightgray;
 		--c-position: gray;
 		--c-svg: black;

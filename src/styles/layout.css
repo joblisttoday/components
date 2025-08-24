@@ -35,8 +35,11 @@ joblist-layout {
 			display: flex;
 			flex-direction: column;
 		}
-		:is(a, a:visited) {
+		:is(a) {
 			color: var(--c-link);
+		}
+		:is(a:visited) {
+			color: var(--c-link--visited);
 		}
 		&:is(:not([full])) {
 			padding: calc(var(--s) / 2);
