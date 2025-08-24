@@ -5,7 +5,7 @@ joblist-boards {
 		position: sticky;
 		top: 0;
 		background-color: var(--c-bg);
-		padding: calc(var(--s) / 2);
+		gap: calc(var(--s) / 2);
 	}
 	:is(input, select, textarea) {
 		padding: calc(var(--s) / 3);
@@ -18,10 +18,13 @@ joblist-boards {
 		resize: vertical;
 		white-space: pre-wrap;
 		word-break: break-all;
-		padding: calc(var(--s) / 2);
-		font-size: 1rem;
-		cursor: copy;
-		margin: calc(var(--s) / 2);
+		padding: 0;
+		&:not(:empty) {
+			padding: calc(var(--s) / 2);
+			min-height: calc(var(--s) * 7);
+			font-size: 1rem;
+			cursor: copy;
+		}
 	}
 	&::before {
 		display: block;
@@ -43,32 +46,43 @@ joblist-boards {
 	}
 	display: flex;
 	flex-direction: column;
+	gap: calc(var(--s) / 2);
 }
 
 joblist-board {
 	:is(ul) {
 		list-style: none;
 	}
-	padding: calc(var(--s) / 2);
 	display: flex;
 	flex-direction: column;
 	gap: calc(var(--s) / 2);
 }
 
 joblist-board-job {
+	:is(joblist-board-job-header) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0 calc(var(--s) / 2);
+	}
 	:is(joblist-board-job-location) {
 		font-weight: bold;
 		/* font-size: 0.9em; */
 		/* color: var(--c-fg--info); */
 	}
+	:is(joblist-board-job-published) {
+		font-style: italic;
+	}
 
 	:is(joblist-board-job-description) {
 		word-break: break-word;
 	}
+	:is(joblist-board-job-department) {
+		font-family: monospace;
+	}
 
 	display: inline-flex;
 	flex-wrap: wrap;
-	gap: calc(var(--s) / 5);
+	/* gap: calc(var(--s) / 5); */
 }
 joblist-board-search {
 	display: flex;

@@ -39,6 +39,7 @@
 		--c-position: gray;
 		--c-svg: white;
 		--c-bg--company: black;
+		--c-border: gray;
 		--c-border--company: gray;
 		--c-button: darkblue;
 
@@ -68,6 +69,7 @@
 		--c-position: gray;
 		--c-svg: black;
 		--c-bg--company: snow;
+		--c-border: lightgray;
 		--c-border--company: lightgray;
 		--c-button: lightgray;
 

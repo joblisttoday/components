@@ -9,7 +9,7 @@
 @import url("./job.css");
 @import url("./results.css");
 @import url("./search.css");
-@import url("./mwc.css");
+/* @import url("./mwc.css"); */ /* Commented out - mwc deprecated */
 @import url("./matrix.css");
 @import url("./board-providers.css");
 @import url("./heatmap.css");
