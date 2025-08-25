@@ -68,12 +68,18 @@ test("company component builds profile URL correctly", () => {
   expect(url).toBe("https://joblist.today/test-company");
 });
 
-test("company component renders no company message when no data", () => {
+test("company component renders no company message when no data", async () => {
   const company = document.createElement("joblist-company");
   company.setAttribute("company-id", "nonexistent");
   document.body.appendChild(company);
   
-  // Should show no company message
+  // Should initially show loading message
+  expect(company.textContent).toContain("Loading company nonexistent...");
+  
+  // Wait for async loading to complete
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  // Should show no company message after loading fails
   expect(company.textContent).toContain("No company nonexistent");
 });
 
