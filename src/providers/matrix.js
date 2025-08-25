@@ -27,7 +27,7 @@
 import { Provider, Job } from "../utils/models.js";
 // import mwc from "../libs/mwc.js"; // Commented out - mwc deprecated
 import { MATRIX_ROOM_FILTER_JOB } from "../libs/sdk.js";
-import { sanitizeHtml } from "../utils/html-sanitizer.js";
+
 
 const providerId = "matrix";
 const EVENTS_LIMIT = 200;
@@ -38,9 +38,9 @@ const serializeJobs = ({ jobs = [], hostname, companyTitle, companyId }) => {
 		const { title, url, description, location } = content;
 		return new Job({
 			providerId,
-			id: `${providerId}-${hostname}-${id}`,
+			id: id,
 			name: title,
-			description: description ? sanitizeHtml(description) : undefined,
+			description: description,
 			url,
 			publishedDate: new Date(origin_server_ts),
 			companyTitle: companyTitle || hostname,

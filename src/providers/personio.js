@@ -29,7 +29,6 @@
  */
 
 import { Provider, Job } from "../utils/models.js";
-import { sanitizeHtml } from "../utils/html-sanitizer.js";
 
 const providerId = "personio";
 
@@ -38,9 +37,9 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
 		const { name, id, office, createdAt, description, employmentType, department } = job;
 		const newJob = new Job({
-			id: `${providerId}-${hostname}-${id}`,
+			id: id,
 			name,
-			description: description ? sanitizeHtml(description) : undefined,
+			description: description,
 			url: `${baseUrl}/job/${id}`,
 			publishedDate: createdAt,
 			location: office,

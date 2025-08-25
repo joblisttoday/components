@@ -86,7 +86,7 @@
  */
 
 import { Provider, Job } from "../utils/models.js";
-import { sanitizeHtml } from "../utils/html-sanitizer.js";
+
 
 const providerId = "smartrecruiters";
 const baseUrl = "https://api.smartrecruiters.com/v1/companies";
@@ -95,9 +95,9 @@ const jobPostingBaseUrl = `https://jobs.smartrecruiters.com`;
 const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 	return jobs.map((job) => {
     return new Job({
-        id: `${providerId}-${hostname}-${job.uuid}`,
+        id: job.uuid,
         name: job.name,
-        description: job.description ? sanitizeHtml(job.description) : undefined,
+        description: job.description,
         url: `${jobPostingBaseUrl}/${hostname}/${job.id}`,
         publishedDate: job.releasedDate,
         location: job.location?.fullLocation

@@ -43,7 +43,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
         }
 
         return new Job({
-            id: `${providerId}-${hostname}-${job.id}`,
+            id: job.id,
             name: job.name,
             url: job.url,
             publishedDate: undefined, // Rippling API does not provide publication dates

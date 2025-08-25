@@ -36,7 +36,7 @@
  */
 
 import { Provider, Job } from "../utils/models.js";
-import { sanitizeHtml } from "../utils/html-sanitizer.js";
+
 
 const providerId = "ashby";
 
@@ -46,9 +46,9 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 		const jobUrl = `https://jobs.ashbyhq.com/${hostname}/${id}`;
 		return new Job({
 			providerId,
-			id: `${providerId}-${hostname}-${id}`,
+			id: id,
 			name: title,
-			description: description ? sanitizeHtml(description) : undefined,
+			description: description,
 			url: jobUrl,
 			publishedDate: publishedDate,
 			employmentType: employmentType,
