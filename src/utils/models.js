@@ -2,6 +2,8 @@
  * @fileoverview Core data models for joblist.today system
  */
 
+import { sanitizeHtmlToText } from "./html-sanitizer.js";
+
 /**
  * @typedef {Object} CompanyData
  * @property {string} [created_at] - Creation timestamp
@@ -181,20 +183,43 @@ class Job {
 	 * @param {JobData} data - Job data object
 	 */
 	createJob(data) {
-		if (data.providerId && data.providerHostname) {
+		if (
+			data.providerId &&
+			data.providerHostname &&
+			data.id &&
+			!data.id.includes(`${data.providerId}-${data.providerHostname}`)
+		) {
 			this.id = `${data.providerId}-${data.providerHostname}-${data.id}`;
 		} else {
-			this.id = data.id;
+			throw "Job passed without required data: id, providerId, providerHostname";
 		}
-		this.name = data.name;
-		this.description = data.description;
-		this.url = data.url;
+
+		// Sanitize all string inputs as they come from external APIs
+		this.name = data.name ? sanitizeHtmlToText(String(data.name)) : undefined;
+		this.description = data.description
+			? sanitizeHtmlToText(String(data.description))
+			: undefined;
+		this.url = data.url ? sanitizeHtmlToText(String(data.url)) : undefined;
+		this.location = data.location
+			? sanitizeHtmlToText(String(data.location))
+			: undefined;
+		this.employmentType = data.employmentType
+			? sanitizeHtmlToText(String(data.employmentType))
+			: undefined;
+		this.department = data.department
+			? sanitizeHtmlToText(String(data.department))
+			: undefined;
+		this.companyTitle = data.companyTitle
+			? sanitizeHtmlToText(String(data.companyTitle))
+			: data.providerHostname
+				? sanitizeHtmlToText(String(data.providerHostname))
+				: undefined;
+		this.companyId = data.companyId
+			? sanitizeHtmlToText(String(data.companyId))
+			: undefined;
+
+		// These should be safe as they're controlled by us
 		this.publishedDate = data.publishedDate;
-		this.location = data.location;
-		this.employmentType = data.employmentType;
-		this.department = data.department;
-		this.companyTitle = data.companyTitle || data.providerHostname;
-		this.companyId = data.companyId;
 		this.providerId = data.providerId;
 		this.providerHostname = data.providerHostname;
 	}
