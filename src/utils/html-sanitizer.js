@@ -1,5 +1,6 @@
 /**
- * @fileoverview HTML sanitization utilities using DOMPurify
+ * @fileoverview Comprehensive sanitization utilities using DOMPurify
+ * Treats all external API input as potentially dangerous
  */
 
 import DOMPurify from "isomorphic-dompurify";
@@ -27,4 +28,17 @@ function sanitizeHtmlToDom(htmlContent) {
 	return clean;
 }
 
-export { sanitizeHtml, sanitizeHtmlToDom };
+/**
+ * Sanitize HTML content and extract plain text only
+ * @param {string} htmlContent - Raw HTML content to sanitize
+ * @returns {string} Plain text with HTML markup removed
+ */
+function sanitizeHtmlToText(htmlContent) {
+	if (!htmlContent) return "";
+	const dom = DOMPurify.sanitize(htmlContent, {
+		RETURN_DOM: true,
+	});
+	return dom.textContent || dom.innerText || "";
+}
+
+export { sanitizeHtml, sanitizeHtmlToDom, sanitizeHtmlToText };
