@@ -77,7 +77,7 @@ const serializeJobs = (jobs = [], hostname, companyTitle, companyId) => {
 			name: text,
 			description: (descriptionPlain ? sanitizeHtml(descriptionPlain) : undefined) || (description ? sanitizeHtml(description) : undefined),
 			url: hostedUrl,
-			publishedDate: createdAt,
+			publishedDate: createdAt ? new Date(createdAt) : undefined,
 			location: fullLocation,
 			employmentType: categories?.commitment,
 			department: categories?.department,
