@@ -132,7 +132,7 @@ joblist-company {
 	}
 	display: flex;
 	flex-direction: column;
-	/* gap: calc(var(--s) / 4); */
+	gap: calc(var(--s) / 2);
 }
 joblist-company {
 	&:is([is-highlighted="true"]) {
