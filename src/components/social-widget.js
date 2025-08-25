@@ -15,7 +15,7 @@ export default class JoblistSocialWidget extends HTMLElement {
 
 	/** Lifecycle: render on connect */
 	connectedCallback() {
-		// this.render();
+		this.render();
 	}
 
 	async render() {
@@ -115,10 +115,7 @@ export default class JoblistSocialWidget extends HTMLElement {
 			// YouTube direct implementation works well, keep it
 			this.addYouTubeContent(content, id, url);
 		} else if (provider === "twitter" && url) {
-			// Use oEmbed for Twitter/X posts and timelines
-			this.tryOEmbedThenFallback(content, url, provider, () =>
-				this.addTwitterContent(content, url, id),
-			);
+			// Twitter/X: simple link since embeds often fail
 		} else if (provider === "instagram" && url) {
 			// Instagram direct implementation works well, keep it
 			this.addInstagramContent(content, url, id);
@@ -126,8 +123,7 @@ export default class JoblistSocialWidget extends HTMLElement {
 			// Facebook direct implementation works well, keep it
 			this.addFacebookContent(content, url, id);
 		} else if (provider === "linkedin" && url) {
-			// LinkedIn has no public oEmbed API, use custom badge
-			this.addLinkedInContent(content, url, id);
+			// LinkedIn: simple link since no embeds allowed
 		}
 
 		preview.appendChild(content);
@@ -213,100 +209,6 @@ export default class JoblistSocialWidget extends HTMLElement {
 	}
 
 	/**
-	 * Attempts to use oEmbed API first, then falls back to custom implementation.
-	 *
-	 * @param {HTMLElement} container - Container element to add content to
-	 * @param {string} url - Full URL to embed
-	 * @param {string} provider - Provider name
-	 * @param {Function} fallbackFn - Fallback function to call if oEmbed fails
-	 */
-	async tryOEmbedThenFallback(container, url, provider, fallbackFn) {
-		// Show loading state
-		const loading = document.createElement("p");
-		loading.className = "loading-text";
-		loading.textContent = `Loading ${provider} content...`;
-		container.appendChild(loading);
-
-		try {
-			const embedHtml = await this.fetchOEmbed(url, provider);
-			if (embedHtml) {
-				// Clear loading and add oEmbed content
-				container.replaceChildren();
-				const embedContainer = document.createElement("div");
-				embedContainer.className = `${provider}-oembed-container`;
-				embedContainer.innerHTML = embedHtml;
-				container.appendChild(embedContainer);
-
-				// Load any required scripts for the embed
-				this.loadEmbedScripts(provider);
-				return;
-			}
-		} catch (error) {
-			console.warn(`oEmbed failed for ${provider}, using fallback:`, error);
-		}
-
-		// Clear loading and use fallback
-		container.replaceChildren();
-		if (fallbackFn) {
-			fallbackFn();
-		}
-	}
-
-	/**
-	 * Fetches oEmbed data for a given URL and provider.
-	 *
-	 * @param {string} url - URL to fetch oEmbed for
-	 * @param {string} provider - Provider name
-	 * @returns {Promise<string|null>} HTML embed code or null if failed
-	 */
-	async fetchOEmbed(url, provider) {
-		const oEmbedEndpoints = {
-			twitter: "https://publish.twitter.com/oembed",
-		};
-
-		const endpoint = oEmbedEndpoints[provider];
-		if (!endpoint) {
-			return null;
-		}
-
-		const params = new URLSearchParams({
-			url: url,
-			format: "json",
-			maxwidth: "300",
-			maxheight: "400",
-		});
-
-		// Add provider-specific parameters
-		if (provider === "twitter") {
-			params.append("hide_media", "false");
-			params.append("hide_thread", "false");
-			params.append("omit_script", "true"); // We'll load the script ourselves
-		}
-
-		const response = await fetch(`${endpoint}?${params}`);
-		if (!response.ok) {
-			throw new Error(`oEmbed request failed: ${response.status}`);
-		}
-
-		const data = await response.json();
-		return data.html || null;
-	}
-
-	/**
-	 * Loads required scripts for embedded content.
-	 *
-	 * @param {string} provider - Provider name
-	 */
-	loadEmbedScripts(provider) {
-		if (provider === "twitter") {
-			this.loadXWidgetsScript(() => {
-				console.log("X widgets loaded via oEmbed");
-			});
-		}
-		// YouTube embeds don't need additional scripts
-	}
-
-	/**
 	 * Adds Wikipedia content to the social media preview.
 	 * Fetches Wikipedia page summary and thumbnail using the REST API.
 	 *
@@ -315,12 +217,6 @@ export default class JoblistSocialWidget extends HTMLElement {
 	 * @param {string} url - Full Wikipedia URL
 	 */
 	addWikipediaContent(container, pageTitle, url) {
-		// Show loading state
-		const loading = document.createElement("p");
-		loading.className = "loading-text";
-		loading.textContent = "Loading Wikipedia preview...";
-		container.appendChild(loading);
-
 		// Use Wikipedia REST API (no auth required)
 		const apiUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(pageTitle)}`;
 
@@ -423,59 +319,6 @@ export default class JoblistSocialWidget extends HTMLElement {
 	}
 
 	/**
-	 * Adds X (Twitter) timeline content to the social media preview.
-	 * Uses the official X for Websites timeline embed API.
-	 *
-	 * @param {HTMLElement} container - Container element to add content to
-	 * @param {string} url - Full X/Twitter profile URL
-	 * @param {string} username - X/Twitter username
-	 */
-	addTwitterContent(container, url, username) {
-		// Show loading state
-		const loading = document.createElement("p");
-		loading.className = "loading-text";
-		loading.textContent = "Loading X timeline...";
-		container.appendChild(loading);
-
-		// Create X timeline embed container
-		const embedContainer = document.createElement("div");
-		embedContainer.className = "twitter-embed-container";
-
-		// Create X timeline widget using official specification
-		const timeline = document.createElement("a");
-		timeline.className = "twitter-timeline";
-		timeline.href = url;
-
-		// Configure timeline appearance and behavior per X developer docs
-		timeline.setAttribute("data-width", "300");
-		timeline.setAttribute("data-height", "400");
-		timeline.setAttribute("data-tweet-limit", "5");
-		timeline.setAttribute(
-			"data-chrome",
-			"noheader nofooter noborders noscrollbar",
-		);
-		timeline.setAttribute("data-aria-polite", "polite");
-
-		// Fallback text for accessibility and non-JS environments
-		timeline.textContent = `Posts by @${username || "company"}`;
-
-		// Add title for screen readers
-		timeline.title = `X timeline for @${username || "company"}`;
-
-		embedContainer.appendChild(timeline);
-		container.appendChild(embedContainer);
-
-		// Load X for Websites JavaScript (official widgets script)
-		this.loadXWidgetsScript(() => {
-			// Clear loading state once script loads
-			const loadingText = container.querySelector(".loading-text");
-			if (loadingText) {
-				loadingText.remove();
-			}
-		});
-	}
-
-	/**
 	 * Loads the X for Websites JavaScript library for timeline rendering.
 	 * Only loads the script once per page to avoid duplicates.
 	 *
@@ -534,11 +377,6 @@ export default class JoblistSocialWidget extends HTMLElement {
 	 * @param {string} username - Instagram username
 	 */
 	addInstagramContent(container, url, username) {
-		const loading = document.createElement("p");
-		loading.className = "loading-text";
-		loading.textContent = "Loading Instagram content...";
-		container.appendChild(loading);
-
 		// First, try to embed Instagram profile directly via iframe
 		this.tryInstagramProfileEmbed(container, url, username);
 	}
@@ -563,15 +401,6 @@ export default class JoblistSocialWidget extends HTMLElement {
 		iframe.loading = "lazy";
 		iframe.title = `Instagram profile: ${username}`;
 
-		// Handle iframe load success/failure
-		iframe.onload = () => {
-			// Clear loading text on successful load
-			const loadingText = container.querySelector(".loading-text");
-			if (loadingText) {
-				loadingText.remove();
-			}
-		};
-
 		iframeContainer.appendChild(iframe);
 		container.appendChild(iframeContainer);
 	}
@@ -586,11 +415,6 @@ export default class JoblistSocialWidget extends HTMLElement {
 	tryInstagramOEmbed(container, url, username) {
 		// Clear existing content
 		container.replaceChildren();
-
-		const loading = document.createElement("p");
-		loading.className = "loading-text";
-		loading.textContent = "Trying alternative Instagram embed...";
-		container.appendChild(loading);
 
 		// Try Instagram oEmbed API (public, no auth required)
 		const oEmbedUrl = `https://graph.instagram.com/oembed?url=${encodeURIComponent(url)}`;
@@ -677,178 +501,11 @@ export default class JoblistSocialWidget extends HTMLElement {
 	 * @param {string} pageName - Facebook page name
 	 */
 	addFacebookContent(container, url, pageName) {
-		const loading = document.createElement("p");
-		loading.className = "loading-text";
-		loading.textContent = "Loading Facebook page...";
-		container.appendChild(loading);
-
 		// Try Facebook page plugin embed (no SDK required)
 		this.tryFacebookPageEmbed(container, url, pageName);
 	}
 
 	/**
-	 * Adds LinkedIn profile content to the social media preview.
-	 * LinkedIn doesn't allow easy embedding, so shows simple description.
-	 *
-	 * @param {HTMLElement} container - Container element to add content to
-	 * @param {string} url - Full LinkedIn profile URL
-	 * @param {string} username - LinkedIn username
-	 */
-	addLinkedInContent(container, url, companyName) {
-		// Create LinkedIn company badge
-		const badgeContainer = document.createElement("div");
-		badgeContainer.className = "linkedin-company-badge";
-
-		// Badge header with company info
-		const badgeHeader = document.createElement("div");
-		badgeHeader.className = "linkedin-badge-header";
-
-		// Company logo placeholder (LinkedIn blue circle with 'in')
-		const logoContainer = document.createElement("div");
-		logoContainer.className = "linkedin-logo-container";
-
-		const logo = document.createElement("div");
-		logo.className = "linkedin-logo";
-		logo.textContent = "in";
-		logoContainer.appendChild(logo);
-
-		// Company information
-		const companyInfo = document.createElement("div");
-		companyInfo.className = "linkedin-company-info";
-
-		const companyNameEl = document.createElement("div");
-		companyNameEl.className = "linkedin-company-name";
-		companyNameEl.textContent = companyName || "Company";
-
-		const companyType = document.createElement("div");
-		companyType.className = "linkedin-company-type";
-		companyType.textContent = "Company Profile";
-
-		companyInfo.appendChild(companyNameEl);
-		companyInfo.appendChild(companyType);
-
-		badgeHeader.appendChild(logoContainer);
-		badgeHeader.appendChild(companyInfo);
-
-		// Follow/View button
-		const actionButton = document.createElement("a");
-		actionButton.className = "linkedin-action-button";
-		actionButton.href = url;
-		actionButton.target = "_blank";
-		actionButton.rel = "noopener noreferrer";
-		actionButton.textContent = "View Profile";
-
-		// LinkedIn branding footer
-		const badgeFooter = document.createElement("div");
-		badgeFooter.className = "linkedin-badge-footer";
-		badgeFooter.textContent = "LinkedIn";
-
-		// Assemble badge
-		badgeContainer.appendChild(badgeHeader);
-		badgeContainer.appendChild(actionButton);
-		badgeContainer.appendChild(badgeFooter);
-
-		container.appendChild(badgeContainer);
-
-		// Add some CSS styling for the badge
-		this.addLinkedInBadgeStyles();
-	}
-
-	/**
-	 * Adds CSS styles for the LinkedIn company badge.
-	 */
-	addLinkedInBadgeStyles() {
-		if (document.querySelector("#linkedin-badge-styles")) return;
-
-		const style = document.createElement("style");
-		style.id = "linkedin-badge-styles";
-		style.textContent = `
-			.linkedin-company-badge {
-				border: 1px solid #e1e5e9;
-				border-radius: 8px;
-				background: #fff;
-				padding: 16px;
-				max-width: 300px;
-				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-			}
-
-			.linkedin-badge-header {
-				display: flex;
-				align-items: center;
-				gap: 12px;
-				margin-bottom: 12px;
-			}
-
-			.linkedin-logo-container {
-				flex-shrink: 0;
-			}
-
-			.linkedin-logo {
-				width: 40px;
-				height: 40px;
-				background: #0a66c2;
-				color: white;
-				border-radius: 4px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				font-weight: bold;
-				font-size: 14px;
-			}
-
-			.linkedin-company-info {
-				flex: 1;
-				min-width: 0;
-			}
-
-			.linkedin-company-name {
-				font-size: 16px;
-				font-weight: 600;
-				color: #000;
-				margin: 0;
-				line-height: 1.3;
-				word-wrap: break-word;
-			}
-
-			.linkedin-company-type {
-				font-size: 14px;
-				color: #666;
-				margin: 2px 0 0 0;
-			}
-
-			.linkedin-action-button {
-				display: inline-block;
-				background: #0a66c2;
-				color: white !important;
-				padding: 8px 16px;
-				border-radius: 24px;
-				text-decoration: none;
-				font-size: 14px;
-				font-weight: 600;
-				text-align: center;
-				transition: background-color 0.2s;
-				border: none;
-				cursor: pointer;
-			}
-
-			.linkedin-action-button:hover {
-				background: #004182;
-			}
-
-			.linkedin-badge-footer {
-				margin-top: 12px;
-				padding-top: 8px;
-				border-top: 1px solid #e1e5e9;
-				font-size: 12px;
-				color: #666;
-				text-align: center;
-			}
-		`;
-
-		document.head.appendChild(style);
-	}
-
 	/**
 	 * Attempts to embed a Facebook page using the page plugin iframe.
 	 * Includes timeout fallback to simple preview if embedding fails.
@@ -872,34 +529,11 @@ export default class JoblistSocialWidget extends HTMLElement {
 		iframe.title = `Facebook page: ${pageName}`;
 		iframe.allow = "encrypted-media";
 
-		// Handle iframe load success/failure
-		iframe.onload = () => {
-			// Clear loading text on successful load
-			const loadingText = container.querySelector(".loading-text");
-			if (loadingText) {
-				loadingText.remove();
-			}
-		};
-
 		iframe.onerror = () => {
 			// If iframe fails, show simple preview
 			container.replaceChildren();
 			this.createSimpleFacebookPreview(container, pageName || "Facebook Page");
 		};
-
-		// Timeout fallback - if iframe doesn't load within 5 seconds, show simple preview
-		setTimeout(() => {
-			const loadingText = container.querySelector(".loading-text");
-			if (loadingText) {
-				// Still loading after 5 seconds, show simple preview
-				container.replaceChildren();
-				this.createSimpleFacebookPreview(
-					container,
-					pageName || "Facebook Page",
-				);
-			}
-		}, 5000);
-
 		iframeContainer.appendChild(iframe);
 		container.appendChild(iframeContainer);
 	}

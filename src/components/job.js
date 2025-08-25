@@ -32,6 +32,7 @@ function timeSince(inputDate) {
 
 	const now = new Date();
 	const secondsPast = Math.floor((now - date) / 1000);
+
 	if (secondsPast < 60) {
 		return `${secondsPast} seconds ago`;
 	}
@@ -55,7 +56,6 @@ function timeSince(inputDate) {
 	if (monthsPast < 12) {
 		return `${monthsPast} months ago`;
 	}
-	const yearsPast = Math.floor(daysPast / 365);
 	return `${yearsPast} years ago`;
 }
 
@@ -72,7 +72,7 @@ export default class JoblistJob extends HTMLElement {
 	static get observedAttributes() {
 		return ["job"];
 	}
-	
+
 	/**
 	 * Gets the job data from the job attribute
 	 * @returns {Object} Parsed job object
@@ -90,11 +90,12 @@ export default class JoblistJob extends HTMLElement {
 			this.removeAttribute("job");
 			return;
 		}
-		const serialized = typeof value === "string" ? value : JSON.stringify(value);
+		const serialized =
+			typeof value === "string" ? value : JSON.stringify(value);
 		this.setAttribute("job", serialized);
 		this.render();
 	}
-	
+
 	/**
 	 * Gets the origin URL for links
 	 * @returns {string} Origin URL, defaults to https://joblist.today
@@ -102,7 +103,7 @@ export default class JoblistJob extends HTMLElement {
 	get origin() {
 		return this.getAttribute("origin") || "https://joblist.today";
 	}
-	
+
 	/**
 	 * Lifecycle method called when element is connected to DOM
 	 */
@@ -121,8 +122,19 @@ export default class JoblistJob extends HTMLElement {
 				this.createCompanyUrl(this.job),
 				this.createNameLink(this.job),
 				this.createLocation(this.job),
-				this.createPublishedDate(this.job),
 			);
+
+			// Add published date if available and valid
+			const publishedDate = this.createPublishedDate(this.job);
+			if (publishedDate) {
+				$doms.push(publishedDate);
+			}
+
+			// Add description if available
+			const description = this.createDescription(this.job);
+			if (description) {
+				$doms.push(description);
+			}
 		} else {
 			$doms.push(`Missing job information`);
 		}
@@ -151,12 +163,18 @@ export default class JoblistJob extends HTMLElement {
 	 * Creates a published date element showing time since publication
 	 * @param {Object} param0 - Job object destructured
 	 * @param {string} param0.published_date - Job publication date
-	 * @returns {HTMLElement} Published date element
+	 * @returns {HTMLElement|null} Published date element or null if no valid date
 	 */
 	createPublishedDate({ published_date }) {
+		if (!published_date) return null;
+
 		const $element = document.createElement("joblist-job-published-date");
 		const parsedDate = new Date(published_date);
-		$element.textContent = `Published ${timeSince(parsedDate)}`;
+		const timeText = timeSince(parsedDate);
+
+		if (!timeText) return null; // Don't show anything for invalid/very old dates
+
+		$element.textContent = `Published ${timeText}`;
 		return $element;
 	}
 
@@ -188,5 +206,27 @@ export default class JoblistJob extends HTMLElement {
 		const $location = document.createElement("joblist-job-location");
 		$location.textContent = `${location}`;
 		return $location;
+	}
+
+	/**
+	 * Creates a job description element with truncated text
+	 * @param {Object} param0 - Job object destructured
+	 * @param {string} param0.description - Job description
+	 * @returns {HTMLElement} Description element
+	 */
+	createDescription({ description }) {
+		if (!description) return null;
+
+		const $description = document.createElement("joblist-job-description");
+		// Create a temporary element to strip HTML tags
+		const tempDiv = document.createElement("div");
+		tempDiv.innerHTML = description;
+		const plainText = tempDiv.textContent || tempDiv.innerText || "";
+
+		// Truncate to ~321 characters like board-job component
+		$description.textContent =
+			plainText.slice(0, 321) + (plainText.length > 321 ? "..." : "");
+		$description.title = plainText; // Full text on hover
+		return $description;
 	}
 }

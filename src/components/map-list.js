@@ -19,7 +19,6 @@ const buildTemplate = () => {
 			:host {
 				display: flex;
 				flex-direction: column;
-				width: 100%;
 			}
 			joblist-leaflet {
 				&:is(.leaflet-container) {
@@ -58,7 +57,7 @@ export default class JoblistMapList extends HTMLElement {
 	get longitude() {
 		return parseFloat(this.getAttribute("longitude") || "10.09");
 	}
-	
+
 	/**
 	 * Gets the map latitude coordinate
 	 * @returns {number} Latitude value, defaults to 51.505
@@ -66,7 +65,7 @@ export default class JoblistMapList extends HTMLElement {
 	get latitude() {
 		return parseFloat(this.getAttribute("latitude") || "51.505");
 	}
-	
+
 	/**
 	 * Gets the map zoom level
 	 * @returns {number} Zoom level, defaults to 4
@@ -137,7 +136,7 @@ export default class JoblistMapList extends HTMLElement {
 	static get observedAttributes() {
 		return ["markers", "jobs", "longitude", "latitude", "zoom"];
 	}
-	
+
 	/**
 	 * Called when observed attributes change
 	 */

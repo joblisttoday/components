@@ -1,6 +1,7 @@
 joblist-company {
 	&:is([full]) {
 		flex-wrap: nowrap;
+		gap: calc(var(--s) / 4);
 	}
 	&:is(:not([full])) {
 		flex-wrap: wrap;
@@ -132,7 +133,6 @@ joblist-company {
 	}
 	display: flex;
 	flex-direction: column;
-	gap: calc(var(--s) / 2);
 }
 joblist-company {
 	&:is([is-highlighted="true"]) {
@@ -205,9 +205,13 @@ joblist-company-links {
 }
 
 joblist-company-widgets {
-	:is(joblist-map-list) {
-		background-color: var(--c-bg);
-		/* max-width: 50vmin; */
+	:is(joblist-map-list, joblist-heatmap) {
+		flex-grow: 1;
+		width: 100%;
+		@media (min-width: 70rem) {
+			max-width: 50%;
+			flex-basis: 45%;
+		}
 	}
 	display: flex;
 	flex-wrap: wrap;

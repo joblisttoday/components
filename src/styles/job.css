@@ -14,3 +14,11 @@ joblist-job-location {
 joblist-job-published-date {
 	font-style: italic;
 }
+
+joblist-job-description {
+	word-break: break-word;
+	flex-basis: 100%;
+	color: var(--color-text-secondary);
+	font-size: 0.9em;
+	line-height: 1.4;
+}

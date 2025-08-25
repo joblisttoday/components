@@ -12,6 +12,11 @@ import "./tag.js";
  * @extends HTMLElement
  */
 export default class JoblistCompany extends HTMLElement {
+	constructor() {
+		super();
+		this._isLoading = false;
+	}
+
 	/**
 	 * Gets whether to display full company details
 	 * @returns {boolean} True if full details should be shown
@@ -74,7 +79,8 @@ export default class JoblistCompany extends HTMLElement {
 	 */
 	async connectedCallback() {
 		if (this.companyId) {
-			// Render a placeholder message immediately so tests see content synchronously
+			// Set loading state and render loading message
+			this._isLoading = true;
 			this.render();
 			try {
 				const baseAttr = this.getAttribute("parquet-base");
@@ -83,12 +89,19 @@ export default class JoblistCompany extends HTMLElement {
 				const mode = modeAttr || "buffer";
 
 				// Use global default SDK unless an override attribute is provided
-				this.sdk = baseAttr || modeAttr ? new JoblistDuckDBSDK(base, { mode }) : joblistDuckDBSDK;
+				this.sdk =
+					baseAttr || modeAttr
+						? new JoblistDuckDBSDK(base, { mode })
+						: joblistDuckDBSDK;
 				await this.sdk.initialize();
 				this.company = await this.sdk.getCompany(this.companyId);
 			} catch (error) {
 				console.error("Company failed to load data:", error);
+			} finally {
+				this._isLoading = false;
 			}
+		} else {
+			this._isLoading = false;
 		}
 		this.render();
 	}
@@ -101,7 +114,13 @@ export default class JoblistCompany extends HTMLElement {
 
 		const $doms = [];
 		const companyData = this.company;
-		if (!companyData || Object.keys(companyData).length === 0) {
+
+		// Show loading state
+		if (this._isLoading && this.companyId) {
+			$doms.push(
+				document.createTextNode(`Loading company ${this.companyId}...`),
+			);
+		} else if (!companyData || Object.keys(companyData).length === 0) {
 			if (this.companyId) {
 				$doms.push(document.createTextNode(`No company ${this.companyId}`));
 			}
@@ -380,8 +399,8 @@ export default class JoblistCompany extends HTMLElement {
 		const $widgets = document.createElement("joblist-company-widgets");
 		$widgets.append(
 			this.createPositions(company),
-			this.createSocialWidget(company),
 			this.createHeatmap(company),
+			this.createSocialWidget(company),
 		);
 		return $widgets;
 	}
