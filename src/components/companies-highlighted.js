@@ -43,7 +43,11 @@ export default class JoblistCompaniesHighlighted extends HTMLElement {
 	/**
 	 * Renders empty state when no companies are available
 	 */
-	renderNoCompanies() {}
+	renderNoCompanies() {
+		const emptyState = document.createElement("joblist-results-404");
+		emptyState.textContent = "No highlighted companies found.";
+		this.replaceChildren(emptyState);
+	}
 	/**
 	 * Creates a company component element
 	 * @param {Object} company - Company data object
