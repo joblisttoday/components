@@ -157,13 +157,7 @@ export class JoblistDuckDBSDK {
 		});
 
 		const table = await this.conn.query(processedSql);
-		return table
-			.toArray()
-			.map((row) =>
-				Object.fromEntries(
-					table.schema.fields.map((field, i) => [field.name, row[i]]),
-				),
-			);
+		return this._rowsToPlain(table);
 	}
 
 	// Enhanced search parsing - treat spaces as AND operations like GitHub search
@@ -233,54 +227,76 @@ export class JoblistDuckDBSDK {
 		return String(s).replace(/'/g, "''");
 	}
 
-	_rowsToPlain(rows) {
+	_rowsToPlain(input, schema) {
+		const rows = Array.isArray(input) ? input : input?.toArray?.() ?? [];
+		const fields =
+			schema ??
+			(!Array.isArray(input) && input?.schema?.fields
+				? input.schema.fields
+				: []);
+
+		const shapeRow = (row) => {
+			if (Array.isArray(row) && fields.length) {
+				const shaped = {};
+				for (const [index, field] of fields.entries()) {
+					shaped[field.name] = row[index];
+				}
+				return shaped;
+			}
+			return row;
+		};
+
 		const convert = (val) => {
 			if (typeof val === "bigint") return Number(val);
 			if (Array.isArray(val)) return val.map(convert);
 			if (val && typeof val === "object") {
 				const out = {};
 				for (const k of Object.keys(val)) out[k] = convert(val[k]);
-				// Coerce known schema fields
-				if (Array.isArray(out.tags)) {
-					// ok
-				} else if (typeof out.tags === "string") {
-					try {
-						const p = JSON.parse(out.tags);
-						out.tags = Array.isArray(p)
-							? p
-							: typeof p === "string"
+				// Coerce known schema fields when present
+				if ("tags" in out) {
+					if (Array.isArray(out.tags)) {
+						// ok
+					} else if (typeof out.tags === "string") {
+						try {
+							const p = JSON.parse(out.tags);
+							out.tags = Array.isArray(p)
 								? p
-										.split(",")
-										.map((s) => s.trim())
-										.filter(Boolean)
-								: [];
-					} catch {
-						out.tags = out.tags
-							.split(",")
-							.map((s) => s.trim())
-							.filter(Boolean);
+								: typeof p === "string"
+									? p
+											.split(",")
+											.map((s) => s.trim())
+											.filter(Boolean)
+									: [];
+						} catch {
+							out.tags = out.tags
+								.split(",")
+								.map((s) => s.trim())
+								.filter(Boolean);
+						}
+					} else if (out.tags == null) {
+						out.tags = [];
 					}
-				} else if (out.tags == null) {
-					out.tags = [];
 				}
-				// Normalize positions to an array of objects
-				if (Array.isArray(out.positions)) {
-					// ok
-				} else if (typeof out.positions === "string") {
-					try {
-						const p = JSON.parse(out.positions);
-						out.positions = Array.isArray(p) ? p : [];
-					} catch {
+				// Normalize positions to an array of objects when present
+				if ("positions" in out) {
+					if (Array.isArray(out.positions)) {
+						// ok
+					} else if (typeof out.positions === "string") {
+						try {
+							const p = JSON.parse(out.positions);
+							out.positions = Array.isArray(p) ? p : [];
+						} catch {
+							out.positions = [];
+						}
+					} else if (out.positions == null) {
 						out.positions = [];
 					}
-				} else if (out.positions == null) {
-					out.positions = [];
 				}
 				return out;
 			}
 			return val;
 		};
-		return rows.map(convert);
+		return rows.map((row) => convert(shapeRow(row)));
 	}
 
 	// Core methods
@@ -311,7 +327,7 @@ export class JoblistDuckDBSDK {
 
 		const sql = `SELECT * FROM '${vname}' WHERE is_highlighted = true OR is_highlighted = 1 OR lower(cast(is_highlighted as varchar)) = 'true'`;
 		const table = await this.conn.query(sql);
-		return this._rowsToPlain(table.toArray());
+		return this._rowsToPlain(table);
 	}
 
 	async searchJobs(query = "", limit = 100) {
@@ -367,7 +383,7 @@ export class JoblistDuckDBSDK {
 
 		try {
 			const table = await this.conn.query(sql);
-			return this._rowsToPlain(table.toArray());
+			return this._rowsToPlain(table);
 		} catch (error) {
 			console.log(
 				"Jobs parquet file not found or failed to load:",
@@ -386,7 +402,7 @@ export class JoblistDuckDBSDK {
 		const lit = String(id).replace(/'/g, "''");
 		const sql = `SELECT * FROM '${vname}' WHERE id = '${lit}' LIMIT 1`;
 		const table = await this.conn.query(sql);
-		const rows = this._rowsToPlain(table.toArray());
+		const rows = this._rowsToPlain(table);
 		return rows[0] || null;
 	}
 
@@ -458,7 +474,7 @@ export class JoblistDuckDBSDK {
 			const statsUrl = this.parquetUrl("stats");
 			await this.ensureParquetRegistered(statsVName, statsUrl);
 			const table = await this.conn.query(`SELECT * FROM '${statsVName}' LIMIT 1`);
-			const rows = this._rowsToPlain(table.toArray());
+			const rows = this._rowsToPlain(table);
 			if (rows?.length) return rows[0];
 		} catch (e) {
 			console.log("Failed to load stats parquet, falling back:", e.message);
@@ -475,7 +491,7 @@ export class JoblistDuckDBSDK {
 			const companyQuery = await this.conn.query(
 				`SELECT COUNT(*) as count FROM '${companiesVName}'`,
 			);
-			const companyRows = companyQuery.toArray();
+			const companyRows = this._rowsToPlain(companyQuery);
 			total_companies = Number(companyRows[0]?.count ?? 0);
 		} catch (e) {
 			console.log("Failed to get company count:", e.message);
@@ -488,7 +504,7 @@ export class JoblistDuckDBSDK {
 			const jobsQuery = await this.conn.query(
 				`SELECT COUNT(*) as count FROM '${jobsVName}'`,
 			);
-			const jobsRows = jobsQuery.toArray();
+			const jobsRows = this._rowsToPlain(jobsQuery);
 			total_jobs = Number(jobsRows[0]?.count ?? 0);
 		} catch (e) {
 			console.log("Failed to get jobs count:", e.message);
@@ -504,7 +520,7 @@ export class JoblistDuckDBSDK {
 		await this.ensureParquetRegistered(vname, url);
 
 		const table = await this.conn.query(`SELECT * FROM '${vname}'`);
-		return this._rowsToPlain(table.toArray());
+		return this._rowsToPlain(table);
 	}
 
 	async getAllCompaniesWithJobs() {
@@ -532,7 +548,7 @@ export class JoblistDuckDBSDK {
 			`;
 
 			const table = await this.conn.query(sql);
-			return this._rowsToPlain(table.toArray());
+			return this._rowsToPlain(table);
 		} catch (e) {
 			console.log(
 				"Failed to join companies with jobs, returning all companies:",
@@ -560,7 +576,7 @@ export class JoblistDuckDBSDK {
 
 		try {
 			const table = await this.conn.query(`SELECT * FROM '${vname}'`);
-			return this._rowsToPlain(table.toArray());
+			return this._rowsToPlain(table);
 		} catch (e) {
 			console.log("Failed to load jobs data:", e.message);
 			return [];
@@ -687,7 +703,7 @@ export class JoblistDuckDBSDK {
 		`;
 
 		const table = await this.conn.query(sql);
-		return this._rowsToPlain(table.toArray());
+		return this._rowsToPlain(table);
 	}
 
 	async _likeSearch(vname, field, term, limitClause, searchColumns) {
@@ -707,7 +723,7 @@ export class JoblistDuckDBSDK {
 
 		try {
 			const table = await this.conn.query(sql);
-			return this._rowsToPlain(table.toArray());
+			return this._rowsToPlain(table);
 		} catch (e) {
 			console.log(`LIKE search failed: ${e.message}`);
 			return [];
@@ -769,7 +785,7 @@ export class JoblistDuckDBSDK {
 
 		try {
 			const table = await this.conn.query(sql);
-			const results = this._rowsToPlain(table.toArray());
+			const results = this._rowsToPlain(table);
 			console.log(`✅ Mixed search returned ${results.length} results`);
 			return results;
 		} catch (e) {
@@ -833,7 +849,7 @@ export class JoblistDuckDBSDK {
 
 		try {
 			const table = await this.conn.query(sql);
-			const results = this._rowsToPlain(table.toArray());
+			const results = this._rowsToPlain(table);
 			console.log(`✅ Multi-field search returned ${results.length} results`);
 			return results;
 		} catch (e) {
@@ -868,7 +884,7 @@ export class JoblistDuckDBSDK {
 
 		try {
 			const table = await this.conn.query(sql);
-			const results = this._rowsToPlain(table.toArray());
+			const results = this._rowsToPlain(table);
 			console.log(
 				`✅ Plain text multi search returned ${results.length} results`,
 			);

@@ -165,7 +165,12 @@ describe('JoblistDuckDBSDK', () => {
 
   test('getStats falls back to counting base tables when stats parquet missing', async () => {
     await sdk.initialize();
-    sdk.ensureParquetRegistered = vi.fn().mockRejectedValue(new Error('missing'));
+    sdk.ensureParquetRegistered = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('missing'))
+      .mockResolvedValueOnce('companies.parquet')
+      .mockResolvedValueOnce('jobs.parquet');
+
     sdk.conn.query = vi
       .fn()
       .mockResolvedValueOnce({ toArray: vi.fn(() => [[5]]), schema: { fields: [{ name: 'count' }] } })
