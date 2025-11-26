@@ -15,8 +15,7 @@
 					<h1>DuckDB WASM: Stats From Parquet</h1>
 					<p>
 						This example renders global stats using DuckDB WASM and remote Parquet files.
-						The component reads from <code>companies_analyze.parquet</code> and <code>jobs_analyze.parquet</code>
-						at the configured base URL.
+						The component reads from <code>stats.parquet</code> at the configured base URL.
 					</p>
 				</header>
 
@@ -29,8 +28,8 @@
 				<section>
 					<h2>Custom Base (override)</h2>
 					<p>
-						Override the base domain via the <code>parquet-base</code> attribute. The files must exist at
-						<code>{base}/companies_analyze.parquet</code> and <code>{base}/jobs_analyze.parquet</code>.
+						Override the base domain via the <code>parquet-base</code> attribute. The file must exist at
+						<code>{base}/stats.parquet</code>.
 					</p>
 					<joblist-stats parquet-base="https://workers.joblist.today"></joblist-stats>
 				</section>

@@ -35,11 +35,24 @@ export default class JoblistStats extends HTMLElement {
 	 * @param {number} stats.total_jobs - Total number of jobs
 	 */
 	render(stats) {
+		this.textContent = "";
+
 		const companiesText = document.createElement("p");
 		companiesText.textContent = `${stats.total_companies} companies.`;
 
 		const jobsText = document.createElement("p");
 		jobsText.textContent = `${stats.total_jobs} jobs.`;
-		this.append(companiesText, jobsText);
+
+		const nodes = [companiesText, jobsText];
+		if (stats.generated_at) {
+			const generatedText = document.createElement("p");
+			// Display in local timezone but note original UTC source
+			const date = new Date(`${stats.generated_at}Z`);
+			const local = isNaN(date) ? stats.generated_at : date.toLocaleString();
+			generatedText.textContent = `Generated at ${local} (UTC)`;
+			nodes.push(generatedText);
+		}
+
+		this.append(...nodes);
 	}
 }

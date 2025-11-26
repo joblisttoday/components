@@ -135,4 +135,43 @@ describe('JoblistDuckDBSDK', () => {
     expect(sdk.conn).toBe(null);
     expect(sdk.db).toBe(null);
   });
+
+
+  test('getStats prefers stats parquet row when available', async () => {
+    await sdk.initialize();
+    sdk.ensureParquetRegistered = vi.fn().mockResolvedValue('stats.parquet');
+    sdk.conn.query = vi.fn().mockResolvedValue({
+      toArray: vi.fn(() => [["2024-01-01", 10, 20]]),
+      schema: {
+        fields: [
+          { name: 'generated_at' },
+          { name: 'total_jobs' },
+          { name: 'total_companies' }
+        ]
+      }
+    });
+
+    const stats = await sdk.getStats();
+    expect(sdk.ensureParquetRegistered).toHaveBeenCalledWith(
+      'stats.parquet',
+      'https://workers.joblist.today/stats.parquet'
+    );
+    expect(stats).toEqual({
+      generated_at: '2024-01-01',
+      total_jobs: 10,
+      total_companies: 20
+    });
+  });
+
+  test('getStats falls back to counting base tables when stats parquet missing', async () => {
+    await sdk.initialize();
+    sdk.ensureParquetRegistered = vi.fn().mockRejectedValue(new Error('missing'));
+    sdk.conn.query = vi
+      .fn()
+      .mockResolvedValueOnce({ toArray: vi.fn(() => [[5]]), schema: { fields: [{ name: 'count' }] } })
+      .mockResolvedValueOnce({ toArray: vi.fn(() => [[7]]), schema: { fields: [{ name: 'count' }] } });
+
+    const stats = await sdk.getStats();
+    expect(stats).toEqual({ total_companies: 5, total_jobs: 7 });
+  });
 });

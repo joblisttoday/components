@@ -452,10 +452,22 @@ export class JoblistDuckDBSDK {
 	async getStats() {
 		if (!this.conn) throw new Error("DuckDB not initialized");
 
+		// Prefer dedicated stats parquet if available
+		try {
+			const statsVName = "stats.parquet";
+			const statsUrl = this.parquetUrl("stats");
+			await this.ensureParquetRegistered(statsVName, statsUrl);
+			const table = await this.conn.query(`SELECT * FROM '${statsVName}' LIMIT 1`);
+			const rows = this._rowsToPlain(table.toArray());
+			if (rows?.length) return rows[0];
+		} catch (e) {
+			console.log("Failed to load stats parquet, falling back:", e.message);
+		}
+
+		// Fallback: compute counts directly from base tables
 		let total_companies = 0;
 		let total_jobs = 0;
 
-		// Get company count
 		try {
 			const companiesVName = "companies.parquet";
 			const companiesUrl = this.parquetUrl("companies");
@@ -469,7 +481,6 @@ export class JoblistDuckDBSDK {
 			console.log("Failed to get company count:", e.message);
 		}
 
-		// Get jobs count
 		try {
 			const jobsVName = "jobs.parquet";
 			const jobsUrl = this.parquetUrl("jobs");

@@ -7,6 +7,13 @@ export default {
   argTypes: {
     parquetBase: { control: 'text' },
   },
+  parameters: {
+    docs: {
+      description: {
+        component: 'Reads aggregate counts (jobs, companies, generated_at) from stats.parquet at the configured base.',
+      },
+    },
+  },
 };
 
 const Template = ({ parquetBase }) => html`<joblist-stats parquet-base=${parquetBase}></joblist-stats>`;
