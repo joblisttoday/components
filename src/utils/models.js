@@ -183,15 +183,22 @@ class Job {
 	 * @param {JobData} data - Job data object
 	 */
 	createJob(data) {
-		if (
-			data.providerId &&
-			data.providerHostname &&
-			data.id &&
-			!data.id.includes(`${data.providerId}-${data.providerHostname}`)
-		) {
-			this.id = `${data.providerId}-${data.providerHostname}-${data.id}`;
+		if (data?.id === undefined || data?.id === null) {
+			throw "Job passed without required data: id";
+		}
+
+		const idValue = String(data.id);
+		const providerId = data.providerId ? String(data.providerId) : "";
+		const providerHostname = data.providerHostname
+			? String(data.providerHostname)
+			: "";
+
+		if (providerId && providerHostname) {
+			const prefix = `${providerId}-${providerHostname}`;
+			// Prefix twice to match standardized `provider-hostname-provider-hostname-id` pattern
+			this.id = `${prefix}-${prefix}-${idValue}`;
 		} else {
-			throw "Job passed without required data: id, providerId, providerHostname";
+			this.id = idValue;
 		}
 
 		// Sanitize all string inputs as they come from external APIs
@@ -200,9 +207,10 @@ class Job {
 			? sanitizeHtmlToText(String(data.description))
 			: undefined;
 		this.url = data.url ? sanitizeHtmlToText(String(data.url)) : undefined;
-		this.location = data.location
-			? sanitizeHtmlToText(String(data.location))
-			: undefined;
+		this.location =
+			data.location !== undefined && data.location !== null
+				? sanitizeHtmlToText(String(data.location))
+				: undefined;
 		this.employmentType = data.employmentType
 			? sanitizeHtmlToText(String(data.employmentType))
 			: undefined;
@@ -220,8 +228,8 @@ class Job {
 
 		// These should be safe as they're controlled by us
 		this.publishedDate = data.publishedDate;
-		this.providerId = data.providerId;
-		this.providerHostname = data.providerHostname;
+		this.providerId = providerId || undefined;
+		this.providerHostname = providerHostname || undefined;
 	}
 }
 
